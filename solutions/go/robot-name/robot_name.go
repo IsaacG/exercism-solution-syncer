@@ -10,9 +10,10 @@ import (
 
 var used = make(map[string]bool)
 var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+var rnd *rand.Rand
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 }
 
 func getName() (string, error) {
@@ -23,11 +24,11 @@ func getName() (string, error) {
 	for {
 		n = fmt.Sprintf(
 			"%c%c%d%d%d",
-			letters[rand.Intn(26)],
-			letters[rand.Intn(26)],
-			rand.Intn(10),
-			rand.Intn(10),
-			rand.Intn(10))
+			letters[rnd.Intn(26)],
+			letters[rnd.Intn(26)],
+			rnd.Intn(10),
+			rnd.Intn(10),
+			rnd.Intn(10))
 		if _, ok := used[n]; !ok {
 			break
 		}
