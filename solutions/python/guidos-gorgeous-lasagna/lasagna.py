@@ -1,8 +1,6 @@
 EXPECTED_BAKE_TIME = 40
 PREPARATION_TIME = 2
 
-
-# TODO: define the 'bake_time_remaining()' function
 def bake_time_remaining(done):
     '''
     :param elapsed_bake_time: int baking time already elapsed
@@ -13,8 +11,8 @@ def bake_time_remaining(done):
     based on the `EXPECTED_BAKE_TIME`.
     '''
 
-    return EXPECTED_BAKE_TIME - done
-
+    return EXPECTED_BAKE_TIME - done  
+    
 def preparation_time_in_minutes(layers):
     """Return prep time for the layers."""
     return PREPARATION_TIME * layers
