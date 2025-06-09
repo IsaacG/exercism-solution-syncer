@@ -17,10 +17,10 @@ func HappyBirthday(name string, age int) string {
 
 // AssignTable assigns a table to each guest.
 func AssignTable(name string, table int, neighbor, direction string, distance float64) string {
-	parts := []string{
-		fmt.Sprintf("Welcome to my party, %s!", name),
-		fmt.Sprintf("You have been assigned to table %X. Your table is %s, exactly %.1f meters from here.", table, direction, distance),
-		fmt.Sprintf("You will be sitting next to %s.", neighbor),
-	}
-	return strings.Join(parts, "\n")
+	builder := strings.Builder{}
+	builder.WriteString(fmt.Sprintf("Welcome to my party, %s!\n", name))
+	builder.WriteString(fmt.Sprintf("You have been assigned to table %X. ", table))
+	builder.WriteString(fmt.Sprintf("Your table is %s, exactly %.1f meters from here.\n", direction, distance))
+	builder.WriteString(fmt.Sprintf("You will be sitting next to %s.", neighbor))
+	return builder.String()
 }
