@@ -7,8 +7,8 @@ def neighbors(cell: complex) -> Generator[complex, None, None]:
     """Yield all eight neighboring cells."""
     for x in (-1, 0, 1):
         for y in (-1, 0, 1):
-            if x or y:
-                yield cell + x + y * 1j
+            if offset := x + y * 1j:
+                yield cell + offset
 
 
 class Minefield:
