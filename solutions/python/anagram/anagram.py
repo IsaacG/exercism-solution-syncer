@@ -1,23 +1,18 @@
 from collections import defaultdict
 
-def find_anagrams(word, candidates):
-  matches = []
 
-  wcount = defaultdict(int)
+def letter_count(word):
+  count = defaultdict(int)
   for c in word.lower():
-    wcount[c] += 1
+    count[c] += 1
+  return count
 
-  for cand in candidates:
-    if cand.lower() == word.lower():
-      continue
 
-    ccount = defaultdict(int)
-    for c in cand.lower():
-      ccount[c] += 1
-    if ccount == wcount:
-      matches.append(cand)
+def find_anagrams(word, candidates):
+  wcount = letter_count(word)
 
-  return matches
+  return [c for c in candidates
+          if c.lower() != word.lower() and wcount == letter_count(c)]
 
 
 # vim:ts=2:sw=2:expandtab
