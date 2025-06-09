@@ -1,21 +1,9 @@
 // Package yacht scores a roll in Yacht.
 package yacht
 
-/*
-Ones            1 × number of ones      1 1 1 4 5 scores 3
-Twos            2 × number of twos      2 2 3 4 5 scores 4
-Threes          3 × number of threes    3 3 3 3 3 scores 15
-Fours           4 × number of fours     1 2 3 3 5 scores 0
-Fives           5 × number of fives     5 1 5 2 5 scores 15
-Sixes           6 × number of sixes     2 3 4 5 6 scores 6
-Full House      Total of the dice       3 3 3 5 5 scores 19
-Four of a Kind  Total of the four dice  4 4 4 4 6 scores 16
-Little Straight 30 points               1 2 3 4 5 scores 30 
-Big Straight    30 points               2 3 4 5 6 scores 30
-Choice          Sum of the dice         2 3 3 4 6 scores 18
-Yacht           50 points               4 4 4 4 4 scores 50
-*/
-
+// I could map the string directly to a function but I opted
+// to make use of an interface that has a .score method.
+// This keeps the map and code easier to read, though longer.
 var scorer = map[string]turn{
 	"ones": singles{1},
 	"twos": singles{2},
@@ -31,7 +19,7 @@ var scorer = map[string]turn{
 	"yacht": yacht{},
 }
 
-func toMap (dice []int) map[int]int {
+func count (dice []int) map[int]int {
 	m := make(map[int]int)
 	for _, d := range dice {
 		if _, ok := m[d]; !ok {
@@ -77,7 +65,7 @@ func (t singles) score(dice []int) (score int) {
 
 
 func (t fullHouse) score(dice []int) int {
-	m := toMap(dice)
+	m := count(dice)
 	if len(m) == 2 && (m[dice[0]] == 2 || m[dice[0]] == 3) {
 		return sum(dice)
 	}
@@ -85,7 +73,7 @@ func (t fullHouse) score(dice []int) int {
 }
 
 func (t fourOfAKind) score(dice []int) int {
-	m := toMap(dice)
+	m := count(dice)
 	if m[dice[0]] >= 4 {
 		return 4 * dice[0]
 	} else if m[dice[1]] >= 4 {
@@ -95,7 +83,7 @@ func (t fourOfAKind) score(dice []int) int {
 }
 
 func (t straight) score(dice []int) int {
-	m := toMap(dice)
+	m := count(dice)
 	if _, ok := m[t.missing]; len(m) == 5 && !ok {
 		return 30
 	}
@@ -107,7 +95,7 @@ func (t choice) score(dice []int) int {
 }
 
 func (t yacht) score(dice []int) int {
-	if len(toMap(dice)) == 1 {
+	if len(count(dice)) == 1 {
 		return 50
 	}
 	return 0
