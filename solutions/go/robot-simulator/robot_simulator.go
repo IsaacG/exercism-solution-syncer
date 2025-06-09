@@ -108,9 +108,7 @@ func StartRobot(command chan Command, action chan Action) {
 func Room(extent Rect, robot Step2Robot, action chan Action, report chan Step2Robot) {
 	for a := range action {
 		switch a {
-		case 'R':
-			robot.Dir = robot.Dir.Rotate(a)
-		case 'L':
+		case 'R', 'L':
 			robot.Dir = robot.Dir.Rotate(a)
 		case 'A':
 			newPos := robot.Pos.Shift(robot.Dir)
@@ -142,13 +140,9 @@ func StartRobot3(name, script string, action chan Action3, log chan string) {
 	action <- Action3{name, 0, true}
 }
 
-// Room3 handles actions from multiple robots.
-func Room3(extent Rect, robots []Step3Robot, action chan Action3, report chan []Step3Robot, log chan string) {
+// ValidateRobots checks for invalid setup and returns the map.
+func ValidateRobots(extent Rect, robots []Step3Robot) (map[string]*Step3Robot, string) {
 	robotMap := map[string]*Step3Robot{}
-	// Keep track of whether any robot is still active.
-	active := len(robots)
-
-	// Check for invalid inputs.
 	errMsg := ""
 	for i, robot := range robots {
 		if robot.Name == "" {
@@ -167,27 +161,34 @@ func Room3(extent Rect, robots []Step3Robot, action chan Action3, report chan []
 		}
 		robotMap[robot.Name] = &robots[i]
 	}
+	return robotMap, errMsg
+}
+
+// Room3 handles actions from multiple robots.
+func Room3(extent Rect, robots []Step3Robot, action chan Action3, report chan []Step3Robot, log chan string) {
+	defer close(report)
+
+	robotMap, errMsg := ValidateRobots(extent, robots)
 	if errMsg != "" {
 		log <- errMsg
-		close(report)
 		return
 	}
+
+	// Keep track of whether any robot is still active.
+	active := len(robots)
 
 	// Process actions.
 	for act := range action {
 		robot, ok := robotMap[act.Name]
 		if !ok {
 			log <- "Received a command from an unknown robot, " + act.Name
-			close(report)
 			return
 		}
 
 		switch {
 		case act.Act == 0 && act.Done:
 			active--
-		case act.Act == 'R':
-			robot.Dir = robot.Dir.Rotate(act.Act)
-		case act.Act == 'L':
+		case act.Act == 'R' || act.Act == 'L':
 			robot.Dir = robot.Dir.Rotate(act.Act)
 		case act.Act == 'A':
 			newPos := robot.Pos.Shift(robot.Dir)
@@ -207,7 +208,6 @@ func Room3(extent Rect, robots []Step3Robot, action chan Action3, report chan []
 			}
 		default:
 			log <- "Invalid command: " + string(act.Act)
-			close(report)
 			return
 		}
 		if active == 0 {
@@ -215,5 +215,4 @@ func Room3(extent Rect, robots []Step3Robot, action chan Action3, report chan []
 		}
 	}
 	report <- robots
-	close(report)
 }
