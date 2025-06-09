@@ -47,9 +47,6 @@ var currencies = map[string]string{
 	"USD": "$",
 }
 
-func (a Ledger) Len() int      { return len(a) }
-func (a Ledger) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-
 // Less orders the ledger by date > description > change
 func (a Ledger) Less(i, j int) bool {
 	if a[i].Date != a[j].Date {
@@ -129,7 +126,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	for _, e := range entries {
 		entriesCopy = append(entriesCopy, e)
 	}
-	sort.Sort(entriesCopy)
+	sort.Slice(entriesCopy, entriesCopy.Less)
 
 	ss := make([]string, len(entriesCopy))
 	for i, et := range entriesCopy {
