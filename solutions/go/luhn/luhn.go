@@ -52,7 +52,8 @@ func sumB(s string, ch chan<- bool) {
 			ch <- false
 			return
 		}
-		if flip = !flip; flip {
+		flip = !flip
+		if flip {
 			v *= 2
 			if v > 9 {
 				v -= 9
