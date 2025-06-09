@@ -44,7 +44,7 @@ export function middleTwo(deck) {
 
 export function sandwichTrick(deck) {
   const mid = deck.length / 2
-  return deck.slice(1, mid).concat(deck.slice(-1)).concat(deck.slice(0, 1)).concat(deck.slice(mid, -1))
+  return [...deck.slice(1, mid), ...deck.slice(-1), deck[0], ...deck.slice(mid, -1)]
 }
 
 /**
@@ -66,8 +66,7 @@ export function twoIsSpecial(deck) {
  * @returns {number[]} ordered deck
  */
 export function perfectlyOrdered(deck) {
-  deck.sort((a, b) => a - b)
-  return deck
+  return deck.sort((a, b) => a - b)
 }
 
 /**
@@ -78,6 +77,5 @@ export function perfectlyOrdered(deck) {
  * @returns {number[]} reordered deck
  */
 export function reorder(deck) {
-  deck.reverse()
-  return deck
+  return deck.reverse()
 }
