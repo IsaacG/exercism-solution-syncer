@@ -1,6 +1,6 @@
 package rectangles
 
-type point struct { x, y int }
+type point struct{ x, y int }
 type board struct {
 	corners, horz, vert map[point]bool
 }
@@ -61,19 +61,20 @@ func (b board) isRect(topLeft, bottomRight point) bool {
 	return true
 }
 
+// Count returns the number of rectangles in a diagram.
 func Count(diagram []string) int {
 	board := newBoard(diagram)
 
 	count := 0
 	// Iterate through all potential rectangle corners.
-	for topLeft, _ := range board.corners {
-		for bottomRight, _ := range board.corners {
+	for topLeft := range board.corners {
+		for bottomRight := range board.corners {
 			if board.isRect(topLeft, bottomRight) {
 				count++
 			}
 		}
 	}
 	return count
-	
+
 	panic("Please implement the Count function")
 }
