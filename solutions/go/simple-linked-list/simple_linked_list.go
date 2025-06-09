@@ -20,11 +20,11 @@ func New(elements []int) *List {
 }
 
 func (l *List) Size() int {
-	var i int
-	var cur *Element
-	for i, cur = 0, l.root; cur != nil; i, cur = i+1, cur.next {
+	count := 0
+	for cur := l.root; cur != nil; cur = cur.next {
+		count++
 	}
-	return i
+	return count
 }
 
 func (l *List) Push(element int) {
@@ -41,10 +41,11 @@ func (l *List) Pop() (int, error) {
 }
 
 func (l *List) Array() []int {
-	size := l.Size()
-	arr := make([]int, size)
-	for i, cur := size-1, l.root; cur != nil; i, cur = i-1, cur.next {
-		arr[i] = cur.value
+	idx := l.Size()
+	arr := make([]int, idx)
+	for cur := l.root; cur != nil; cur = cur.next {
+		idx--
+		arr[idx] = cur.value
 	}
 	return arr
 }
