@@ -7,7 +7,6 @@
 # Track what brackets we are in using a stack. With each open, add that open
 # to the stack. On close, assert it matches the top of the stack and pop.
 
-declare -r brackets='[\[\](){}]' open='[\[({]'
 declare -A pair=( [']']='[' [')']='(' ['}']='{' )
 
 boolRC () { (( $? == 0 )) && echo true || echo false; }
@@ -17,15 +16,14 @@ matching () {
   input=$1 stack=""
   for (( i = 0; i < ${#input}; i++ )); do
     chr="${input:i:1}"
-    [[ $chr = $brackets ]] || continue
-    if [[ $chr = $open ]]; then
-      stack+=$chr
-    else # closing bracket
-      p=${pair[$chr]}
-      # close much match the last open on the stack
-      [[ $stack = *"$p" ]] || return 1
-      stack=${stack%$p}
-    fi
+    case "$chr" in
+      [\[\({] ) stack+=$chr;;
+      [\]\)}] )
+        p=${pair[$chr]}
+        [[ $stack = *"$p" ]] || return 1
+        stack=${stack%$p}
+        ;;
+    esac
   done
   # At the end, the stack must be empty.
   [[ $stack = '' ]]
