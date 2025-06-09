@@ -23,24 +23,17 @@ func NewGarden(diagram string, children []string) (*Garden, error) {
 	if len(rows) != 3 {
 		return nil, errors.New("diagram should contain 3 lines")
 	}
-	if len(rows[0]) != 0 {
+	cups := make([][]rune, len(rows))
+	for i := range rows {
+		cups[i] = []rune(rows[i])
+	}
+	if len(cups[0]) != 0 {
 		return nil, errors.New("diagram should start with newline")
 	}
-	if len(rows[1]) != len(rows[2]) {
+	if len(cups[1]) != len(cups[2]) {
 		return nil, errors.New("rows must be same size")
 	}
-	if len(rows[1]) != 2*len(children) {
-		return nil, errors.New("rows contain two cups per child")
-	}
-	// Validation with `switch` statements.
-	switch {
-	case len(rows) != 3:
-		return nil, errors.New("diagram should contain 3 lines")
-	case len(rows[0]) != 0:
-		return nil, errors.New("diagram should start with newline")
-	case len(rows[1]) != len(rows[2]):
-		return nil, errors.New("rows must be same size")
-	case len(rows[1]) != 2*len(children):
+	if len(cups[1]) != 2*len(children) {
 		return nil, errors.New("rows contain two cups per child")
 	}
 	for _, c := range diagram {
@@ -51,10 +44,7 @@ func NewGarden(diagram string, children []string) (*Garden, error) {
 			return nil, errors.New("invalid cup code " + string(c))
 		}
 	}
-	cups := make([][]rune, len(rows))
-	for i := range rows {
-		cups[i] = []rune(rows[i])
-	}
+
 	garden := make(Garden, len(children))
 	c := make([]string, len(children))
 	copy(c, children)
