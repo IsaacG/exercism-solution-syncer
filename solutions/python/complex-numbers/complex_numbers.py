@@ -77,6 +77,3 @@ class ComplexNumber:
 
     def __repr__(self):
         return f"{self.real} + {self.imaginary} * i"
-
-
-# vim:ts=2:sw=2:expandtab
