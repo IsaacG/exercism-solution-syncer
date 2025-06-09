@@ -1,19 +1,16 @@
-def is_prime:
+def is_prime($priors; $threshold):
   .
-  | .candidate as $candidate
-  | ($candidate | sqrt | ceil) as $threshold
-  | .priors
-  | [.[] | select(. <= $threshold)]
+  | . as $candidate
+  | [$priors[] | select(. <= $threshold)]
   | all($candidate % . != 0)
   ;
 
 def next_prime:
   .
-  | .candidate |= . + 2
-  | if is_prime
-    then (.priors += [.candidate])
-    else next_prime
-    end
+  | . as $priors
+  | ((. | max) + 2 )
+  | until(is_prime($priors; . | sqrt); . + 2)
+  | $priors + [.]
   ;
 
 .number as $n
@@ -21,5 +18,5 @@ def next_prime:
   then "there is no zeroth prime" | halt_error
   else .
   end
-| reduce range(1; $n) as $_ ({candidate: 1, priors: [2]}; next_prime)
-| .priors[$n - 1]
+| reduce range(1; $n - 1) as $_ ([3]; next_prime)
+| .[-1]
