@@ -6,51 +6,18 @@ import (
 	"strings"
 )
 
-// Valid Luhn number or not?
+// Valid checks is the string s contains a valid Luhn number, wherein every other digit is doubled and the sum must be divisible by 10.
 func Valid(s string) bool {
 	s = strings.ReplaceAll(s, " ", "")
 	if len(s) <= 1 {
 		return false
 	}
-	c := make(chan bool, 2)
-	// go sumA(s, c)
-	go sumB(s, c)
-	// a, b := <-c, <-c
-	// if a != b {
-	// 	panic("answers differ")
-	// }
-	return <-c
-}
-
-// func sumA(s string, ch chan<- bool) {
-// 	var sum int
-// 	if len(s)%2 == 1 {
-// 		s = "0" + s
-// 	}
-// 	for i, c := range s {
-// 		v, err := strconv.Atoi(string(c))
-// 		if err != nil {
-// 			ch <- false
-// 		}
-// 		if i%2 == 0 {
-// 			v *= 2
-// 			if v > 9 {
-// 				v -= 9
-// 			}
-// 		}
-// 		sum += v
-// 	}
-// 	ch <- sum%10 == 0
-// }
-
-func sumB(s string, ch chan<- bool) {
 	var sum int
 	flip := len(s)%2 == 1
 	for _, c := range s {
 		v, err := strconv.Atoi(string(c))
 		if err != nil {
-			ch <- false
-			return
+			return false
 		}
 		flip = !flip
 		if flip {
@@ -61,5 +28,29 @@ func sumB(s string, ch chan<- bool) {
 		}
 		sum += v
 	}
-	ch <- sum%10 == 0
+	return sum%10 == 0
 }
+
+// Notes:
+// My prefered solution looks more like:
+//
+// 	var sum int
+// 	if len(s)%2 == 1 {
+// 		s = "0" + s
+// 	}
+// 	for i, c := range s {
+// 		v, err := strconv.Atoi(string(c))
+// 		if err != nil {
+// 			return false
+// 		}
+// 		if i%2 == 0 {
+// 			v *= 2
+// 			if v > 9 {
+// 				v -= 9
+// 			}
+// 		}
+// 		sum += v
+// 	}
+// 	return sum%10 == 0
+// }
+
