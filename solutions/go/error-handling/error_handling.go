@@ -4,6 +4,7 @@ package erratum
 func Use(o ResourceOpener, input string) error {
 	var res Resource
 	var err error
+
 	// Try to open.
 	for res, err = o(); err != nil; res, err = o() {
 		if _, ok := err.(TransientError); ok {
@@ -13,15 +14,17 @@ func Use(o ResourceOpener, input string) error {
 		return err
 	}
 	defer res.Close()
+
+	// Recover on a panic.
 	defer func() {
 		if r := recover(); r != nil {
 			err = r.(error)
 			if f, ok := r.(FrobError); ok {
 				res.Defrob(f.defrobTag)
-				err = f.inner
 			}
 		}
 	}()
+
 	res.Frob(input)
 	return err
 }
