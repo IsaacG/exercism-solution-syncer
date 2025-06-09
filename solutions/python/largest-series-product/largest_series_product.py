@@ -4,7 +4,7 @@ import math
 
 def largest_product(series: str, size: int) -> int:
     """Return the largest series product."""
-    if not series and not size:
+    if size == 0:
         return 1
     if size > len(series):
         raise ValueError("span must be smaller than string length")
