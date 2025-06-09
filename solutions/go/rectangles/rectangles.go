@@ -1,18 +1,21 @@
 package rectangles
 
-type Point struct { x, y int }
+type point struct { x, y int }
+type board struct {
+	corners, horz, vert map[point]bool
+}
 
-func Count(diagram []string) int {
-	corners := map[Point]bool{}
-	horz := map[Point]bool{}
-	vert := map[Point]bool{}
+func newBoard(diagram []string) board {
+	corners := map[point]bool{}
+	horz := map[point]bool{}
+	vert := map[point]bool{}
 
 	for y, line := range diagram {
 		for x, char := range line {
 			if char == ' ' {
 				continue
 			}
-			p := Point{x, y}
+			p := point{x, y}
 			switch char {
 			case '+':
 				corners[p] = true
@@ -22,48 +25,52 @@ func Count(diagram []string) int {
 				vert[p] = true
 			case '-':
 				horz[p] = true
+			default:
+				panic("Invalid char " + string(char))
 			}
 		}
 	}
+	return board{corners, horz, vert}
+}
+
+func (b board) isRect(topLeft, bottomRight point) bool {
+	// topLeft must be above and left of bottomRight.
+	if topLeft.x >= bottomRight.x || topLeft.y >= bottomRight.y {
+		return false
+	}
+	// Check the other two corners exist.
+	topRight := point{bottomRight.x, topLeft.y}
+	bottomLeft := point{topLeft.x, bottomRight.y}
+	if !b.corners[topRight] || !b.corners[bottomLeft] {
+		return false
+	}
+
+	// Check the top and bottom edges exist.
+	for x := topLeft.x; x <= topRight.x; x++ {
+		if !b.horz[point{x, topLeft.y}] || !b.horz[point{x, bottomLeft.y}] {
+			return false
+		}
+	}
+
+	// Check the right and left edges exist.
+	for y := topLeft.y; y <= bottomLeft.y; y++ {
+		if !b.vert[point{topLeft.x, y}] || !b.vert[point{topRight.x, y}] {
+			return false
+		}
+	}
+	return true
+}
+
+func Count(diagram []string) int {
+	board := newBoard(diagram)
 
 	count := 0
 	// Iterate through all potential rectangle corners.
-	for topLeft, _ := range corners {
-		for bottomRight, _ := range corners {
-			// topLeft must be above and left of bottomRight.
-			if topLeft.x >= bottomRight.x || topLeft.y >= bottomRight.y {
-				continue
+	for topLeft, _ := range board.corners {
+		for bottomRight, _ := range board.corners {
+			if board.isRect(topLeft, bottomRight) {
+				count++
 			}
-			// Check the other two corners exist.
-			topRight := Point{bottomRight.x, topLeft.y}
-			bottomLeft := Point{topLeft.x, bottomRight.y}
-			if !corners[topRight] || !corners[bottomLeft] {
-				continue
-			}
-
-			// Check the top and bottom edges exist.
-			valid := true
-			for x := topLeft.x; x <= topRight.x; x++ {
-				if !horz[Point{x, topLeft.y}] || !horz[Point{x, bottomLeft.y}] {
-					valid = false
-					break
-				}
-			}
-			if !valid {
-				continue
-			}
-
-			// Check the right and left edges exist.
-			for y := topLeft.y; y <= bottomLeft.y; y++ {
-				if !vert[Point{topLeft.x, y}] || !vert[Point{topRight.x, y}] {
-					valid = false
-					break
-				}
-			}
-			if !valid {
-				continue
-			}
-			count++
 		}
 	}
 	return count
