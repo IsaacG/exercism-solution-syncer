@@ -28,7 +28,7 @@ def is_prime($priors; $threshold):
   def _is_prime:
     . as [$idx, $candidate] |
     if $priors[$idx] > $threshold
-     then true
+      then true
       elif $candidate % $priors[$idx] == 0
       then false
       else [$idx + 1, $candidate] | _is_prime
