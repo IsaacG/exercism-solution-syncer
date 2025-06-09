@@ -1,59 +1,70 @@
 """Doubly linked list."""
 
 from __future__ import annotations
+from typing import Callable, Generic, Generator, Optional, TypeVar
 
 
-class Node:
+NodeValue = TypeVar('NodeValue')
+
+
+
+class Node(Generic[NodeValue]):
     """List node."""
-    def __init__(self, value):
+    def __init__(self, value: NodeValue):
         """Create a new node."""
         self.value = value
-        self.prev = None
-        self.next = None
+        self.prev: Optional[Node] = None
+        self.next: Optional[Node] = None
 
-    def add_prev(self, value):
+    def add_prev(self, value: NodeValue) -> Node:
         """Add a node prior to self."""
         new_node = Node(value)
+        assert self.prev is not None
         self.link(self.prev, new_node, self)
         return new_node
 
-    def add_next(self, value):
+    def add_next(self, value: NodeValue) -> Node:
         """Add a node after self."""
         new_node = Node(value)
+        assert self.next is not None
         self.link(self, new_node, self.next)
         return new_node
 
     @staticmethod
-    def link(node_a, node_b, node_c):
+    def link(node_a: Node, node_b: Node, node_c: Node) -> None:
         """Set up node linkage between three nodes in a sequence."""
         node_a.next, node_b.next = node_b, node_c
         node_b.prev, node_c.prev = node_a, node_b
 
-    def remove(self):
+    def remove(self) -> NodeValue:
         """Remove a node from the list and return its value."""
+        assert self.prev is not None
+        assert self.next is not None
         self.next.prev = self.prev
         self.prev.next = self.next
         return self.value
 
 
-def increment(func):
+def increment(
+    func: Callable[[LinkedList, NodeValue], None]
+) -> Callable[[LinkedList, NodeValue], None]:
     """LinkedList increment decorator to bump the length."""
 
-    def wrapper(self, *args):
-        func(self, *args)
+    def wrapper(self, value: NodeValue) -> None:
+        func(self, value)
         self.length += 1
 
     return wrapper
 
 
-def decrement(func):
+def decrement(func: Callable[[LinkedList], NodeValue]) -> Callable[[LinkedList], NodeValue]:
     """LinkedList decrement decorator to check and reduce the length."""
 
-    def wrapper(self, *args):
+    def wrapper(self):
         if self.length <= 0:
             raise IndexError("Cannot remove from an empty list.")
         self.length -= 1
-        return func(self, *args)
+        return func(self)
 
     return wrapper
 
@@ -71,26 +82,26 @@ class LinkedList:
         self.length = 0
 
     @increment
-    def push(self, value):
+    def push(self, value: NodeValue) -> None:
         """Push a node to the end of the list."""
         self.last.add_prev(value)
 
     @increment
-    def unshift(self, value):
+    def unshift(self, value: NodeValue) -> None:
         """Insert a node at the start of the list."""
         self.head.add_next(value)
 
     @decrement
-    def pop(self):
+    def pop(self) -> NodeValue:
         """Pop a node from the end of the list."""
         return self.last.prev.remove()
 
     @decrement
-    def shift(self):
+    def shift(self) -> NodeValue:
         """Remove a node from the start of the list."""
         return self.head.next.remove()
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[NodeValue, None, None]:
         """Iterate through the list."""
         cur = self.head.next
         while cur != self.last:
