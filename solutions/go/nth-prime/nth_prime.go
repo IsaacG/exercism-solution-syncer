@@ -1,7 +1,7 @@
 // Package prime
 package prime
 
-var primes []int
+var primes = []int{2}
 
 func isPrime(i int) bool {
 	for _, n := range primes {
@@ -17,7 +17,7 @@ func Nth(n int) (int, bool) {
 		return 0, false
 	}
 
-	for i := 2; len(primes) < n; i++ {
+	for i := 3; len(primes) < n; i += 2 {
 		if isPrime(i) {
 			primes = append(primes, i)
 		}
