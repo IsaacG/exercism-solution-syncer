@@ -8,13 +8,14 @@ import (
 
 // Record stores a DB record.
 type Record struct {
-	ID int;
-	Parent int;
+	ID     int
+	Parent int
 }
+
 // Node represents a tree node.
 type Node struct {
-	ID int;
-	Children []*Node;
+	ID       int
+	Children []*Node
 }
 
 // Build generates a tree of nodes from a list of records.
