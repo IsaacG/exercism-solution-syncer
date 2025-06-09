@@ -2,7 +2,6 @@
 
 
 from __future__ import annotations
-import copy
 import dataclasses
 from typing import Optional
 
@@ -59,45 +58,39 @@ class Zipper:
 
     def set_value(self, value: int) -> Zipper:
         """Set the Focus value."""
-        new = copy.deepcopy(self)
-        new.focus.value = value
-        return new
+        self.focus.value = value
+        return self
 
     def left(self) -> Optional[Zipper]:
         """Return a Zipper with the Focus on the left."""
-        new = copy.deepcopy(self)
-        if new.focus.left is None:
+        if self.focus.left is None:
             return None
-        new.focus = new.focus.left
-        return new
+        self.focus = self.focus.left
+        return self
 
     def set_left(self, tree: dict) -> Zipper:
-        """Return a Zipper with the left set to a new Tree."""
-        new = copy.deepcopy(self)
-        new.focus.left = Node.from_dict(tree)
-        return new
+        """Return a Zipper with the left set to a self Tree."""
+        self.focus.left = Node.from_dict(tree)
+        return self
 
     def right(self) -> Optional[Zipper]:
         """Return a Zipper with the Focus on the right."""
-        new = copy.deepcopy(self)
-        if new.focus.right is None:
+        if self.focus.right is None:
             return None
-        new.focus = new.focus.right
-        return new
+        self.focus = self.focus.right
+        return self
 
     def set_right(self, tree: dict) -> Zipper:
-        """Return a Zipper with the right set to a new Tree."""
-        new = copy.deepcopy(self)
-        new.focus.right = Node.from_dict(tree)
-        return new
+        """Return a Zipper with the right set to a self Tree."""
+        self.focus.right = Node.from_dict(tree)
+        return self
 
     def up(self) -> Optional[Zipper]:
         """Return a Zipper with the Focus on the parent."""
-        new = copy.deepcopy(self)
-        if new.focus.parent is None:
+        if self.focus.parent is None:
             return None
-        new.focus = new.focus.parent
-        return new
+        self.focus = self.focus.parent
+        return self
 
     def to_tree(self) -> dict:
         """Return a dict representation of the Tree."""
