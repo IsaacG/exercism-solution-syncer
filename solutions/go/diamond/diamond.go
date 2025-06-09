@@ -3,9 +3,10 @@ package diamond
 import (
 	"bytes"
 	"fmt"
-	"strings"
 )
-var Space = []byte{' '}
+
+// A is the value of 'A'.
+const A = int('A')
 
 // Gen returns a diamond pattern string.
 func Gen(char byte) (string, error) {
@@ -13,37 +14,35 @@ func Gen(char byte) (string, error) {
 		return "", fmt.Errorf("invalid char %b not in range [A, Z]", char)
 	}
 
-	first := int('A')
-	last := int(char)
-	length := last - first
+	length := int(char) - A
+	rowLength := (length * 2) + 1
+	blankRow := bytes.Repeat([]byte{' '}, rowLength)
 
-	var sb strings.Builder
-
+	// Precompute all the rows, since we need them twice.
+	rows := make([][]byte, rowLength)
 	for i := 0; i <= length; i++ {
-		sb.Write(bytes.Repeat(Space, length - i))
-		sb.WriteByte(byte(first+i))
-		if i > 0 {
-			sb.Write(bytes.Repeat(Space, i*2-1))
-			sb.WriteByte(byte(first+i))
-		}
-		sb.Write(bytes.Repeat(Space, length - i))
-		if char != 'A' {
-			sb.WriteByte('\n')
-		}
-	}
-	// Mirror the bottom half.
-	for i := length - 1; i >= 0; i-- {
-		sb.Write(bytes.Repeat(Space, length - i))
-		sb.WriteByte(byte(first+i))
-		if i > 0 {
-			sb.Write(bytes.Repeat(Space, i*2-1))
-			sb.WriteByte(byte(first+i))
-		}
-		sb.Write(bytes.Repeat(Space, length - i))
-		if i != 0 {
-			sb.WriteByte('\n')
-		}
+		// Fill the row with spaces.
+		rows[i] = make([]byte, rowLength)
+		copy(rows[i], blankRow)
+		// Insert the char on either side of center.
+		rows[i][length-i] = byte(A + i)
+		rows[i][length+i] = byte(A + i)
 	}
 
-	return sb.String(), nil
+	var buf bytes.Buffer
+
+	// Write the top half.
+	for i := 0; i < length; i++ {
+		buf.Write(rows[i])
+		buf.WriteByte('\n')
+	}
+	// Write the bottom half.
+	for i := length; i > 0; i-- {
+		buf.Write(rows[i])
+		buf.WriteByte('\n')
+	}
+	// Final row, no newline.
+	buf.Write(rows[0])
+
+	return buf.String(), nil
 }
