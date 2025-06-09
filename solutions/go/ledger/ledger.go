@@ -132,22 +132,15 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	}
 	sort.Sort(entriesCopy)
 
-	// Parallelism, always a great idea
-	co := make(chan chanMsg)
-	for i, et := range entriesCopy {
-		go func(i int, entry Entry) {
-			s, err := formatEntry(entry, locale, currency)
-			co <- chanMsg{i: i, s: s, e: err}
-		}(i, et)
-	}
 	ss := make([]string, len(entriesCopy))
-	for range entriesCopy {
-		v := <-co
-		if v.e != nil {
-			return "", v.e
+	for i, et := range entriesCopy {
+		s, err := formatEntry(et, locale, currency)
+		if err != nil {
+			return "", err
 		}
-		ss[v.i] = v.s
+		ss[i] = s
 	}
+
 	header := fmt.Sprintf("%-10s | %-25s | %s\n", l.header[0], l.header[1], l.header[2])
 	return header + strings.Join(ss, ""), nil
 }
