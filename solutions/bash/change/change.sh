@@ -16,17 +16,17 @@ fi
 count=(0) using=(0)
 for (( i = 1; i <= target; i++ )); do
   min=-1
+  count[i]= using[i]=
   for n in "${coins[@]}"; do
     (( n > i )) && continue # ignore coins larger than target
+    [[ ${count[i-n]} ]] || continue
     maybe=$(( ${count[i-n]} + 1 ))
-    (( maybe )) || continue
     if (( min == -1 )) || (( maybe < min )); then
       min=$maybe
       count[i]=$maybe
       using[i]=$n
     fi
   done
-  (( min == -1 )) && (( count[i] = -1, using[i] = -1 ))
 done
 
 # Check if we were able to solve it.
