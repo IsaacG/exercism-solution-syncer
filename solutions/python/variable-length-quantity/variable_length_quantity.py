@@ -6,24 +6,21 @@ MORE = 0b10000000
 MASK = 0b01111111
 
 
-def encode_one(number: int) -> list[int]:
-    """Encode one number."""
-    encoded: list[int] = []
-    while number:
-        # Set the MORE bit on all chunks.
-        encoded.append(MORE | (number & MASK))
-        number >>= 7
-    if not encoded:
-        encoded.append(0)
-    # Unset MORE on the last chunk.
-    encoded[0] &= MASK
-    encoded.reverse()
-    return encoded
-
-
 def encode(numbers: list[int]) -> list[int]:
     """Encode numbers."""
-    return [chunk for number in numbers for chunk in encode_one(number)]
+    results = []
+    for number in numbers:
+        encoded: list[int] = []
+        while number:
+            # Set the MORE bit on all chunks.
+            encoded.append(MORE | (number & MASK))
+            number >>= 7
+        if not encoded:
+            encoded.append(0)
+        # Unset MORE on the last chunk.
+        encoded[0] &= MASK
+        results.extend(reversed(encoded))
+    return results
 
 
 def decode(encoded: list[int]) -> list[int]:
