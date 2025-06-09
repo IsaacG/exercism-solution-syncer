@@ -27,7 +27,7 @@ class Minefield:
         if self.data[cur] == "*":
             return "*"
         count = sum(
-            self.data[cur + offset] == "*"
+            self.data.get(cur + offset, "") == "*"
             for offset in DIRECTIONS if cur + offset in self.data
         )
         return str(count) if count else " "
