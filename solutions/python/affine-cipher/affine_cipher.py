@@ -1,5 +1,6 @@
 """Affine Cipher encoding and decoding."""
 
+import math
 import string
 import textwrap
 
@@ -21,15 +22,10 @@ def char_op(char: str, operation: Callable[[int], int]) -> str:
     return chr((operation(offset) + LEN) % LEN + ORD_A)
 
 
-def factors(i: int) -> set[int]:
-    """Return factors for a number. Not efficient but it doesn't need to be."""
-    return {j for j in range(2, i // 2 + 1) if i % j == 0}
-
-
 def encode(plain_text: str, a: int, b: int) -> str:
     """Encode a string using an affine cipher."""
     # Check for shared factors.
-    if factors(a) & factors(LEN):
+    if math.gcd(a, LEN) != 1:
         raise ValueError(f"a ({a}) and m ({len(LOWER)}) must be coprime")
 
     encoded = "".join(
@@ -52,7 +48,7 @@ def mmi(num: int) -> int:
 def decode(ciphered_text, a, b):
     """Decode a string using an affine cipher."""
     # Check for shared factors.
-    if factors(a) & factors(LEN):
+    if math.gcd(a, LEN) != 1:
         raise ValueError(f"a ({a}) and m ({len(LOWER)}) must be coprime")
 
     m = mmi(a)
