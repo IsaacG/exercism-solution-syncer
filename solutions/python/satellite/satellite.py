@@ -15,8 +15,8 @@ def tree_from_traversals(preorder: list[str], inorder: list[str]) -> dict:
     # The first element of the preorder is always the root.
     root = preorder[0]
     # The inorder can be partitioned on the root to give the left and right inorder.
-    inorder_idx = inorder.index(root)
-    inorder_sub = inorder[:inorder_idx], inorder[inorder_idx + 1:]
+    idx = inorder.index(root)
+    inorder_sub = inorder[:idx], inorder[idx + 1:]
     # With N = len(left subtree), preorder left can be found by taking the next N
     # elements after the root. The rest are preorder right.
     preorder_sub = (
