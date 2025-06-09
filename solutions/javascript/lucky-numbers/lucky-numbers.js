@@ -8,9 +8,7 @@
  * @returns {number} sum of the two arrays
  */
 export function twoSum(array1, array2) {
-  const one = Number(array1.map((x) => String(x)).join(""))
-  const two = Number(array2.map((x) => String(x)).join(""))
-  return one + two
+  return Number(array1.join("")) + Number(array2.join(""))
 }
 
 /**
@@ -20,7 +18,7 @@ export function twoSum(array1, array2) {
  * @returns {boolean} whether the number is a palindrome or not
  */
 export function luckyNumber(value) {
-  return String(value) === String(value).split('').reverse().join('')
+  return String(value) === [...value.toString()].reverse().join('')
 }
 
 /**
