@@ -11,13 +11,11 @@ def value_of_card(card: str) -> int:
     :param card: str - given card.
     :return: int - value of a given card (J, Q, K = 10, 'A' = 1) numerical value otherwise.
     """
-    match card:
-        case "J" | "Q" | "K":
-            return 10
-        case "A":
-            return 1
-        case _:
-            return int(card)
+    if card in "JQK":
+        return 10
+    if card == "A":
+        return 1
+    return int(card)
 
 
 def higher_card(card_one: str, card_two: str) -> str | tuple[str, str]:
