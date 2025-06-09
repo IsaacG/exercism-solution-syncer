@@ -2,8 +2,7 @@
 
 BEGIN {
     n = split(flags, f)
-    for (i = 1; i <= n; i++)
-        opt[f[i]] = 1
+    for (i = 1; i <= n; i++) opt[f[i]] = 1
     IGNORECASE = opt["i"]
     if (opt["x"]) pattern = "^" pattern "$"
 }
