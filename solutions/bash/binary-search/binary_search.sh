@@ -17,9 +17,9 @@ b_find_recursive () {
   elif (( start >= end )); then # we exhausted the array
     echo -1
   elif (( mpv < want )); then # value is after the midpoint
-    b_find "$want" "$((midpoint + 1))" "$end" "${array[@]}"
+    b_find_recursive "$want" "$((midpoint + 1))" "$end" "${array[@]}"
   elif (( mpv > want )); then # value is before the midpoint
-    b_find "$want" "$start" "$((midpoint - 1))" "${array[@]}"
+    b_find_recursive "$want" "$start" "$((midpoint - 1))" "${array[@]}"
   else
     echo "How did you get here?"
     exit 1
