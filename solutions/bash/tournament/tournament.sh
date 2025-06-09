@@ -30,13 +30,11 @@ if (( $# )); then
   compute < "$1"
 elif ! [[ -t 1 ]]; then
   compute
-else
-  exit 0
 fi
 for t in "${!teams[@]}"; do
   matches=$(( win[$t] + draw[$t] + loss[$t] ))
   points=$(( 3 * win[$t] + draw[$t] ))
-  printf '%2d ' $points; row "$t" $matches "${win[$t]}" "${draw[$t]}" "${loss[$t]}" $points
-done | sort -rn | sed 's/^...//'
+  row "$t" $matches "${win[$t]}" "${draw[$t]}" "${loss[$t]}" $points
+done | sort -t"|" -k6,6nr -k1,1
 
 # vim:ts=2:sw=2:expandtab
