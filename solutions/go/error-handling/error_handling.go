@@ -25,5 +25,7 @@ func Use(o ResourceOpener, input string) (err error) {
 	}()
 
 	res.Frob(input)
-	return nil
+	// A named return must be used to set the
+	// return value from inside the defer.
+	return
 }
