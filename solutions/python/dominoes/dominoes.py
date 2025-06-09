@@ -16,7 +16,7 @@ class Domino(tuple):
 
 
 def select(dominoes: list[Domino]) -> Generator[tuple[Domino, list[Domino]], None, None]:
-    """Generate tuples of a start domino and the rest."""
+    """Generate tuples of a start Domino and the rest."""
     for one in set(dominoes):
         rest = dominoes.copy()
         rest.remove(one)
