@@ -4,16 +4,16 @@ def modifier(n):
   return (n - 10) // 2
 
 
+TRAITS = ('strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma')
+
+
 class Character:
 
   def __init__(self):
     random.seed()
-    self.strength = self.ability()
-    self.dexterity = self.ability()
-    self.constitution = self.ability()
-    self.intelligence = self.ability()
-    self.wisdom = self.ability()
-    self.charisma = self.ability()
+    for a in TRAITS:
+      setattr(self, a, self.ability())
+
     self.hitpoints = 10 + modifier(self.constitution)
         
 
