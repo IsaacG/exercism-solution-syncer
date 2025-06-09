@@ -21,7 +21,4 @@ class Character:
     dice = sorted([random.randint(1, 6) for _ in range(4)], reverse=True)
     return sum(dice[0:3])
 
-
-
-
 # vim:ts=2:sw=2:expandtab
