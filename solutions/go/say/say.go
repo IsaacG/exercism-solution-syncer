@@ -22,7 +22,7 @@ func saySmall(sb *strings.Builder, n int64) {
 
 // sayLarge says a number recursively.
 func sayLarge(sb *strings.Builder, n int64, divisor int64, label string) {
-	sayBuilder(sb, n / divisor)
+	sayBuilder(sb, n/divisor)
 	sb.WriteString(" " + label)
 	if r := n % divisor; r != 0 {
 		sb.WriteRune(' ')
@@ -32,7 +32,7 @@ func sayLarge(sb *strings.Builder, n int64, divisor int64, label string) {
 
 // Algorithm from https://exercism.org/tracks/javascript/exercises/say/solutions/515ab00bc90f46b0bde3732d9317a46b
 func sayBuilder(sb *strings.Builder, n int64) bool {
-	if n < 0 || n >= 1_000_000_000_000{
+	if n < 0 || n >= 1_000_000_000_000 {
 		return false
 	}
 	switch {
