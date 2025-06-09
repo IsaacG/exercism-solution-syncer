@@ -23,7 +23,7 @@ type solver struct {
 	b            *board
 	toFind       map[string]struct{}
 	toFindCounts map[int]int
-	wantLengths  []int
+	wantLengths  []int // Sorted word lengths to track the max length to look for.
 	found        map[string][2][2]int
 	solved       bool
 }
@@ -65,7 +65,7 @@ func (b board) valid(p point) bool {
 
 // foundAll returns if all the words have been found.
 func (s *solver) foundAll() bool {
-	return len(s.toFind) == 0
+	return s.solved
 }
 
 // recordFinding records coordinates of found words if the word is in the word list.
@@ -83,7 +83,8 @@ func (s *solver) recordFinding(wordLen int, start point, dir direction) {
 	s.found[word] = [2][2]int{{start.i, start.j}, {cur.i - dir.i, cur.j - dir.j}}
 	delete(s.toFind, word)
 	s.toFindCounts[len(word)]--
-	if len(word) == s.wantLengths[0] && s.toFindCounts[len(word)] == 0 {
+	// Pop off lengths once we found them all.
+	for len(s.wantLengths) != 0 && s.toFindCounts[s.wantLengths[0]] == 0 {
 		s.wantLengths = s.wantLengths[1:]
 	}
 	if len(s.wantLengths) == 0 {
@@ -116,11 +117,11 @@ func (s *solver) recordWordsAt(start point) {
 func (s *solver) solve() bool {
 	for _, start := range s.b.points() {
 		s.recordWordsAt(start)
-		if s.foundAll() {
-			return true
+		if s.solved {
+			break
 		}
 	}
-	return false
+	return s.solved
 }
 
 // newSolver constructs and returns a new solver.
