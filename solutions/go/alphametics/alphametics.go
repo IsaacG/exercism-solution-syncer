@@ -6,14 +6,13 @@ import (
 )
 
 type Puzzle struct {
-	lhs     charWeight
-	rhs     charWeight
+	lhs     map[rune]int
+	rhs     map[rune]int
 	chars   []rune
 	nonZero map[rune]bool
 	maxVal  int
 }
 
-type charWeight map[rune]int
 
 type values struct {
 	m       map[rune]int
@@ -21,8 +20,8 @@ type values struct {
 	nonZero map[rune]bool
 }
 
-func newCharWeight(words []string) charWeight {
-	w := charWeight{}
+func charWeight(words []string) map[rune]int {
+	w := map[rune]int{}
 	for _, word := range words {
 		runes := []rune(word)
 		base := 1
@@ -34,15 +33,19 @@ func newCharWeight(words []string) charWeight {
 	return w
 }
 
-func newValues(chars []rune, nonZero map[rune]bool) values {
+func newValues(chars []rune, nonZero map[rune]bool) *values {
 	v := make(map[rune]int, len(chars))
 	for _, c := range chars {
-		v[c] = 0
+		if nonZero[c] {
+			v[c] = 1
+		} else {
+			v[c] = 0
+		}
 	}
-	return values{v, chars, nonZero}
+	return &values{v, chars, nonZero}
 }
 
-func (v values) stringMap() map[string]int {
+func (v *values) stringMap() map[string]int {
 	sm := make(map[string]int, len(v.m))
 	for r, i := range v.m {
 		sm[string(r)] = i
@@ -50,7 +53,7 @@ func (v values) stringMap() map[string]int {
 	return sm
 }
 
-func (v values) increment() {
+func (v *values) increment() {
 	for _, c := range v.chars {
 		v.m[c]++
 		if v.m[c] != 10 {
@@ -64,16 +67,7 @@ func (v values) increment() {
 	}
 }
 
-func (v values) translate(s string) int {
-	sum := 0
-	for _, b := range s {
-		sum *= 10
-		sum += v.m[b]
-	}
-	return sum
-}
-
-func (p Puzzle) valid(v values) bool {
+func (p Puzzle) valid(v *values) bool {
 	// Disqualify repeating numbers.
 	vals := make(map[int]struct{}, len(v.m))
 	for _, val := range v.m {
@@ -91,7 +85,10 @@ func (p Puzzle) valid(v values) bool {
 	for r, w := range p.rhs {
 		rhs += v.m[r] * w
 	}
-	return lhs == rhs
+	if lhs != rhs {
+		return false
+	}
+	return true
 }
 
 func newPuzzle(input string) (*Puzzle, error) {
@@ -124,8 +121,8 @@ func newPuzzle(input string) (*Puzzle, error) {
 	}
 
 	return &Puzzle{
-		lhs:     newCharWeight(words[:len(words)-1]),
-		rhs:     newCharWeight(words[len(words)-1:]),
+		lhs:     charWeight(words[:len(words)-1]),
+		rhs:     charWeight(words[len(words)-1:]),
 		chars:   chars,
 		nonZero: nonZero,
 		maxVal:  maxVal,
