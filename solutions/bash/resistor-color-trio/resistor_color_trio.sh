@@ -16,7 +16,7 @@ color () {
   esac
 }
 
-die () { echo "$1"; exit 1; }
+die () { echo "$1"; exit 1; } >&2
 
 resist () {
   units=(ohms kiloohms megaohms gigaohms)
