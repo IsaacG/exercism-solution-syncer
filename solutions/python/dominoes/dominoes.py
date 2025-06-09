@@ -7,7 +7,7 @@ class Domino(tuple):
     """Domino tile."""
 
     def orientations(self) -> list[Domino]:
-        """Return a reversed Domino."""
+        """Return all possible Domino orientations."""
         return [self, Domino(reversed(self))]
 
     def can_connect(self, prior: Optional[int]) -> bool:
