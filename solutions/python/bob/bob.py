@@ -6,16 +6,9 @@ def response(hey):
   if not hey:  # Silence
     return 'Fine. Be that way!'
   if hey.endswith('?'):
-    return "Calm down, I know what I'm doing!" if yelling(hey) else 'Sure.'
+    return "Calm down, I know what I'm doing!" if hey.isupper() else 'Sure.'
   else:
-    return 'Whoa, chill out!' if yelling(hey) else 'Whatever.'
-
-
-def yelling(hey):
-  return (any(c in string.ascii_uppercase for c in hey)
-      and not any(c in string.ascii_lowercase for c in hey))
-
-    
+    return 'Whoa, chill out!' if hey.isupper() else 'Whatever.'
 
 
 # vim:ts=2:sw=2:expandtab
