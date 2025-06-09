@@ -35,47 +35,57 @@ def _ParseMidLineWraps(line: str) -> str:
     Transforms e.g. '__a__' into '<strong>a</strong>'.
     Operates on a whole line, looping until no more wraps found.
     """
-    while True:
-        for md, token in MIDLINE_WRAP:
-            if re.match(f'(.*){md}(.*){md}(.*)', line):
-                pre, text, post = line.split(md, 2)
-                line = pre + _Wrap(text, token) + post
-                break
-        else:
-            return line
+    for md, token in MIDLINE_WRAP:
+        pattern = f'(.*){md}(.*){md}(.*)'
+        replace = f'\\1<{token.value}>\\2</{token.value}>\\3'
+        line = re.sub(pattern, replace, line)
+    return line
+
+
+def _LineWrapper(line):
+    # Default line wrapper, if none others found.
+    line_wrap = Tag.PARAGRAPH
+    # Determine how to wrap this line.
+    if line.startswith('#'):
+        header, line = line.split(' ', 1)
+        line_wrap = HEADERS[len(header)]
+    elif line.startswith('*'):
+        line_wrap = Tag.BULLET
+        line = line.split(' ', 1)[1]
+    return line, line_wrap
+
+
+def _HandleList(line, in_list):
+    tags = []
+    if in_list and not line.startswith('*'):
+        in_list = False
+        tags.append('</ul>')
+    elif line.startswith('*'):
+        if not in_list:
+            tags.append('<ul>')
+        in_list = True
+    return tags, in_list
 
 
 def parse(markdown):
     lines = markdown.split('\n')
-    res = ''
+    res = []
     in_list = False
-    for i in lines:
+    for line in lines:
         # Close out a list if needed.
-        if in_list and not i.startswith('*'):
-            in_list = False
-            res += '</ul>'
-
-        # Default line wrapper, if none others found.
-        line_wrap = Tag.PARAGRAPH
-        # Determine how to wrap this line.
-        if i.startswith('#'):
-            header, i = i.split(' ', 1)
-            line_wrap = HEADERS[len(header)]
-        elif i.startswith('*'):
-            line_wrap = Tag.BULLET
-            i = i.split(' ', 1)[1]
-            if not in_list:
-                res += '<ul>'
-            in_list = True
+        tags, in_list = _HandleList(line, in_list)
+        res.extend(tags)
+        # Parse line-wrapping leading symbols.
+        line, line_wrap = _LineWrapper(line)
         # Parse the line's contents.
-        i = _ParseMidLineWraps(i)
-
-        res += _Wrap(i, line_wrap)
+        line = _ParseMidLineWraps(line)
+        # Wrap the line.
+        res.append(_Wrap(line, line_wrap))
 
     # Close out any list we may be in.
     if in_list:
-        res += '</ul>'
-    return res
+        res.append('</ul>')
+    return ''.join(res)
 
 
 # vim:ts=4:sw=4:expandtab
