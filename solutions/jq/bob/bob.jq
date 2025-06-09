@@ -1,6 +1,6 @@
 .heyBob
 # Strip whitespace.
-| sub("[[:space:]]+"; ""; "g")
+| sub("[[:space:]]*$"; "")
 | # Silence.
   if . == ""
   then "Fine. Be that way!"
