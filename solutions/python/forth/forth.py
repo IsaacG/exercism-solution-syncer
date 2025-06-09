@@ -90,12 +90,8 @@ class Forth:
         """Parse and set user defined values."""
         # Read definition name.
         name = next(instructions)
-        # Check if the name is an int.
-        try:
-            int(name)
-        except ValueError:
-            pass
-        else:
+        # Check if the name is an int. Integers cannot be redefined.
+        if NUM_RE.match(name):
             raise ValueError("illegal operation")
         # Read instructions until a ";" is found.
         vals = []
