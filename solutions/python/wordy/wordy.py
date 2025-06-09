@@ -16,6 +16,7 @@ SUFFIX = "?"
 NUM_RE = re.compile(r"-?[0-9]+")
 # Binary (two operands) operations.
 OPS = [
+    (int, re.compile(r"(-?[0-9]+)")),
     (operator.pow, re.compile(r"(.*) raised to the (.*)th power")),
     (operator.mul, re.compile(r"(.*) multiplied by (.*)")),
     (operator.truediv, re.compile(r"(.*) divided by (.*)")),
@@ -44,10 +45,13 @@ def answer(question: str) -> int:
 
 def solve(question: str) -> int:
     """Solve a problem fragment."""
-    if NUM_RE.fullmatch(question):
-        return int(question)
     for operation, pattern in OPS:
         if match := pattern.fullmatch(question):
-            operands = (solve(part) for part in match.groups())
+            if " " in question:
+                resolver = solve
+            else:
+                # Stop recursing when down to one token.
+                resolver = lambda x: x
+            operands = (resolver(part) for part in match.groups())
             return operation(*operands)
     raise ValueError("syntax error")
