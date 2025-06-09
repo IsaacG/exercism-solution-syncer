@@ -16,7 +16,6 @@ item = [
   'eleven Pipers Piping',
   'twelve Drummers Drumming',
 ]
-
 numbers = [
   'zeroth', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth',
   'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth']
@@ -30,6 +29,7 @@ def verse(i):
     items = item[i:0:-1]
   out += ', '.join(items) + '.'
   return out
+
   
 def recite(start, end):
     return [verse(i) for i in range(start, end + 1)]
