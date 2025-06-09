@@ -1,13 +1,10 @@
 .legacy
 | to_entries
-| [
-  .[]
-  | .key as $k
-  | .value[]
-  | {
-      key: (. | ascii_downcase),
-      value: ($k | tonumber)
+| map(
+    {
+      key: (.value[] | ascii_downcase),
+      value: (.key | tonumber)
     }
-  ]
+  )
 | sort
 | from_entries
