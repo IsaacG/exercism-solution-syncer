@@ -23,8 +23,9 @@ add () {
 (( $# == 2 )) || exit 1
 
 out=
+rot=$(( $2 % 26 ))
 for ((i=0; i < ${#1}; i++)); do
-  out+=$(add "${1:i:1}" "$2")
+  out+=$(add "${1:i:1}" "$rot")
 done
 printf '%s' "$out"
 
