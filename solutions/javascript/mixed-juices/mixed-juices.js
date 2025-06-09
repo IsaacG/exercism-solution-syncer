@@ -4,8 +4,6 @@
 // the @ts-check directive. It will give you helpful autocompletion when
 // implementing this exercise.
 
-const mixTimes = {'Pure Strawberry Joy': 0.5, 'Energizer': 1.5, 'Green Garden': 1.5, 'Tropical Island': 3, 'All or Nothing': 5}
-
 /**
  * Determines how long it takes to prepare a certain juice.
  *
@@ -13,7 +11,14 @@ const mixTimes = {'Pure Strawberry Joy': 0.5, 'Energizer': 1.5, 'Green Garden': 
  * @returns {number} time in minutes
  */
 export function timeToMixJuice(name) {
-  return mixTimes[name] || 2.5
+  switch (name) {
+    case 'Pure Strawberry Joy': return 0.5;
+    case 'Energizer': return 1.5;
+    case 'Green Garden': return 1.5;
+    case 'Tropical Island': return 3;
+    case 'All or Nothing': return 5;
+    default: return 2.5;
+  }
 }
 
 /**
@@ -28,8 +33,9 @@ export function limesToCut(wedgesNeeded, limes) {
   const sizes = ['small', 'medium', 'large']
   let wedgesGot = 0
   let limesUsed = 0
-  while (limesUsed < limes.length && wedgesGot < wedgesNeeded) {
-    wedgesGot += sizes.indexOf(limes[limesUsed]) * 2 + 6
+  while (limes.length && wedgesGot < wedgesNeeded) {
+    let lime = limes.shift()
+    wedgesGot += sizes.indexOf(lime) * 2 + 6
     limesUsed++
   }
   return limesUsed
@@ -43,7 +49,7 @@ export function limesToCut(wedgesNeeded, limes) {
  * @returns {string[]} remaining orders after the time is up
  */
 export function remainingOrders(timeLeft, orders) {
-  while (timeLeft > 0) {
+  while (orders.length > 0 && timeLeft > 0) {
     timeLeft -= timeToMixJuice(orders.shift())
   }
   return orders
