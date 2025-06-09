@@ -20,7 +20,7 @@ def resistor_label(colors: list[str]) -> str:
     if len(colors) > 3:
         *values, multiplier, tolerance = colors
     else:
-        values, multiplier, tolerance = colors, "black", None
+        values, multiplier, tolerance = colors, COLORS[0], None
 
     # Add the bands, apply the multiplier.
     val = 0.0
