@@ -1,15 +1,5 @@
+import calendar
 import datetime
-import enum
-
-
-class Weekday(enum.IntEnum):
-  Monday = 0
-  Tuesday = 1
-  Wednesday = 2
-  Thursday = 3
-  Friday = 4
-  Saturday = 5
-  Sunday = 6
 
 
 class MeetupDayException(Exception):
@@ -32,10 +22,8 @@ def meetup(year, month, week, day_of_week):
       year += month // 12
       month %= 12
     d = datetime.date(year, month, 1) - datetime.timedelta(7)
-  else:
-    raise MeetupDayException('Invalid')
 
-  day_of_week = Weekday[day_of_week].value
+  day_of_week = list(calendar.day_name).index(day_of_week)
   dow_shift = datetime.timedelta((day_of_week - d.weekday()) % 7)
   return d + dow_shift
 
