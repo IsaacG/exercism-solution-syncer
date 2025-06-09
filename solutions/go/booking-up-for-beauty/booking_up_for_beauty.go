@@ -29,7 +29,7 @@ func IsAfternoonAppointment(date string) bool {
 	if err != nil {
 		panic(err)
 	}
-	hr, _, _ := t.Clock()
+	hr := t.Hour()
 	return hr >= 12 && hr < 18
 }
 
