@@ -10,10 +10,9 @@
 # Map ingredients to substitute ingredients.
 (
   [
-    (.ingredients[], ."optional ingredients"[])
+    (.ingredients  + ."optional ingredients")[]
     | select(has("substitute"))
-    | {(.item): .substitute} |
-    to_entries[]
+    | {(.item): .substitute}
   ]
-  | from_entries
+  | add
 )
