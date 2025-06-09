@@ -115,7 +115,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	for _, e := range entries {
 		entriesCopy = append(entriesCopy, e)
 	}
-	sort.Slice(entriesCopy, func (i, j int) bool {
+	sort.Slice(entriesCopy, func(i, j int) bool {
 		if entriesCopy[i].Date != entriesCopy[j].Date {
 			return entriesCopy[i].Date < entriesCopy[j].Date
 		}
