@@ -7,6 +7,7 @@ handshake () {
   local -a out
   for ((i = 0; i < ${#codes[@]}; i++)); do
     if (( 1 << i & $1 )); then
+      # Append or prepend based on reverse bit.
       (( 1 << 4 & $1 )) && out=( "${codes[i]}" "${out[@]}" ) || out+=( "${codes[i]}" )
     fi
   done
