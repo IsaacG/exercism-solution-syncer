@@ -11,7 +11,7 @@ def is_paired(input_string):
         stack.pop()
       else:
         return False
-  return bool(stack)
+  return not stack
 
 
 # vim:ts=2:sw=2:expandtab
