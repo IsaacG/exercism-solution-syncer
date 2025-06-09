@@ -1,6 +1,9 @@
 BLACK = 'B'
 WHITE = 'W'
 NONE = ' '
+DIRECTONS =  {(0, 1), (0, -1), (1, 0), (-1, 0)}
+STONES = {BLACK, WHITE}
+OWNERS = {BLACK, WHITE, NONE}
 
 class Board:
   """Count territories of each player in a Go game
@@ -12,12 +15,6 @@ class Board:
   def __init__(self, board):
     self.board = board
 
-  def is_valid(self, x, y):
-    return 0 <= y < self.y and 0 <= x < self.x
-
-  def get(self, x, y):
-    return self.board[y][x]
-
   @property
   def x(self):
     return len(self.board[0])
@@ -27,9 +24,14 @@ class Board:
     return len(self.board)
 
   def neighbors(self, x, y):
-    offsets =  ((0, 1), (0, -1), (1, 0), (-1, 0))
-    return set((x + i, y + j) for (i, j) in offsets
+    return set((x + i, y + j) for (i, j) in DIRECTONS
             if self.is_valid(x + i, y + j))
+
+  def is_valid(self, x, y):
+    return 0 <= y < self.y and 0 <= x < self.x
+
+  def get(self, x, y):
+    return self.board[y][x]
 
   def territory(self, x, y):
     """Find the owner and the territories given a coordinate on
@@ -49,8 +51,7 @@ class Board:
       raise ValueError('invalid coordinates')
 
     # Return early when pointing to a stone.
-    if self.get(x, y) != NONE:
-      print('[%s]' % self.get(x, y))
+    if self.get(x, y) in STONES:
       return NONE, set()
 
     # Owner is not yet known.
@@ -67,21 +68,18 @@ class Board:
       (x, y) = to_check.pop()
       checked.add((x, y))
 
-      if self.get(x, y) is NONE:
+      if self.get(x, y) == NONE:
         # Add new unchecked squares.
         terr.add((x, y))
         to_check.update(self.neighbors(x, y) - checked)
-      else: # ie self.get(x, y) is not NONE
+      else: # ie self.get(x, y) in STONES
         # Set the owner, either to a color or to NONE as needed.
-        if owner is None:
+        if not owner:
           owner = self.get(x, y)
         elif owner != self.get(x, y):
           owner = NONE
-    # On an empty board...
-    if owner is None:
-      owner = NONE
 
-    return owner, terr
+    return owner or NONE, terr
 
   def territories(self):
     """Find the owners and the territories of the whole board
