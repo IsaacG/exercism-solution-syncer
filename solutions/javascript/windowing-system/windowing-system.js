@@ -7,8 +7,7 @@
  */
 
 export function Size(width = 80, height = 60) {
-  this.width = width
-  this.height = height
+  this.resize(width, height)
 }
 
 Size.prototype.resize = function (width, height) {
@@ -17,8 +16,7 @@ Size.prototype.resize = function (width, height) {
 }
 
 export function Position(x = 0, y = 0) {
-  this.x = x
-  this.y = y
+  this.move(x, y)
 }
 
 Position.prototype.move = function (newX, newY) {
@@ -34,23 +32,21 @@ export class ProgramWindow {
   }
 
   resize(size) {
-    let w = size.width > 0 ? size.width : 1;
-    let h = size.height > 0 ? size.height : 1;
     const maxW = this.screenSize.width - this.position.x
     const maxH = this.screenSize.height - this.position.y
-    if (w > maxW) { w = maxW }
-    if (h > maxH) { h = maxH }
-    this.size.resize(w, h)
+    this.size.resize(
+      Math.max(1, Math.min(maxW, size.width)),
+      Math.max(1, Math.min(maxH, size.height))
+    )
   }
 
   move(position) {
-    let x = position.x >= 0 ? position.x : 0
-    let y = position.y >= 0 ? position.y : 0
     const maxX = this.screenSize.width - this.size.width
     const maxY = this.screenSize.height - this.size.height
-    if (x > maxX) { x = maxX }
-    if (y > maxY) { y = maxY }
-    this.position.move(x, y)
+    this.position.move(
+      Math.max(0, Math.min(maxX, position.x)),
+      Math.max(0, Math.min(maxY, position.y))
+    )
   }
 }
 
