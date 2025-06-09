@@ -1,51 +1,34 @@
 #!/usr/bin/env bash
 
-declare -r brackets='[\[\](){}]'
+# Solution pretty much stolen from glennj.
+# My first take did not use a stack, though it ought to have.
+# See matching_brackets.non-stack.sh
+
+# Track what brackets we are in using a stack. With each open, add that open
+# to the stack. On close, assert it matches the top of the stack and pop.
+
+declare -r brackets='[\[\](){}]' open='[\[({]'
+declare -A pair=( [']']='[' [')']='(' ['}']='{' )
 
 boolRC () { (( $? == 0 )) && echo true || echo false; }
 (( $# == 1 )) || exit 1
 
 matching () {
-  local start=0 input=$1 len=${#1} end
-
-  # Trim anything prior to a bracket
-  while [[ ${input:start:1} != $brackets ]] && (( start <= len )); do (( start++ )); done
-  input=${input:start:len-start}
-
-  # Empty == done and good
-  [[ -z $input ]] && return
-
-  # Split into the inner and rest:  "[$inner]$rest"
-  end=$(get_len "$input") || return 1
-  local inner=${input:1:end-1}
-  local rest=${input:end+1:len-end}
-
-  # echo "Inner: '$inner'" >&2
-  # echo "Rest: '$rest'" >&2
-
-  matching "$inner" || return 1
-  matching "$rest" || return 1
-}
-
-get_len () {
-  local input=$1
-  local -i s=0 c=0 p=0 # square curl parenthesis. Could use a mapping from ]->[ )->( }->{ and a map of ([{
-  local -i pos=0 len=${#input}
-
-  while : ; do
-    (( pos == len )) && return 1  # Got to the end without balancing open and closes
-    case "${input:pos:1}" in
-      \[ ) (( s++ ));;
-      \] ) (( s-- ));;
-      \{ ) (( c++ ));;
-      \} ) (( c-- ));;
-      \( ) (( p++ ));;
-      \) ) (( p-- ));;
-    esac
-    (( s < 0 || c < 0 || p < 0 )) && return 1  # cannot have more close than open
-    (( s || c || p )) || { echo $pos; return; } # close matches open; this span is an inner span
-    (( pos++ ))
+  input=$1 stack=""
+  for (( i = 0; i < ${#input}; i++ )); do
+    chr="${input:i:1}"
+    [[ $chr = $brackets ]] || continue
+    if [[ $chr = $open ]]; then
+      stack+=$chr
+    else # closing bracket
+      p=${pair[$chr]}
+      # close much match the last open on the stack
+      [[ $stack = *"$p" ]] || return 1
+      stack=${stack%$p}
+    fi
   done
+  # At the end, the stack must be empty.
+  [[ $stack = '' ]]
 }
 
 matching "$1"
