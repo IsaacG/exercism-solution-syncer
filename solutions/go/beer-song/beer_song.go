@@ -1,8 +1,8 @@
 package beer
 
 import (
-	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -13,22 +13,22 @@ func Song() string {
 
 func Verses(start, stop int) (string, error) {
 	if start < stop {
-		return "", errors.New("invalid")
+		return "", fmt.Errorf("invalid start, stop [%d, %d]; expected start >= stop", start, stop)
 	}
-	var out []string
+	var b strings.Builder
 	for i := start; i >= stop; i-- {
 		v, err := Verse(i)
 		if err != nil {
 			return "", err
 		}
-		out = append(out, v)
+		b.WriteString(v + "\n")
 	}
-	return strings.Join(out, "\n") + "\n", nil
+	return b.String(), nil
 }
 
 func bottle(n int) string {
 	if n > 1 {
-		return fmt.Sprintf("%d bottles", n)
+		return strconv.Itoa(n) + " bottles"
 	}
 	if n == 1 {
 		return "1 bottle"
@@ -38,7 +38,7 @@ func bottle(n int) string {
 
 func Verse(n int) (string, error) {
 	if n < 0 || n >= 100 {
-		return "", errors.New("invalid")
+		return "", fmt.Errorf("invalid number of bottles, %d; must be [0, 99]", n)
 	}
 	out := fmt.Sprintf("%s of beer on the wall, %s of beer.\n", bottle(n), strings.ToLower(bottle(n)))
 	if n > 0 {
