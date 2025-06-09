@@ -13,43 +13,21 @@ func Valid(s string) bool {
 		return false
 	}
 	var sum int
-	flip := len(s)%2 == 0
-	for _, c := range s {
+	if len(s)%2 == 1 {
+		s = "0" + s
+	}
+	for i, c := range s {
 		v, err := strconv.Atoi(string(c))
 		if err != nil {
 			return false
 		}
-		if flip {
+		if i%2 == 0 {
 			v *= 2
 			if v > 9 {
 				v -= 9
 			}
 		}
 		sum += v
-		flip = !flip
 	}
 	return sum%10 == 0
 }
-
-// Notes:
-// My prefered solution looks more like:
-//
-// 	var sum int
-// 	if len(s)%2 == 1 {
-// 		s = "0" + s
-// 	}
-// 	for i, c := range s {
-// 		v, err := strconv.Atoi(string(c))
-// 		if err != nil {
-// 			return false
-// 		}
-// 		if i%2 == 0 {
-// 			v *= 2
-// 			if v > 9 {
-// 				v -= 9
-// 			}
-// 		}
-// 		sum += v
-// 	}
-// 	return sum%10 == 0
-// }
