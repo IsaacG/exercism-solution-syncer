@@ -1,3 +1,6 @@
+# ===========================
+# Three is_prime implementations, with greatly varying speeds.
+
 # Slow. 1001'th prime: 5.4 seconds.
 def is_prime_v1($priors; $threshold):
   def under:
@@ -37,6 +40,8 @@ def is_prime($priors; $threshold):
 
   [0, .] | _is_prime
 ;
+
+# ===========================
 
 # Given a list of primes, return a list of primes with one addition.
 def next_prime:
