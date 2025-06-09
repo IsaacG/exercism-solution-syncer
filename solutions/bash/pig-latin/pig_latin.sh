@@ -15,10 +15,11 @@ igpay_aysay () {
   fi
 }
 
+words=()
 while (( $# )); do
-  igpay_aysay "$1"
+  words+=( $(igpay_aysay "$1" ) )
   shift
-  (( $# )) && printf ' ' || printf '\n'
 done
+echo "${words[@]}"
 
 # vim:ts=2:sw=2:expandtab
