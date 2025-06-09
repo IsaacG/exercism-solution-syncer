@@ -13,11 +13,7 @@ class Board:
     self.board = board
 
   def is_valid(self, x, y):
-    if x < 0 or y < 0:
-      return False
-    if x >= self.x or y >= self.y:
-      return False
-    return True
+    return 0 <= y < self.y and 0 <= x < self.x
 
   def get(self, x, y):
     return self.board[y][x]
