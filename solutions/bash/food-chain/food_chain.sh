@@ -10,15 +10,14 @@ declare -A reaction=(
   [cow]="I don't know how she swallowed a cow!"
   [horse]="She's dead, of course!"
 )
-declare -A reason=(
-  [cow]='She swallowed the cow to catch the goat.'
-  [goat]='She swallowed the goat to catch the dog.'
-  [dog]='She swallowed the dog to catch the cat.'
-  [cat]='She swallowed the cat to catch the bird.'
-  [bird]='She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.'
-  [spider]='She swallowed the spider to catch the fly.'
-  [fly]="I don't know why she swallowed the fly. Perhaps she'll die."
-)
+
+declare -A reason
+for i in {0..6}; do
+  printf -v r 'She swallowed the %s to catch the %s.' "${creatures[i]}" "${creatures[i-1]}"
+  reason[${creatures[i]}]="$r"
+done
+reason[bird]='She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.'
+reason[fly]="I don't know why she swallowed the fly. Perhaps she'll die."
 
 print_verse () {
   local -i i
