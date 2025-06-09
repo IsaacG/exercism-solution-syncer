@@ -15,13 +15,13 @@ fi
 # using(target) stores the coin N for which we got to the min.
 count=(0) using=(0)
 for (( i = 1; i <= target; i++ )); do
-  min=-1
-  count[i]= using[i]=
+  min=0  # not yet found
+  count[i]= using[i]=  # add an empty element.
   for n in "${coins[@]}"; do
     (( n > i )) && continue # ignore coins larger than target
-    [[ ${count[i-n]} ]] || continue
+    [[ ${count[i-n]} ]] || continue  # no solution for i-n; ignore
     maybe=$(( ${count[i-n]} + 1 ))
-    if (( min == -1 )) || (( maybe < min )); then
+    if (( ! min )) || (( maybe < min )); then
       min=$maybe
       count[i]=$maybe
       using[i]=$n
@@ -30,7 +30,7 @@ for (( i = 1; i <= target; i++ )); do
 done
 
 # Check if we were able to solve it.
-if (( ${count[target]} == -1 )); then
+if [[ -z ${count[target]} ]]; then
   echo "can't make target with given coins"
   exit 1
 fi
