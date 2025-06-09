@@ -1,18 +1,31 @@
 """Compute primes."""
 
+import math
 from typing import Generator
 
 def primes() -> Generator[int, None, None]:
     """Prime number generator."""
+    # Yield the only even prime then only check odd values.
     yield 2
-    found: set[int] = set()
+    found: list[int] = []
     cur = 1
     while True:
+        # Test odd values: 3, 5, ...
         cur += 2
-        if any(cur % factor == 0 for factor in found):
-            continue
-        found.add(cur)
-        yield cur
+        is_prime = True
+        # Limit prime checks to sqrt(value)
+        limit = math.sqrt(cur)
+        for factor in found:
+            # If there are no factors <= sqrt(val) then val is prime.
+            if factor > limit:
+                break
+            if cur % factor == 0:
+                is_prime = False
+                break
+        if is_prime:
+            found.append(cur)
+            yield cur
+
 
 def prime(number: int) -> int:
     """Return the n'th prime."""
