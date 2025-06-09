@@ -7,7 +7,7 @@ var allergens = []string{"eggs", "peanuts", "shellfish", "strawberries", "tomato
 func Allergies(code uint) []string {
 	var results []string
 	for i := uint(0); i < uint(len(allergens)); i++ {
-		if 1 << i & code != 0 {
+		if 1<<i&code != 0 {
 			results = append(results, allergens[i])
 		}
 	}
