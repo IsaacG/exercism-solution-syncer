@@ -14,4 +14,4 @@ def values:
 | ascii_upcase
 | split("")
 | map(values[.])
-| add
+| add // 0
