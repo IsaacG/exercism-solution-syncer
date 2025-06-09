@@ -1,9 +1,8 @@
 package erratum
 
 // Use uses a resource with an input.
-func Use(o ResourceOpener, input string) error {
+func Use(o ResourceOpener, input string) (err error) {
 	var res Resource
-	var err error
 
 	// Try to open.
 	for res, err = o(); err != nil; res, err = o() {
@@ -18,13 +17,13 @@ func Use(o ResourceOpener, input string) error {
 	// Recover on a panic.
 	defer func() {
 		if r := recover(); r != nil {
-			err = r.(error)
 			if f, ok := r.(FrobError); ok {
 				res.Defrob(f.defrobTag)
 			}
+			err = r.(error)
 		}
 	}()
 
 	res.Frob(input)
-	return err
+	return nil
 }
