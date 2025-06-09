@@ -23,26 +23,16 @@ def sort_entries(cart):
     return dict(sorted(cart.items()))
 
 
-def send_to_store(cart, isle_mapping):
-    """Combine users order to isle and refrigeration information.
-
-    :param cart: dict - users shopping cart dictionary.
-    :param isle_mapping: dict - isle and refrigeration information dictionary.
-    :return: dict - fulfillment dictionary ready to send to store.
-    """
+def send_to_store(cart, aisle_mapping):
+    """Combine users order to aisle and refrigeration information."""
     return {
-        item: [count, *isle_mapping[item]]
+        item: [count, *aisle_mapping[item]]
         for item, count in sorted(cart.items(), reverse=True)
     }
 
 
 def update_store_inventory(fulfillment_cart, store_inventory):
-    """Update store inventory levels with user order.
-
-    :param fulfillment cart: dict - fulfillment cart to send to store.
-    :param store_inventory: dict - store available inventory
-    :return: dict - store_inventory updated.
-    """
+    """Update store inventory levels with user order."""
     return {
         item: [count - fulfillment_cart.get(item, [0])[0] or "Out of Stock", aisle, val]
         for item, (count, aisle, val) in store_inventory.items()
