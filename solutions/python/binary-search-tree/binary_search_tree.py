@@ -1,6 +1,7 @@
 """Binary Tree."""
 
 from __future__ import annotations
+import itertools
 from typing import Optional
 
 
@@ -34,17 +35,13 @@ class TreeNode:
                 self.left = TreeNode(None)
             self.left.insert(value)
 
-    def sorted(self) -> list[int]:
+    def __iter__(self) -> list[int]:
         """Return node values, sorted."""
-        if self.data is None:
-            return []
-        data = []
-        if self.left:
-            data.extend(self.left.sorted())
-        data.append(self.data)
-        if self.right:
-            data.extend(self.right.sorted())
-        return data
+        return itertools.chain(
+            self.left or [],
+            [self.data],
+            self.right or [],
+        )
 
 
 class BinarySearchTree:
@@ -55,7 +52,6 @@ class BinarySearchTree:
         self.root = TreeNode(None)
         for value in tree_data:
             self.root.insert(value)
-            print(f"Insert {value=} => {self.root}")
 
     def data(self) -> TreeNode:
         """Return Tree data."""
@@ -63,4 +59,4 @@ class BinarySearchTree:
 
     def sorted_data(self) -> list[int]:
         """Return sorted data."""
-        return self.root.sorted()
+        return list(self.root)
