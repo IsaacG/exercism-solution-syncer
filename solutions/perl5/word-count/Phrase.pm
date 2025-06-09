@@ -8,7 +8,7 @@ our @EXPORT_OK = qw(word_count);
 
 sub word_count ($phrase) {
   my %count;
-  map { s/[^[:alnum:]]//g; $count{$_}++ if $_ } split /\s/, lc $phrase;
+  $count{$_}++ for grep {$_ ne ''} map { s/[^[:alnum:]]//gr } split /\s/, lc $phrase;
   return \%count;
 }
 
