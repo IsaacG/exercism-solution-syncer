@@ -10,14 +10,7 @@ type Puzzle struct {
 	rhs     map[rune]int
 	chars   []rune
 	nonZero map[rune]bool
-	maxVal  int
-}
-
-
-type values struct {
-	m       map[rune]int
-	chars   []rune
-	nonZero map[rune]bool
+	used    map[int]bool
 }
 
 func charWeight(words []string) map[rune]int {
@@ -31,64 +24,6 @@ func charWeight(words []string) map[rune]int {
 		}
 	}
 	return w
-}
-
-func newValues(chars []rune, nonZero map[rune]bool) *values {
-	v := make(map[rune]int, len(chars))
-	for _, c := range chars {
-		if nonZero[c] {
-			v[c] = 1
-		} else {
-			v[c] = 0
-		}
-	}
-	return &values{v, chars, nonZero}
-}
-
-func (v *values) stringMap() map[string]int {
-	sm := make(map[string]int, len(v.m))
-	for r, i := range v.m {
-		sm[string(r)] = i
-	}
-	return sm
-}
-
-func (v *values) increment() {
-	for _, c := range v.chars {
-		v.m[c]++
-		if v.m[c] != 10 {
-			break
-		}
-		if v.nonZero[c] {
-			v.m[c] = 1
-		} else {
-			v.m[c] = 0
-		}
-	}
-}
-
-func (p Puzzle) valid(v *values) bool {
-	// Disqualify repeating numbers.
-	vals := make(map[int]struct{}, len(v.m))
-	for _, val := range v.m {
-		vals[val] = struct{}{}
-	}
-	if len(vals) != len(v.m) {
-		return false
-	}
-	// Check the equallity.
-	lhs := 0
-	for r, w := range p.lhs {
-		lhs += v.m[r] * w
-	}
-	rhs := 0
-	for r, w := range p.rhs {
-		rhs += v.m[r] * w
-	}
-	if lhs != rhs {
-		return false
-	}
-	return true
 }
 
 func newPuzzle(input string) (*Puzzle, error) {
@@ -114,10 +49,8 @@ func newPuzzle(input string) (*Puzzle, error) {
 	}
 
 	chars := make([]rune, 0, len(charMap))
-	maxVal := 1
 	for c := range charMap {
 		chars = append(chars, c)
-		maxVal *= 10
 	}
 
 	return &Puzzle{
@@ -125,19 +58,37 @@ func newPuzzle(input string) (*Puzzle, error) {
 		rhs:     charWeight(words[len(words)-1:]),
 		chars:   chars,
 		nonZero: nonZero,
-		maxVal:  maxVal,
+		used:    map[int]bool{},
 	}, nil
 }
 
-func (p Puzzle) solve() (map[string]int, error) {
-	v := newValues(p.chars, p.nonZero)
-	for i := 0; i < p.maxVal; i++ {
-		if p.valid(v) {
-			return v.stringMap(), nil
-		}
-		v.increment()
+func (p Puzzle) recursiveSolve(balance int, chars []rune) (map[string]int, bool) {
+	c, rest := chars[0], chars[1:]
+	weight := p.lhs[c] - p.rhs[c]
+	start := 0
+	if p.nonZero[c] {
+		start = 1
 	}
-	return nil, errors.New("no solution found")
+	for i := start; i < 10; i++ {
+		if p.used[i] {
+			continue
+		}
+
+		p.used[i] = true
+		if len(rest) == 0 {
+			if balance+weight*i == 0 {
+				return map[string]int{string(c): i}, true
+			}
+		} else {
+			vals, ok := p.recursiveSolve(balance+weight*i, rest)
+			if ok {
+				vals[string(c)] = i
+				return vals, true
+			}
+		}
+		p.used[i] = false
+	}
+	return nil, false
 }
 
 func Solve(puzzle string) (map[string]int, error) {
@@ -145,6 +96,9 @@ func Solve(puzzle string) (map[string]int, error) {
 	if err != nil {
 		return nil, err
 	}
-	return p.solve()
-
+	solution, ok := p.recursiveSolve(0, p.chars)
+	if !ok {
+		return nil, errors.New("no solution found")
+	}
+	return solution, nil
 }
