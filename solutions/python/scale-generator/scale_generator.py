@@ -32,4 +32,5 @@ class Scale:
         for i in intervals:
             out.append(chromatic[cur])
             cur += STEPS[i]
+        out.append(out[0])
         return out
