@@ -40,7 +40,7 @@ func Verse(n int) string {
 func Song() string {
 	s := make([]string, 12)
 	for i := 0; i < 12; i++ {
-		s[i] = Verse(i+1)
+		s[i] = Verse(i + 1)
 	}
 	return strings.Join(s, "\n") + "\n"
 }
