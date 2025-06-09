@@ -1,30 +1,32 @@
 module ProteinTranslation(proteins) where
 
 protein :: String -> Maybe String
-protein s
-  | s == "AUG" = Just "Methionine"
-  | s == "UUC" = Just "Phenylalanine"
-  | s == "UUU" = Just "Phenylalanine"
-  | s == "UUG" = Just "Leucine"
-  | s == "UUA" = Just "Leucine"
-  | s == "UCG" = Just "Serine"
-  | s == "UCA" = Just "Serine"
-  | s == "UCC" = Just "Serine"
-  | s == "UCU" = Just "Serine"
-  | s == "UAC" = Just "Tyrosine"
-  | s == "UAU" = Just "Tyrosine"
-  | s == "UGC" = Just "Cysteine"
-  | s == "UGU" = Just "Cysteine"
-  | s == "UGG" = Just "Tryptophan"
-  | otherwise = Nothing
+protein "AUG" = Just "Methionine"
+protein "UUC" = Just "Phenylalanine"
+protein "UUU" = Just "Phenylalanine"
+protein "UUG" = Just "Leucine"
+protein "UUA" = Just "Leucine"
+protein "UCG" = Just "Serine"
+protein "UCA" = Just "Serine"
+protein "UCC" = Just "Serine"
+protein "UCU" = Just "Serine"
+protein "UAC" = Just "Tyrosine"
+protein "UAU" = Just "Tyrosine"
+protein "UGC" = Just "Cysteine"
+protein "UGU" = Just "Cysteine"
+protein "UGG" = Just "Tryptophan"
+protein "UAG" = Just "Stop"
+protein "UAA" = Just "Stop"
+protein "UGA" = Just "Stop"
+protein _ = Nothing
 
 proteins :: String -> Maybe [String]
-proteins s = Just $ translate s
-
-translate :: String -> [String]
-translate "" = []
-translate s = case p of
-  Nothing ->  []
-  Just q ->  q : (translate $ drop 3 s)
+proteins "" = Just []
+proteins s = case protein first of
+  Nothing -> Nothing
+  Just "Stop" -> Just []
+  Just amino -> case proteins remaining of
+    Nothing -> Nothing
+    Just rest -> Just $ amino : rest
   where
-    p = protein $ take 3 s
+    (first, remaining) = splitAt 3 s
