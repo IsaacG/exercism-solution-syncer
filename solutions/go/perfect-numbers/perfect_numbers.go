@@ -4,25 +4,25 @@ package perfect
 import "errors"
 
 // Classification indicates the number type.
-type Classification int;
+type Classification int
+
 const (
 	// NoClassification when no classification was done.
-	NoClassification = 0;
+	NoClassification = 0
 	// ClassificationAbundant for abundant numbers.
-	ClassificationAbundant = 1;
+	ClassificationAbundant = 1
 	// ClassificationDeficient for deficient numbers.
-	ClassificationDeficient = 2;
+	ClassificationDeficient = 2
 	// ClassificationPerfect for perfect numbers.
-	ClassificationPerfect = 3;
+	ClassificationPerfect = 3
 )
 
 // ErrOnlyPositive when the number is not positive.
-var ErrOnlyPositive = errors.New("only positive values allowed");
-
+var ErrOnlyPositive = errors.New("only positive values allowed")
 
 func aliquotSum(n int64) (sum int64) {
 	for i := int64(1); i < n; i++ {
-		if n % i == 0 {
+		if n%i == 0 {
 			sum += i
 		}
 	}
