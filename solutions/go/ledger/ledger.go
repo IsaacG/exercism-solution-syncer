@@ -58,12 +58,6 @@ func (a Ledger) Less(i, j int) bool {
 	return a[i].Change < a[j].Change
 }
 
-type chanMsg struct {
-	i int
-	s string
-	e error
-}
-
 func formatCurrency(locale, currency string, cents int) string {
 	format := localeConfig[locale].positiveCurrencyFormat
 	if cents < 0 {
