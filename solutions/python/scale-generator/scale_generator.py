@@ -26,11 +26,14 @@ class Scale:
 
     def interval(self, intervals: str) -> list[str]:
         """Return an interval."""
-        chromatic = self.chromatic()
-        cur = 0
-        out = []
+        # Compute the steps. See also itertools.accumulate.
+        steps = [0]
         for i in intervals:
-            out.append(chromatic[cur])
-            cur += STEPS[i]
+            steps.append(steps[-1] + STEPS[i])
+
+        # Use the steps to pull the notes out of the chromatic.
+        chromatic = self.chromatic()
+        out = [chromatic[step] for step in steps[:-1]]
+        # Repeat the first note to close the loop.
         out.append(out[0])
         return out
