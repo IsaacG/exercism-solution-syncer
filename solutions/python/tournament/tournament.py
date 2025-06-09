@@ -24,7 +24,10 @@ class Tournament:
   def from_rows(cls, rows):
     teams = collections.defaultdict(TeamScore)
     for row in rows:
-      team_a, team_b, result = row.split(';')
+      fields = row.split(';')
+      if len(fields) != 3:
+        raise ValueError('Poorly formed input')
+      team_a, team_b, result = fields
       if result == 'draw':
         teams[team_a].draws += 1
         teams[team_b].draws += 1
