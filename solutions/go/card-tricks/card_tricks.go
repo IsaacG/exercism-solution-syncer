@@ -22,7 +22,10 @@ func SetItem(slice []int, index, value int) []int {
 
 // PrefilledSlice creates a slice of given length and prefills it with the given value.
 func PrefilledSlice(value, length int) []int {
-	slice := []int{}
+	if length < 0 {
+		return nil
+	}
+	slice := make([]int, 0, length)
 	for i := 0; i < length; i++ {
 		slice = append(slice, value)
 	}
