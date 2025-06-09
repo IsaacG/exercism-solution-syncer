@@ -1,6 +1,7 @@
 import datetime
 
-def add(moment):
-  return moment + datetime.timedelta(0, 1e9)
+GIGASECOND = datetime.timedelta(seconds=int(1e9))
 
-# vim:ts=2:sw=2:expandtab
+
+def add(moment):
+    return moment + GIGASECOND
