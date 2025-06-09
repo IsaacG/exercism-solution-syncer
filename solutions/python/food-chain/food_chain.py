@@ -10,8 +10,11 @@ REACTIONS = {
     "cow": "I don't know how she swallowed a cow!",
     "horse": "She's dead, of course!",
 }
+# Map verse "numbers" to specific animals.
 ANIMALS = dict(enumerate(REACTIONS, start=1))
+# Map each animal to it's food/subject, i.e. what it eats.
 SUBJECTS = dict(zip(list(REACTIONS)[1:], list(REACTIONS)))
+# Unlike all other animals, the bird does not simply eat a "spider". It is more detailed.
 SUBJECTS["bird"] = "spider that wriggled and jiggled and tickled inside her"
 
 
