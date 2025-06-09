@@ -9,6 +9,6 @@ def count_words(sentence):
     sentence = sentence.replace(i, ' ')
   clean = lambda x: x.strip(string.punctuation).lower()
   words = [clean(w) for w in sentence.split()]
-  return dict(collections.Counter(w for w in words if w))
+  return collections.Counter(w for w in words if w)
 
 # vim:ts=2:sw=2:expandtab
