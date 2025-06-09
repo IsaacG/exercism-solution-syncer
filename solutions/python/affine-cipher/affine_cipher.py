@@ -1,12 +1,9 @@
 """Affine Cipher encoding and decoding."""
 
 import string
+import textwrap
 
 from typing import Callable
-
-# Not available on the test runner:
-# import more_itertools
-import itertools
 
 LOWER = string.ascii_lowercase
 ORD_A = ord(LOWER[0])
@@ -29,28 +26,19 @@ def factors(i: int) -> set[int]:
     return {j for j in range(2, i // 2 + 1) if i % j == 0}
 
 
-# Taken from the itertools recipe docs.
-def grouper(iterable, n):
-    """Collect data into fixed-length chunks or blocks."""
-    args = [iter(iterable)] * n
-    return itertools.zip_longest(*args, fillvalue="")
-
-
 def encode(plain_text: str, a: int, b: int) -> str:
     """Encode a string using an affine cipher."""
     # Check for shared factors.
     if factors(a) & factors(LEN):
         raise ValueError(f"a ({a}) and m ({len(LOWER)}) must be coprime")
 
-    chars = (
+    encoded = "".join(
         char_op(char, lambda c: a * c + b)
         for char in plain_text.lower()
         if char.isalnum()
     )
     # Apply chunking.
-    # Not available on the test runner:
-    # return " ".join("".join(bunch) for bunch in more_itertools.chunked(chars, 5))
-    return " ".join("".join(bunch) for bunch in grouper(chars, 5))
+    return " ".join(textwrap.wrap(encoded, width=5))
 
 
 def mmi(num: int) -> int:
