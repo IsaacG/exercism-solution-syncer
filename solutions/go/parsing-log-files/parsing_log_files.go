@@ -4,7 +4,6 @@ package parsinglogfiles
 import (
 	"fmt"
 	"regexp"
-	"strings"
 )
 
 // IsValidLine returns if a log line is valid.
@@ -21,10 +20,10 @@ func SplitLogLine(text string) []string {
 
 // CountQuotedPasswords returns the number of quoted passwords.
 func CountQuotedPasswords(lines []string) int {
-	re := regexp.MustCompile(`".*password.*"`)
+	re := regexp.MustCompile(`(?i)".*password.*"`)
 	count := 0
 	for _, line := range lines {
-		if re.MatchString(strings.ToLower(line)) {
+		if re.MatchString(line) {
 			count++
 		}
 	}
@@ -40,7 +39,7 @@ func RemoveEndOfLineText(text string) string {
 // TagWithUserName returns log entries with optional USR tags added.
 func TagWithUserName(lines []string) []string {
 	result := []string{}
-	re := regexp.MustCompile(`User\s+(\S+)`)
+	re := regexp.MustCompile(`User\s+(\w+)`)
 	for _, line := range lines {
 		if re.MatchString(line) {
 			matches := re.FindStringSubmatch(line)
