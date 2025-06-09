@@ -1,5 +1,3 @@
-import re
-
 class Luhn:
   def __init__(self, card_num):
     self._num = card_num.replace(' ', '')
@@ -10,7 +8,7 @@ class Luhn:
     if len(num) <= 1:
       return False
     # Input must only contain digits.
-    if re.search(r'[^0-9]', num):
+    if not num.isnumeric():
       return False
     # Add all the odd-positioned numbers.
     total = sum(int(n) for n in num[-1::-2])
