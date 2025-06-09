@@ -10,16 +10,16 @@ func PreparationTime(layers []string, time int) int {
 
 // Quantities returns the quantity of noodles and sauce needed.
 func Quantities(layers []string) (int, float64) {
-	var nooldles int
+	var noodles int
 	var sauce float64
 	for _, contents := range layers {
 		if contents == "noodles" {
-			nooldles += 50
+			noodles += 50
 		} else if contents == "sauce" {
 			sauce += 0.2
 		}
 	}
-	return nooldles, sauce
+	return noodles, sauce
 }
 
 // AddSecretIngredient adds an ingredient to the list.
