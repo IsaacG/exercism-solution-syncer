@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# There's little help getting around these three functions as they basically
+# spell out 0-10 for 0-10, 10-19, 20-90.
+
 say1 () { # 1's place, ie 0-9
   case "$1" in
     0) printf zero;;
