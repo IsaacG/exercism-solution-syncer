@@ -30,7 +30,7 @@ func AnnualBalanceUpdate(balance float64) float64 {
 func YearsBeforeDesiredBalance(balance, targetBalance float64) int {
 	var years int
 	for balance < targetBalance {
-		years = years + 1
+		years++
 		balance = AnnualBalanceUpdate(balance)
 	}
 	return years
