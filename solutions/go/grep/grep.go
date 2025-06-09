@@ -10,6 +10,7 @@ import (
 
 // Match represents a matching line.
 type Match struct {
+	Filename   string
 	LineNumber int
 	Text       string
 }
@@ -45,16 +46,44 @@ func getOpts(flags []string) Opts {
 	return o
 }
 
+// formatter formats results from a chan.
+func formatter(o Opts, matches <-chan Match, out chan<- []string) {
+	results := []string{}
+
+	for m := range matches {
+		if o.OnlyFilename {
+			results = append(results, m.Filename)
+		} else {
+			parts := make([]string, 0, 3)
+			if o.IncludeFilename {
+				parts = append(parts, m.Filename)
+			}
+			if o.IncludeLineNum {
+				parts = append(parts, strconv.Itoa(m.LineNumber))
+			}
+			parts = append(parts, m.Text)
+			results = append(results, strings.Join(parts, ":"))
+		}
+	}
+	out <- results
+}
+
 // Search for a pattern.
 func Search(pattern string, flags, files []string) []string {
 	o := getOpts(flags)
 	o.IncludeFilename = len(files) > 1
 
+	matchChan := make(chan Match)
+	out := make(chan []string)
+	defer close(out)
+
+	// Format the results async.
+	go formatter(o, matchChan, out)
+
 	if !o.CaseSensitive {
 		pattern = strings.ToLower(pattern)
 	}
 
-	matches := map[string][]Match{}
 	// Check each file.
 	for _, filename := range files {
 		fh, err := os.Open(filename)
@@ -82,35 +111,13 @@ func Search(pattern string, flags, files []string) []string {
 
 			// Handle a match.
 			if lineMatches != o.Invert {
-				matches[filename] = append(matches[filename], Match{i, line})
+				matchChan <- Match{filename, i, line}
 				if o.OnlyFilename {
 					break
 				}
 			}
 		}
 	}
-
-	// Format the results.
-	results := []string{}
-	for _, filename := range files {
-		if fileMatches, ok := matches[filename]; ok {
-			if o.OnlyFilename {
-				results = append(results, filename)
-			} else {
-				for _, match := range fileMatches {
-					parts := make([]string, 0, 3)
-					if o.IncludeFilename {
-						parts = append(parts, filename)
-					}
-					if o.IncludeLineNum {
-						parts = append(parts, strconv.Itoa(match.LineNumber))
-					}
-					parts = append(parts, match.Text)
-					results = append(results, strings.Join(parts, ":"))
-				}
-			}
-		}
-	}
-
-	return results
+	close(matchChan)
+	return <-out
 }
