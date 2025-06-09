@@ -15,7 +15,10 @@ func Square(s int) (uint64, error) {
 }
 
 // Total computes the total grains on a board.
-func Total () uint64 {
-	s, _ := Square(64)
-	return 2 * s - 1
+func Total() uint64 {
+	s, err := Square(64)
+	if err != nil {
+		panic("unexpected error occured.")
+	}
+	return 2*s - 1
 }
