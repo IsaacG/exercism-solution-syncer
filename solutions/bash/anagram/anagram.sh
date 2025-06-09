@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-boolRC () { (( $? == 0 )) && echo true || echo false; }
-
 isMatch () {
   (( ${#want[@]} == ${#count[@]} )) || return 1
   for k in "${!want[@]}"; do
