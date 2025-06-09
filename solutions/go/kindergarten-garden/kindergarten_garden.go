@@ -7,9 +7,9 @@ import (
 )
 
 // Garden stores a class garden.
-type Garden map[string][]byte
+type Garden map[string][]rune
 
-var plants = map[byte]string{
+var plants = map[rune]string{
 	'C': "clover",
 	'G': "grass",
 	'R': "radishes",
@@ -19,6 +19,7 @@ var plants = map[byte]string{
 // NewGarden returns a garden from a diagram.
 func NewGarden(diagram string, children []string) (*Garden, error) {
 	rows := strings.Split(diagram, "\n")
+	// Validation with `if` statements.
 	if len(rows) != 3 {
 		return nil, errors.New("diagram should contain 3 lines")
 	}
@@ -31,13 +32,28 @@ func NewGarden(diagram string, children []string) (*Garden, error) {
 	if len(rows[1]) != 2*len(children) {
 		return nil, errors.New("rows contain two cups per child")
 	}
+	// Validation with `switch` statements.
+	switch {
+	case len(rows) != 3:
+		return nil, errors.New("diagram should contain 3 lines")
+	case len(rows[0]) != 0:
+		return nil, errors.New("diagram should start with newline")
+	case len(rows[1]) != len(rows[2]):
+		return nil, errors.New("rows must be same size")
+	case len(rows[1]) != 2*len(children):
+		return nil, errors.New("rows contain two cups per child")
+	}
 	for _, c := range diagram {
 		if c == '\n' {
 			continue
 		}
-		if _, ok := plants[byte(c)]; !ok {
+		if _, ok := plants[c]; !ok {
 			return nil, errors.New("invalid cup code " + string(c))
 		}
+	}
+	cups := make([][]rune, len(rows))
+	for i := range rows {
+		cups[i] = []rune(rows[i])
 	}
 	garden := make(Garden, len(children))
 	c := make([]string, len(children))
@@ -47,11 +63,12 @@ func NewGarden(diagram string, children []string) (*Garden, error) {
 		if _, ok := garden[child]; ok {
 			return nil, errors.New("duplicate child name, " + child)
 		}
-		garden[child] = make([]byte, 4)
-		garden[child][0] = rows[1][2*i]
-		garden[child][1] = rows[1][2*i+1]
-		garden[child][2] = rows[2][2*i]
-		garden[child][3] = rows[2][2*i+1]
+		garden[child] = []rune{
+			cups[1][2*i],
+			cups[1][2*i+1],
+			cups[2][2*i],
+			cups[2][2*i+1],
+		}
 	}
 	return &garden, nil
 }
