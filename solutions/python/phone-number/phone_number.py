@@ -1,22 +1,34 @@
-class Phone(object):
+import string
+
+
+class PhoneNumber(object):
   def __init__(self, num):
+    if any(c in num for c in string.ascii_letters):
+      raise ValueError('letters not permitted')
+    if any(c in num for c in set(string.punctuation) - set("()+-.")):
+      raise ValueError('punctuations not permitted')
+        
+
     # Ignore all non-digits.
     digits = ''.join([i for i in num if i.isdigit()])
 
+    if len(digits) > 11:
+      raise ValueError('more than 11 digits')
     # For an 11-digit with country code, drop the country code.
-    if len(digits) == 11 and digits.startswith('1'):
-      digits = digits[1:]
+    if len(digits) == 11:
+      if digits.startswith('1'):
+        digits = digits[1:]
+      else:
+        raise ValueError('11 digits must start with 1')
     self.number = digits
-    self.validate()
 
-  def validate(self):
     if len(self.number) != 10:
-      raise ValueError('Invalid number')
+      raise ValueError('incorrect number of digits')
 
-    for invalid in ('0', '1'):
-      for check in (self.area_code, self.exchange):
-        if check.startswith(invalid):
-          raise ValueError('Invalid number')
+    for num, name in (('0', 'zero'), ('1', 'one')):
+      for val, part in ((self.area_code, 'area'), (self.exchange, 'exchange')):
+        if val.startswith(num):
+          raise ValueError(f'{part} code cannot start with {name}')
 
   @property
   def area_code(self):
@@ -31,7 +43,7 @@ class Phone(object):
     return self.number[6:10]
 
   def pretty(self):
-    return '(%s) %s-%s' % (self.number[0:3], self.number[3:6], self.number[6:10])
+    return '(%s)-%s-%s' % (self.number[0:3], self.number[3:6], self.number[6:10])
 
-        
+
 # vim:ts=2:sw=2:expandtab
