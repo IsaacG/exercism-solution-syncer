@@ -12,13 +12,16 @@ encode () {
 }
 
 
-(( $# == 3 )) || { echo "Invalid usage"; exit 1; }
-(( $2 > 0 )) || { echo "Invalid rail count"; exit 1; }
+main () {
+  (( $# == 3 )) || { echo "Invalid usage"; exit 1; }
+  (( $2 > 0 )) || { echo "Invalid rail count"; exit 1; }
 
-case "$1" in
-  -e) encode "$2" "$3";;
-  -d) decode "$2" "$3";;
-  *) exit 1;;
-esac
+  case "$1" in
+    -e) encode "$2" "$3";;
+    -d) decode "$2" "$3";;
+    *) exit 1;;
+  esac
+}
+main "$@"
 
 # vim:ts=2:sw=2:expandtab
