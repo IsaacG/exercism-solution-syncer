@@ -1,27 +1,18 @@
-from itertools import permutations
-
-side_combos = ((0, 1, 2), (1, 2, 0), (2, 0, 1))
-
-def is_valid(sides):
-  return all(sides[a] <= sides[b] + sides[c]
-             for a, b, c in side_combos) and sides[0]
+def is_valid(sides: list[float]) -> bool:
+    """Return if a triangle is valid."""
+    return max(sides) * 2 < sum(sides) and all(sides)
 
 
 def equilateral(sides):
-  if not is_valid(sides):
-    return False
-  return all(sides[a] == sides[b] for a, b, _ in side_combos)
+    """Return if a triangle is an equilateral triangle."""
+    return is_valid(sides) and len(set(sides)) == 1
 
 
 def isosceles(sides):
-  if not is_valid(sides):
-    return False
-  return any(sides[a] == sides[b] for a, b, _ in side_combos)
+    """Return if a triangle is an isosceles triangle."""
+    return is_valid(sides) and len(set(sides)) < 3
 
 
 def scalene(sides):
-  if not is_valid(sides):
-    return False
-  return not any(sides[a] == sides[b] for a, b, _ in side_combos)
-
-# vim:ts=2:sw=2:expandtab
+    """Return if a triangle is a scalene triangle."""
+    return is_valid(sides) and len(set(sides)) == 3
