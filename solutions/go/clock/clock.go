@@ -3,7 +3,7 @@ package clock
 
 import "fmt"
 
-// Clock represents a time, minutes since midnight.
+// Clock represents a time-of-day.
 type Clock int
 
 const day = 24 * 60
