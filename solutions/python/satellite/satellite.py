@@ -19,7 +19,10 @@ def tree_from_traversals(preorder: list[str], inorder: list[str]) -> dict:
     inorder_sub = inorder[:inorder_idx], inorder[inorder_idx + 1:]
     # The preorder for the left and right can be found by taking the elements from the
     # parent preorder and filtering for elements in the inorder.
-    preorder_sub = [[x for x in preorder if x in ios] for ios in inorder_sub]
+    preorder_sub = (
+        preorder[1:len(inorder_sub[0]) + 1],
+        preorder[len(inorder_sub[0]) + 1:],
+    )
     return {
         "v": root,
         "l": tree_from_traversals(preorder_sub[0], inorder_sub[0]),
