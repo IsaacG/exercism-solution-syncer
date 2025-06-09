@@ -12,14 +12,17 @@ func Valid(s string) bool {
 	if len(s) <= 1 {
 		return false
 	}
-	a, b := sumA(s), sumB(s)
+	c := make(chan bool, 2)
+	go sumA(s, c)
+	go sumB(s, c)
+	a, b := <-c, <-c
 	if a != b {
-		panic("Error")
+		panic("answers differ")
 	}
-	return a%10 == 0
+	return a
 }
 
-func sumA(s string) int {
+func sumA(s string, ch chan<- bool) {
 	var sum int
 	if len(s)%2 == 1 {
 		s = "0" + s
@@ -27,7 +30,7 @@ func sumA(s string) int {
 	for i, c := range s {
 		v, err := strconv.Atoi(string(c))
 		if err != nil {
-			return 1
+			ch <- false
 		}
 		if i%2 == 0 {
 			v *= 2
@@ -37,16 +40,17 @@ func sumA(s string) int {
 		}
 		sum += v
 	}
-	return sum
+	ch <- sum%10 == 0
 }
 
-func sumB(s string) int {
+func sumB(s string, ch chan<- bool) {
 	var sum int
 	flip := len(s)%2 == 1
 	for _, c := range s {
 		v, err := strconv.Atoi(string(c))
 		if err != nil {
-			return 1
+			ch <- false
+			return
 		}
 		if flip = !flip; flip {
 			v *= 2
@@ -56,5 +60,5 @@ func sumB(s string) int {
 		}
 		sum += v
 	}
-	return sum
+	ch <- sum%10 == 0
 }
