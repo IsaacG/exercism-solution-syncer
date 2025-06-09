@@ -17,14 +17,10 @@ class SpaceAge:
 
     def __init__(self, seconds: int):
         self.seconds = seconds
+        for planet, ratio in PLANET_RATIOS.items():
+            setattr(self, f"on_{planet}", lambda: round(self.years * ratio, 2))
 
     @property
     def years(self) -> int:
         """Return Earth years."""
-        return self.seconds / 31557600
-
-    def __getattr__(self, name: str):
-        assert name.startswith("on_"), name
-        planet = name.removeprefix("on_")
-        result = round(self.seconds / (EARTH_SECONDS * PLANET_RATIOS[planet]), 2)
-        return lambda: result
+        return self.seconds / EARTH_SECONDS
