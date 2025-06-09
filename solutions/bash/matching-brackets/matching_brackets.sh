@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -r both='[\[\](){}]' open='[\[({]' close='[\])}]'
+declare -r brackets='[\[\](){}]'
 
 boolRC () { (( $? == 0 )) && echo true || echo false; }
 (( $# == 1 )) || exit 1
@@ -9,7 +9,7 @@ matching () {
   local start=0 input=$1 len=${#1} end
 
   # Trim anything prior to a bracket
-  while [[ ${input:start:1} != $both ]] && (( start <= len )); do (( start++ )); done
+  while [[ ${input:start:1} != $brackets ]] && (( start <= len )); do (( start++ )); done
   input=${input:start:len-start}
 
   # Empty == done and good
@@ -29,7 +29,7 @@ matching () {
 
 get_len () {
   local input=$1
-  local -i s=0 c=0 p=0 # square curl parenthesis
+  local -i s=0 c=0 p=0 # square curl parenthesis. Could use a mapping from ]->[ )->( }->{ and a map of ([{
   local -i pos=0 len=${#input}
 
   while : ; do
