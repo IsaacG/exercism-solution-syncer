@@ -51,7 +51,7 @@ def decrement(func):
 
     def wrapper(self, *args):
         if self.length <= 0:
-            raise RuntimeError("Cannot remove a value from an empty list.")
+            raise IndexError("Cannot remove from an empty list.")
         self.length -= 1
         return func(self, *args)
 
