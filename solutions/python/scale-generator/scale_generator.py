@@ -21,7 +21,7 @@ class Scale:
         else:
             scale = SCALE[1]
 
-        start = [s.upper() for s in scale].index(self.tonic.upper())
+        start = scale.index(self.tonic.capitalize())
         return [scale[(start + i) % len(scale)] for i in range(len(scale))]
 
     def interval(self, intervals: str) -> list[str]:
