@@ -5,18 +5,22 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
 var used = make(map[string]bool)
 var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 var rnd *rand.Rand
+var mutex sync.Mutex
 
 func init() {
 	rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 }
 
 func getName() (string, error) {
+	mutex.Lock()
+	defer mutex.Unlock()
 	if len(used) == 26*26*10*10*10 {
 		return "", errors.New("out of names")
 	}
