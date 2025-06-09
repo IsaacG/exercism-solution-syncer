@@ -10,10 +10,14 @@ def roman(number: int) -> str:
     # Generate a mapping from numeric value to Roman numeral.
     mapping = []
     for position in range(len(DIGIT_CHARS) - 1, -1, -1):
+        # Values: 1000, 100, 10, 1
         scale = 10 ** position
         chars = DIGIT_CHARS[position]
+        # This might be: (9, IX) or (90, XC)
         mapping.append((9 * scale, chars[2] + chars[0]))
+        # This might be: (5, V) or (50, D)
         mapping.append((5 * scale, chars[1]))
+        # This might be: (4, IV) or (40, XD)
         mapping.append((4 * scale, chars[2] + chars[1]))
         mapping.append((1 * scale, chars[2]))
 
