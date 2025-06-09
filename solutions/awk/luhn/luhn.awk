@@ -1,10 +1,13 @@
 BEGIN { FS = "" }
 #
 # Check for invalid chars
-/[^0-9 ]/ { print "false" }
+/[^0-9 ]/ {
+    print "false"
+    next
+}
 
 # Valid chars only
-/^[0-9 ]+$/ {
+{
     # Drop any spaces
     gsub(/ /, "")
     double = !(length % 2)
