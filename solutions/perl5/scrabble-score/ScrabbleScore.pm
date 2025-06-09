@@ -2,7 +2,7 @@ package ScrabbleScore;
 use strict;
 use warnings;
 use Exporter 'import';
-use List::Util qw/ pairmap /;
+use List::Util qw(pairmap sum0);
 use feature qw(signatures);
 our @EXPORT_OK = qw(score);
 
@@ -14,9 +14,7 @@ my %points = (
 %points = pairmap { map { $_ => $b } split '', $a } %points;
 
 sub score ( $word, %extensions ) {
-  my $score = 0;
-  $score += $points{$_} for (split('', lc $word));
-  return $score;
+  return sum0 map { $points{$_} } split '', lc $word;
 }
 
 1;
