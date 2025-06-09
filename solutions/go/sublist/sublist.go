@@ -27,7 +27,7 @@ func Sublist(a, b []int) Relation {
 		r = Relation("sublist")
 	}
 
-	for i := 0; i <= len(a) - len(b); i++ {
+	for i := 0; i <= len(a)-len(b); i++ {
 		if startswith(a[i:], b) {
 			return r
 		}
