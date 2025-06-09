@@ -1,61 +1,82 @@
+"""Implement complex numbers."""
+
 import math
 import numbers
 
-class ComplexNumber(object):
-  def __init__(self, real, imaginary):
-    self.real = real
-    self.imaginary = imaginary
+class ComplexNumber:
+    """Complex Number."""
 
-  def __eq__(self, other):
-    if isinstance(other, numbers.Real):
-      return self == ComplexNumber(other, 0)
+    def __init__(self, real, imaginary):
+        self.real = real
+        self.imaginary = imaginary
 
-    return (
-      type(self) == type(other)
-      and self.real == other.real
-      and self.imaginary == other.imaginary)
+    def __eq__(self, other):
+        if isinstance(other, numbers.Real):
+            return self == ComplexNumber(other, 0)
 
-  def __add__(self, other):
-    if isinstance(other, numbers.Real):
-      return self + ComplexNumber(other, 0)
+        return (
+            isinstance(other, ComplexNumber)
+            and self.real == other.real
+            and self.imaginary == other.imaginary)
 
-    return ComplexNumber(self.real + other.real, self.imaginary + other.imaginary)
+    def __add__(self, other):
+        if isinstance(other, numbers.Real):
+            return self + ComplexNumber(other, 0)
 
-  def __mul__(self, other):
-    if isinstance(other, numbers.Real):
-      return self * ComplexNumber(other, 0)
+        return ComplexNumber(self.real + other.real, self.imaginary + other.imaginary)
 
-    r = self.real * other.real - self.imaginary * other.imaginary
-    i = self.imaginary * other.real + self.real * other.imaginary
-    return ComplexNumber(r, i)
+    def __mul__(self, other):
+        if isinstance(other, numbers.Real):
+            return self * ComplexNumber(other, 0)
 
-  def __sub__(self, other):
-    if isinstance(other, numbers.Real):
-      return self - ComplexNumber(other, 0)
+        return ComplexNumber(
+            self.real * other.real - self.imaginary * other.imaginary,
+            self.imaginary * other.real + self.real * other.imaginary
+        )
 
-    return ComplexNumber(self.real - other.real, self.imaginary - other.imaginary)
+    def __sub__(self, other):
+        if isinstance(other, numbers.Real):
+            return self - ComplexNumber(other, 0)
 
-  def __truediv__(self, other):
-    if isinstance(other, numbers.Real):
-      return self / ComplexNumber(other, 0)
+        return ComplexNumber(self.real - other.real, self.imaginary - other.imaginary)
 
-    div = (other.real**2 + other.imaginary**2) 
-    r = (self.real * other.real + self.imaginary * other.imaginary) / div
-    i = (self.imaginary * other.real - self.real * other.imaginary) / div
-    return ComplexNumber(r, i)
+    def __radd__(self, other):
+        return self + other
 
-  def __abs__(self):
-    return math.sqrt(self.real ** 2 + self.imaginary ** 2)
+    def __rmul__(self, other):
+        return self * other
 
-  def conjugate(self):
-    return ComplexNumber(self.real, -self.imaginary)
+    def __rsub__(self, other):
+        return other + -1 * self
 
-  def exp(self):
-    e_i = ComplexNumber(math.cos(self.imaginary), math.sin(self.imaginary))
-    return e_i * math.exp(self.real)
+    def __rtruediv__(self, other):
+        div = (self.real**2 + self.imaginary**2)
+        return other * ComplexNumber(self.real / div, - self.imaginary / div)
 
-  def __repr__(self):
-    return '%d + %d * i' % (self.real, self.imaginary)
+    def __truediv__(self, other):
+        if isinstance(other, numbers.Real):
+            return self / ComplexNumber(other, 0)
+
+        div = (other.real**2 + other.imaginary**2)
+        return ComplexNumber(
+            (self.real * other.real + self.imaginary * other.imaginary) / div,
+            (self.imaginary * other.real - self.real * other.imaginary) / div,
+        )
+
+    def __abs__(self):
+        return math.sqrt(self.real ** 2 + self.imaginary ** 2)
+
+    def conjugate(self):
+        """Return the conjugate."""
+        return ComplexNumber(self.real, -self.imaginary)
+
+    def exp(self):
+        """Return the exponent."""
+        e_i = ComplexNumber(math.cos(self.imaginary), math.sin(self.imaginary))
+        return e_i * math.exp(self.real)
+
+    def __repr__(self):
+        return f"{self.real} + {self.imaginary} * i"
 
 
 # vim:ts=2:sw=2:expandtab
