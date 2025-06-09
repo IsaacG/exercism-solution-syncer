@@ -161,9 +161,9 @@ class Hand:
 
 def best_hands(hands: list[str]) -> list[str]:
     """Return the best poker hands."""
-    # Store the input strings and the card hards.
+    # Map the input strings to the Hand so the inputs can be reused for returns.
     the_hands = {i: Hand(i) for i in hands}
-    # Sort to find the best hand.
+    # Find the best hand. Hands sort from best to worst.
     best = min(the_hands.values())
     # Return all hands that would tie the best hand.
     return [k for k, v in the_hands.items() if v.__cmp__(best) == Outcome.TIE]
