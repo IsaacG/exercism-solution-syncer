@@ -22,7 +22,6 @@ func (r *Resident) HasRequiredInfo() bool {
 		return false
 	}
 	return true
-
 }
 
 // Delete deletes a resident's information.
