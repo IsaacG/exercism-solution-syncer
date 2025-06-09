@@ -4,6 +4,8 @@ How to play blackjack:    https://bicyclecards.com/how-to-play/blackjack/
 "Standard" playing cards: https://en.wikipedia.org/wiki/Standard_52-card_deck
 """
 
+from typing import Union
+
 
 def value_of_card(card: str) -> int:
     """Determine the scoring value of a card.
@@ -18,7 +20,7 @@ def value_of_card(card: str) -> int:
     return int(card)
 
 
-def higher_card(card_one: str, card_two: str) -> str | tuple[str, str]:
+def higher_card(card_one: str, card_two: str) -> Union[str, tuple[str, str]]:
     """Determine which card has a higher value in the hand.
 
     J, Q, K = 10, 'A' = 1, all others are numerical value.
