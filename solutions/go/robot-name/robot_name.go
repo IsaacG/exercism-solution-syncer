@@ -5,10 +5,15 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 var used = make(map[string]bool)
 var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 func getName() (string, error) {
 	if len(used) == 26*26*10*10*10 {
