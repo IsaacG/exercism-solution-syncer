@@ -2,9 +2,11 @@
 
 import string
 
-ORD_LOWER = ord(string.ascii_lowercase[0])
-ORD_UPPER = ord(string.ascii_uppercase[0])
 LEN_ALPHA = len(string.ascii_uppercase)
+CHAR_RANGES = (
+    (string.ascii_lowercase, ord(string.ascii_lowercase[0])),
+    (string.ascii_uppercase, ord(string.ascii_uppercase[0])),
+)
 
 
 def rotate(text: str, key: int) -> str:
@@ -14,10 +16,9 @@ def rotate(text: str, key: int) -> str:
 
 def _add(char: str, key: int) -> str:
     """Rotate one character."""
-    if char in string.ascii_uppercase:
-        return _normalize(ord(char) + key, ORD_UPPER)
-    elif char in string.ascii_lowercase:
-        return _normalize(ord(char) + key, ORD_LOWER)
+    for chars, start in CHAR_RANGES:
+        if char in chars:
+            return _normalize(ord(char) + key, start)
     else:
         # Non-alpha characters are unchanged.
         return char
