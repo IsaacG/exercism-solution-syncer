@@ -18,12 +18,7 @@ def _add(char: str, key: int) -> str:
     """Rotate one character."""
     for chars, start in CHAR_RANGES:
         if char in chars:
-            return _normalize(ord(char) + key, start)
+            return chr((ord(char) + key - start) % LEN_ALPHA + start)
     else:
         # Non-alpha characters are unchanged.
         return char
-
-
-def _normalize(char: str, start_ord: int) -> str:
-    """Normalize a char to fall within an alphabet."""
-    return chr((char - start_ord) % LEN_ALPHA + start_ord)
