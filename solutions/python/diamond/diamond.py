@@ -3,7 +3,7 @@
 import string
 
 
-def rows(letter):
+def rows(letter: str) -> list[str]:
     """Return a diamond pattern for a letter."""
     count = string.ascii_uppercase.index(letter)
     out = []
