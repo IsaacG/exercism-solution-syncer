@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 from typing import Callable, Generic, Generator, Optional, TypeVar
-
-
 NodeValue = TypeVar('NodeValue')
-
 
 
 class Node(Generic[NodeValue]):
