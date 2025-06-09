@@ -47,9 +47,9 @@ def increment(
 ) -> Callable[[LinkedList, NodeValue], None]:
     """LinkedList increment decorator to bump the length."""
 
-    def wrapper(self, value: NodeValue) -> None:
-        func(self, value)
-        self.length += 1
+    def wrapper(linked_list: LinkedList, value: NodeValue) -> None:
+        func(linked_list, value)
+        linked_list.length += 1
 
     return wrapper
 
@@ -57,11 +57,11 @@ def increment(
 def decrement(func: Callable[[LinkedList], NodeValue]) -> Callable[[LinkedList], NodeValue]:
     """LinkedList decrement decorator to check and reduce the length."""
 
-    def wrapper(self):
-        if self.length <= 0:
+    def wrapper(linked_list: LinkedList):
+        if linked_list.length <= 0:
             raise IndexError("Cannot remove from an empty list.")
-        self.length -= 1
-        return func(self)
+        linked_list.length -= 1
+        return func(linked_list)
 
     return wrapper
 
