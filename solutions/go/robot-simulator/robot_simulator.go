@@ -5,11 +5,25 @@ package robot
 // ============ Step 1 ============
 // ================================
 const (
-	N Dir = 0 // North
-	E Dir = 1 // East
-	S Dir = 2 // South
-	W Dir = 3 // West
+	N Dir       = 0 // North
+	E Dir       = 1 // East
+	S Dir       = 2 // South
+	W Dir       = 3 // West
 )
+
+var directions = map[Dir]string{
+	N: "North",
+	E: "East",
+	S: "South",
+	W: "West",
+}
+var movement = map[Dir]complex128{
+	N: complex(0, 1),
+	E: complex(1, 0),
+	S: complex(0, -1),
+	W: complex(-1, 0),
+}
+
 
 // Rotate returns a rotated direction.
 func (d Dir) Rotate(a Action) Dir {
@@ -35,30 +49,15 @@ func Left() {
 
 // Advance advances Step1Robot.
 func Advance() {
-	switch Step1Robot.Dir {
-	case N:
-		Step1Robot.Y++
-	case E:
-		Step1Robot.X++
-	case S:
-		Step1Robot.Y--
-	case W:
-		Step1Robot.X--
-	}
+	newPos := complex(float64(Step1Robot.X), float64(Step1Robot.Y)) + movement[Step1Robot.Dir]
+	Step1Robot.X, Step1Robot.Y = int(real(newPos)),  int(imag(newPos))
 }
 
 func (d Dir) String() string {
-	switch d {
-	case N:
-		return "North"
-	case E:
-		return "East"
-	case S:
-		return "South"
-	case W:
-		return "West"
-	default:
+	if s, ok := directions[d]; !ok {
 		panic("invalid direction")
+	} else {
+		return s
 	}
 }
 
@@ -68,29 +67,14 @@ func (d Dir) String() string {
 
 // Contains returns if a Pos is within a Rect.
 func (r Rect) Contains(p Pos) bool {
-	if !(r.Min.Easting <= p.Easting && p.Easting <= r.Max.Easting) {
-		return false
-	}
-	if !(r.Min.Northing <= p.Northing && p.Northing <= r.Max.Northing) {
-		return false
-	}
-	return true
+	return ((r.Min.Easting <= p.Easting && p.Easting <= r.Max.Easting) &&
+		(r.Min.Northing <= p.Northing && p.Northing <= r.Max.Northing))
 }
 
 // Shift returns a shifted position.
 func (p Pos) Shift(d Dir) Pos {
-	switch d {
-	case N:
-		return Pos{p.Easting + 0, p.Northing + 1}
-	case E:
-		return Pos{p.Easting + 1, p.Northing + 0}
-	case S:
-		return Pos{p.Easting + 0, p.Northing - 1}
-	case W:
-		return Pos{p.Easting - 1, p.Northing + 0}
-	default:
-		panic("invalid direction")
-	}
+	newPos := complex(float64(p.Easting), float64(p.Northing)) + movement[d]
+	return Pos{RU(real(newPos)),  RU(imag(newPos))}
 }
 
 // Action is simply a command.
@@ -219,8 +203,7 @@ func Room3(extent Rect, robots []Step3Robot, action chan Action3, report chan []
 		case act.Act == 'A':
 			newPos := robot.Pos.Shift(robot.Dir)
 			posValidate <- futureMove{act.Name, newPos}
-			logMsg := <-posResult
-			if logMsg == "" {
+			if logMsg := <-posResult; logMsg == "" {
 				robot.Pos = newPos
 			} else {
 				log <- logMsg
