@@ -10,11 +10,15 @@
 
 boolRC () { (( $? == 0 )) && echo true || echo false; }
 bashTriTest () {
-  case "$1" in
-    equilateral) [[ $2 = $3 ]] && [[ $2 == $4 ]];;
-    isosceles) [[ $2 = $3 ]] || [[ $2 == $4 ]] || [[ $3 == $4 ]];;
-    scalene) [[ $2 != $3 ]] && [[ $2 != $4 ]];;
-    *) echo 'Invalid'; exit 1;;
+  shape=$1
+  shift
+  (( $1 <= $2 + $3 && $2 <= $1 + $3 && $3 <= $1 + $2 )) || return
+  (( $1 > 0 && $2 > 0 && $3 > 0 )) || return
+  case "${shape}" in
+    equilateral) (( $1 == $2 && $1 == $3 ));;
+    isosceles) (( $1 == $2 || $1 == $3 || $2 == $3 ));;
+    scalene) (( $1 != $2 && $1 != $2 ));;
+    *) echo 'Invalid'; false;;
   esac
 }
 
@@ -38,6 +42,7 @@ triTest () {
 
 (( $# == 4 )) || exit 1
 triTest "$@"
+# bashTriTest "$@"
 boolRC
 
 # vim:ts=2:sw=2:expandtab
