@@ -10,8 +10,8 @@ toChar s = show s :: String
 
 decode :: String -> String
 decode (x:xs)
-  | n /= "" = replicate (toInt n) (head r) ++ (decode . tail $ r)
-  | otherwise = x:decode xs
+  | null n = x:decode xs
+  | otherwise = replicate (toInt n) (head r) ++ (decode . tail $ r)
   where
     (n, r) = span isDigit $ x:xs
 decode [] = ""
