@@ -6,14 +6,15 @@ func isDiv(n int, d []int) bool {
 		if i == 0 {
 			continue
 		}
-		if n % i == 0 {
+		if n%i == 0 {
 			return true
 		}
 	}
 	return false
 }
 
-func SumMultiples(lim int, div ... int) int {
+// SumMultiples sums up multiples of the divisors.
+func SumMultiples(lim int, div ...int) int {
 	var sum int
 	for i := 1; i < lim; i++ {
 		if isDiv(i, div) {
