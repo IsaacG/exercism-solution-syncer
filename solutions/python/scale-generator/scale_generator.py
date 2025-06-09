@@ -22,7 +22,7 @@ class Scale:
             scale = SCALE[1]
 
         start = scale.index(self.tonic.capitalize())
-        return [scale[(start + i) % len(scale)] for i in range(len(scale))]
+        return scale[start:] + scale[:start]
 
     def interval(self, intervals: str) -> list[str]:
         """Return an interval."""
