@@ -5,10 +5,10 @@ package robot
 // ============ Step 1 ============
 // ================================
 const (
-	N Dir       = 0 // North
-	E Dir       = 1 // East
-	S Dir       = 2 // South
-	W Dir       = 3 // West
+	N Dir = 0 // North
+	E Dir = 1 // East
+	S Dir = 2 // South
+	W Dir = 3 // West
 )
 
 var directions = map[Dir]string{
@@ -46,7 +46,7 @@ func Left() {
 // Advance advances Step1Robot.
 func Advance() {
 	newPos := complex(float64(Step1Robot.X), float64(Step1Robot.Y)) + movement[Step1Robot.Dir]
-	Step1Robot.X, Step1Robot.Y = int(real(newPos)),  int(imag(newPos))
+	Step1Robot.X, Step1Robot.Y = int(real(newPos)), int(imag(newPos))
 }
 
 func (d Dir) String() string {
@@ -70,7 +70,7 @@ func (r Rect) Contains(p Pos) bool {
 // Shift returns a shifted position.
 func (p Pos) Shift(d Dir) Pos {
 	newPos := complex(float64(p.Easting), float64(p.Northing)) + movement[d]
-	return Pos{RU(real(newPos)),  RU(imag(newPos))}
+	return Pos{RU(real(newPos)), RU(imag(newPos))}
 }
 
 // Action is simply a command.
