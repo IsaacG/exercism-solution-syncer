@@ -1,4 +1,7 @@
 """Compute years on various planets."""
+import functools
+
+
 EARTH_SECONDS = 60 * 60 * 24 * 365.25
 PLANET_RATIOS = {
     'mercury': 0.2408467,
@@ -18,9 +21,14 @@ class SpaceAge:
     def __init__(self, seconds: int):
         self.seconds = seconds
         for planet, ratio in PLANET_RATIOS.items():
-            setattr(self, f"on_{planet}", lambda: round(self.years * ratio, 2))
+            # Set functions using partial() to bind the ratio to the function.
+            setattr(self, f"on_{planet}", functools.partial(self.weighted_years, ratio))
+
+    def weighted_years(self, ratio: float) -> float:
+        """Return weighted years, adjusted for a planet."""
+        return round(self.years / ratio, 2)
 
     @property
-    def years(self) -> int:
+    def years(self) -> float:
         """Return Earth years."""
         return self.seconds / EARTH_SECONDS
