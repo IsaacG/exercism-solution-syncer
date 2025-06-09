@@ -1,9 +1,4 @@
 export const isPangram = (data) => {
-  const seen = new Set();
-  for (const char of [...data.toLowerCase()]) {
-    if (char.match(/[a-z]/)) {
-      seen.add(char);
-    }
-  }
+  const seen = new Set(data.toLowerCase().match(/[a-z]/g));
   return seen.size === 26;
 };
