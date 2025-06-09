@@ -15,9 +15,6 @@ def word_trans(word: str) -> str:
     For other words, split into the "start" and "rest", moving "start" to the end.
     The exact split pattern depends on how the word starts.
     """
-    # if any(word.startswith(pat) for pat in ("xr", "yt")):
-    #     return word + "ay"
-
     if re.match(r"((?:xr|yt).*)", word):
         pattern = r"((?:xr|yt).*)()"
     # If the starts contains "qu", do not split on "u".
