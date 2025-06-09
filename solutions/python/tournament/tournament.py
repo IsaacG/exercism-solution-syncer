@@ -38,6 +38,9 @@ class Tournament:
       elif result == 'loss':
         teams[team_a].losses += 1
         teams[team_b].wins += 1
+      else:
+        raise ValueError('Poorly formed input')
+
     return cls(teams)
 
   def format(self):
