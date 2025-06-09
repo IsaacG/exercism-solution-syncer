@@ -2,7 +2,6 @@
 package ledger
 
 import (
-	"errors"
 	"fmt"
 	"sort"
 	"strconv"
@@ -21,25 +20,25 @@ type Entry struct {
 type Ledger []Entry
 
 var localeConfig = map[string]struct {
-	header     []string
-	dateFormat string
-	tSep       string
-	curFormatP string
-	curFormatN string
+	header                 []string
+	dateFormat             string
+	thousandsSeparator     string
+	positiveCurrencyFormat string
+	negativeCurrencyFormat string
 }{
 	"nl-NL": {
-		header:     []string{"Datum", "Omschrijving", "Verandering"},
-		dateFormat: "02-01-2006",
-		tSep:       ".",
-		curFormatP: "%s %s,%02d ",
-		curFormatN: "%s %s,%02d-",
+		header:                 []string{"Datum", "Omschrijving", "Verandering"},
+		dateFormat:             "02-01-2006",
+		thousandsSeparator:     ".",
+		positiveCurrencyFormat: "%s %s,%02s ",
+		negativeCurrencyFormat: "%s %s,%02s-",
 	},
 	"en-US": {
-		header:     []string{"Date", "Description", "Change"},
-		dateFormat: "01/02/2006",
-		tSep:       ",",
-		curFormatP: "%s%s.%02d ",
-		curFormatN: "(%s%s.%02d)",
+		header:                 []string{"Date", "Description", "Change"},
+		dateFormat:             "01/02/2006",
+		thousandsSeparator:     ",",
+		positiveCurrencyFormat: "%s%s.%s ",
+		negativeCurrencyFormat: "(%s%s.%s)",
 	},
 }
 
@@ -69,14 +68,14 @@ type chanMsg struct {
 }
 
 func formatCurrency(locale, currency string, cents int) string {
-	format := localeConfig[locale].curFormatP
+	format := localeConfig[locale].positiveCurrencyFormat
 	if cents < 0 {
 		cents = -cents
-		format = localeConfig[locale].curFormatN
+		format = localeConfig[locale].negativeCurrencyFormat
 	}
 	var parts []string
 	dollars := strconv.Itoa(cents / 100)
-	cents = cents % 100
+	centsStr := fmt.Sprintf("%02d", cents%100)
 
 	o := len(dollars) % 3
 	if o == 0 {
@@ -90,7 +89,7 @@ func formatCurrency(locale, currency string, cents int) string {
 		parts = append(parts, dollars[i:i+o])
 	}
 
-	return fmt.Sprintf(format, currencies[currency], strings.Join(parts, localeConfig[locale].tSep), cents)
+	return fmt.Sprintf(format, currencies[currency], strings.Join(parts, localeConfig[locale].thousandsSeparator), centsStr)
 }
 
 func truncate(s, cont string, l int) string {
@@ -117,12 +116,12 @@ func formatEntry(e Entry, locale, currency string) (string, error) {
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 	// Validation.
 	if _, ok := currencies[currency]; !ok {
-		return "", errors.New("invalid currency")
+		return "", fmt.Errorf("invalid currency: %s", currency)
 	}
 
 	l, ok := localeConfig[locale]
 	if !ok {
-		return "", errors.New("unknown locale")
+		return "", fmt.Errorf("unknown locale: %s", locale)
 	}
 
 	// Make a copy and sort it.
