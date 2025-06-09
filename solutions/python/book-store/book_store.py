@@ -38,9 +38,8 @@ lowest price.
 """
 
 import collections
-import copy
 import itertools
-from typing import List
+from typing import Mapping, List
 
 # The price paid for various group sizes.
 DISCOUNT = {1: 1.00, 2: 0.95, 3: 0.90, 4: 0.80, 5: 0.75}
@@ -72,94 +71,98 @@ class Grouping:
 
 
 class Possibilities:
-  """Calculate the various ways to group books."""
+  """A collection of possible groupings of the books."""
 
-  def __init__(self, basket: List[int]):
-    self._basket = collections.Counter(basket)
-    self._num_groups = max(self._basket.values() or [0])
+  def __init__(self, basket: Mapping[int, int]):
+    self._num_groups = max(basket.values() or [0])
     self._possibilities = [Grouping([0] * self._num_groups)]
 
-  def Price(self) -> int:
+  def MinPrice(self) -> int:
     """Return the price of the cheapest possible grouping."""
     return min(p.Price() for p in self._possibilities)
 
-  def Cheapest(self) -> int:
-    """Compute the cheapest price possible and return it.
-
-    Apply a series of steps that shuffles titles into groups.
-    This generates a number of possible groupings and modifies
-    class state in a destructive manner.
+  def UpdateFirstPossibility(self, book_count: int, group_count: int):
+    """Inplace update of the titles in the first possibility.
+  
+    This is used to build out the base case before diverging
+    into multiple branches.
     """
-    steps = [
-      self.AddMostCommonTitle,
-      self.AddSecondMostCommon,
-      self.AddAllCombos]
-    while self._basket and steps:
-      steps.pop(0)()
-    return self.Price()
-
-  def _UpdateFirstPossibility(self, book_count: int, group_count: int):
-    """Inplace update of the titles in the first possibility."""
     for group in range(group_count):
       self._possibilities[0]._bookset[group] += book_count
 
-  def AddMostCommonTitle(self):
-    """Create initial groups based on the most common title.
+  def AddInAllCombos(self, book_count: int):
+    """Add a book title to the groups in all possible combos.
 
-    Find the title(s) that appear the most times. Create N
-    groups for N occurances. Place those N title(s) into
-    the N groups and remove them from the basket.
+    This operation expands the number of possibilities by trying
+    all combos.
     """
-    basket = self._basket
+    new_possibilities = []
+    for grouping in self._possibilities:
+      # Given N groups and M counts of a book, get combos C(N, M)
+      combos = itertools.combinations(range(self._num_groups), book_count)
+      for selected_groups in combos:
+        new_groupings = grouping.WithBookIn(selected_groups)
+        new_possibilities.append(new_groupings)
+    self._possibilities = new_possibilities
 
-    books_in_each_group = [
-        book for book, count in basket.items()
-        if count == self._num_groups]
-    num_books = len(books_in_each_group)
 
-    self._UpdateFirstPossibility(num_books, self._num_groups)
-    for book in books_in_each_group:
-      del basket[book]
+def BuildPossibilities(books: List[int]) -> Possibilities:
+  """Generate a Possibilities with all good groupings.
 
-  def AddSecondMostCommon(self):
-    """Place the second most common title into the first M groups.
+  Some optimizations are done to ignore more expensive groupings.
+  """
+  basket = collections.Counter(books)
+  possibilities = Possibilities(basket)
+  books_used = set()
 
-    Picking exactly one title from the basket (which shows up
-    more than any other group, ie M times), place that title
-    into the first M groups.
-    
-    Since the groups at this point are all the same, the order
-    does not matter for this step.
-    """
-    basket = self._basket
+  if set(basket) == books_used:
+    return possibilities
 
-    second_highest_count = max(basket.values())
-    book = [book for book, count in basket.items() if count == second_highest_count][0]
-    self._UpdateFirstPossibility(1, second_highest_count)
-    del basket[book]
+  # The number of groups is controlled by the most common book found.
+  num_groups = max(basket.values() or [0])
+  common_titles = [
+      book for book, count in basket.items() if count == num_groups]
+  # Start by placing the most-common-titles into each basket,
+  # using just one possible distribution for now.
+  possibilities.UpdateFirstPossibility(len(common_titles), num_groups)
+  books_used.update(common_titles)
 
-  def AddAllCombos(self):
-    """Brute force stage. Try all combos.
+  if set(basket) == books_used:
+    return possibilities
 
-    For each title in the basket, try placing it in every
-    combination of groups. Each try creates a new possibility.
-    """
-    possibilities = self._possibilities
-    basket = self._basket
-    # For the remaining books, we need to try different combinations.
-    # For each title, attempt to add the title to each combo of groups.
-    for book, count in basket.items():
-      new_possibilities = []
-      for grouping in possibilities:
-        for selected_groups in itertools.combinations(range(self._num_groups), count):
-          new_groupings = grouping.WithBookIn(selected_groups)
-          new_possibilities.append(new_groupings)
-      possibilities = new_possibilities
-    self._possibilities = possibilities
+  # Place the second most common title into the first M groups.
+  # Picking exactly one title from the basket (which shows up
+  # more than any other group, ie M times), place that title
+  # into the first M groups.
+  # Since the groups at this point are all the same, the order
+  # does not matter for this step.
+  second_highest_count = max(
+      i for i in basket.values() if i != num_groups)
+  book = [
+      book for book, count in basket.items()
+      if count == second_highest_count][0]
+  possibilities.UpdateFirstPossibility(1, second_highest_count)
+  books_used.add(book)
+
+  if set(basket) == books_used:
+    return possibilities
+
+  # Brute force stage. Try all combos.
+  # For each title in the basket, try placing it in every
+  # combination of groups. Each try creates a new possibility.
+  remaining = set(basket) - books_used
+  for book in remaining:
+    possibilities.AddInAllCombos(basket[book])
+    books_used.add(book)
+  
+  if set(basket) == books_used:
+    return possibilities
+  
+  raise RuntimeError('How are there books left?')
 
 
 def total(basket):
-  return Possibilities(basket).Cheapest()
+  return BuildPossibilities(basket).MinPrice()
 
 
 # vim:ts=2:sw=2:expandtab
