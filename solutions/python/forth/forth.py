@@ -1,5 +1,9 @@
 """Forth interpretter."""
 import operator
+import re
+
+
+NUM_RE = re.compile(r"^-?\d+$")
 
 
 class StackUnderflowError(Exception):
@@ -46,7 +50,7 @@ class Forth:
         instructions = iter(words)
         while (word := next(instructions, None)) is not None:
             # Push numbers to the stack.
-            if word.isdigit():
+            if NUM_RE.match(word):
                 self.stack.append(int(word))
                 continue
 
