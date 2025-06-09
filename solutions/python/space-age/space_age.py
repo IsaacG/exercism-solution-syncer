@@ -1,6 +1,4 @@
-import functools
-
-
+"""Compute years on various planets."""
 EARTH_SECONDS = 60 * 60 * 24 * 365.25
 PLANET_RATIOS = {
     'mercury': 0.2408467,
@@ -14,18 +12,19 @@ PLANET_RATIOS = {
 }
 
 
-class SpaceAge(object):
+class SpaceAge:
+    """Compute years on various planets."""
 
-    def __init__(self, seconds):
+    def __init__(self, seconds: int):
         self.seconds = seconds
 
     @property
-    def years(self):
+    def years(self) -> int:
+        """Return Earth years."""
         return self.seconds / 31557600
 
-    def __getattr__(self, n):
-        assert n.startswith("on_"), n
-        planet = n.removeprefix("on_")
-        result = round(self.seconds / (EARTH_SECONDS * PLANET_RATIOS[planet]), 2) 
+    def __getattr__(self, name: str):
+        assert name.startswith("on_"), name
+        planet = name.removeprefix("on_")
+        result = round(self.seconds / (EARTH_SECONDS * PLANET_RATIOS[planet]), 2)
         return lambda: result
-
