@@ -3,8 +3,8 @@ package robotname
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
-	"strconv"
 )
 
 var used = make(map[string]bool)
@@ -14,16 +14,15 @@ func getName() (string, error) {
 	if len(used) == 26*26*10*10*10 {
 		return "", errors.New("out of names")
 	}
-	name := make([]byte, 0, 5)
 	var n string
 	for {
-		for i := 0; i < 2; i++ {
-			name = append(name, letters[rand.Intn(26)])
-		}
-		for i := 0; i < 3; i++ {
-			name = append(name, strconv.Itoa(rand.Intn(10))[0])
-		}
-		n = string(name)
+		n = fmt.Sprintf(
+			"%c%c%d%d%d",
+			letters[rand.Intn(26)],
+			letters[rand.Intn(26)],
+			rand.Intn(10),
+			rand.Intn(10),
+			rand.Intn(10))
 		if _, ok := used[n]; !ok {
 			break
 		}
