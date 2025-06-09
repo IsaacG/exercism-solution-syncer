@@ -16,36 +16,46 @@ class TeamScore:
     return 3 * self.wins + self.draws
 
 
-def _print_scores(teams):
-  template = '%-30s | %2d | %2d | %2d | %2d | %2d'
-  table = ['Team                           | MP |  W |  D |  L |  P']
-  # https://docs.python.org/3/howto/sorting.html#sort-stability-and-complex-sorts
-  # Sort first by name then by points. Sort stability will give us points-then-names.
-  team_names = sorted(teams)
-  team_names = sorted(team_names, key=lambda t: teams[t].points, reverse=True)
-  for team_name in team_names:
-    team = teams[team_name]
-    table.append(
-      template % (
-        team_name, team.played, team.wins,
-        team.draws, team.losses, team.points))
-  return table
+class Tournament:
+  def __init__(self, teams):
+    self._teams = teams
+
+  @classmethod
+  def from_rows(cls, rows):
+    teams = collections.defaultdict(TeamScore)
+    for row in rows:
+      team_a, team_b, result = row.split(';')
+      if result == 'draw':
+        teams[team_a].draws += 1
+        teams[team_b].draws += 1
+        continue
+      elif result == 'win':
+        teams[team_a].wins += 1
+        teams[team_b].losses += 1
+      elif result == 'loss':
+        teams[team_a].losses += 1
+        teams[team_b].wins += 1
+    return cls(teams)
+
+  def format(self):
+    teams = self._teams
+    template = '%-30s | %2d | %2d | %2d | %2d | %2d'
+    table = ['Team                           | MP |  W |  D |  L |  P']
+    # https://docs.python.org/3/howto/sorting.html#sort-stability-and-complex-sorts
+    # Sort first by name then by points. Sort stability will give us points-then-names.
+    team_names = sorted(teams)
+    team_names = sorted(team_names, key=lambda t: teams[t].points, reverse=True)
+    for team_name in team_names:
+      team = teams[team_name]
+      table.append(
+        template % (
+          team_name, team.played, team.wins,
+          team.draws, team.losses, team.points))
+    return table
 
 
 def tally(rows):
-  teams = collections.defaultdict(TeamScore)
-  for row in rows:
-    team_a, team_b, result = row.split(';')
-    if result == 'draw':
-      teams[team_a].draws += 1
-      teams[team_b].draws += 1
-      continue
-    if result == 'loss':
-      team_a, team_b = team_b, team_a
-    teams[team_a].wins += 1
-    teams[team_b].losses += 1
-
-  return _print_scores(teams)
+  return Tournament.from_rows(rows).format()
 
 
 
