@@ -54,15 +54,8 @@ class LedgerEntry:
         assert num >= 0, "Absolute values only"
         k_sep, d_sep = FMT['sep'][locale]
         val = num // 100
-        parts = []
-        if val == 0:
-            parts.append('0')
-        # Split the number into thousands.
-        while val:
-            parts.append(str(val % 1000))
-            val //= 1000
         # Join thousands with the k_sep.
-        whole = k_sep.join(reversed(parts))
+        whole = f"{val:_}".replace("_", k_sep)
         # Add the decimal part.
         return f'{whole}{d_sep}{num % 100:02}'
 
