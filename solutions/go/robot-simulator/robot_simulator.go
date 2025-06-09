@@ -28,19 +28,19 @@ var rotation = map[Action]Dir{
 	'L': 3,
 }
 
-// Rotate returns a rotated direction.
-func (d Dir) Rotate(a Action) Dir {
+// rotate returns a rotated direction.
+func (d Dir) rotate(a Action) Dir {
 	return (d + rotation[a]) % 4
 }
 
 // Right rotates Step1Robot to the right.
 func Right() {
-	Step1Robot.Dir = Step1Robot.Dir.Rotate('R')
+	Step1Robot.Dir = Step1Robot.Dir.rotate('R')
 }
 
 // Left rotates Step1Robot to the left.
 func Left() {
-	Step1Robot.Dir = Step1Robot.Dir.Rotate('L')
+	Step1Robot.Dir = Step1Robot.Dir.rotate('L')
 }
 
 // Advance advances Step1Robot.
@@ -61,14 +61,14 @@ func (d Dir) String() string {
 // ============ Step 2 ============
 // ================================
 
-// Contains returns if a Pos is within a Rect.
-func (r Rect) Contains(p Pos) bool {
+// contains returns if a Pos is within a Rect.
+func (r Rect) contains(p Pos) bool {
 	return ((r.Min.Easting <= p.Easting && p.Easting <= r.Max.Easting) &&
 		(r.Min.Northing <= p.Northing && p.Northing <= r.Max.Northing))
 }
 
-// Shift returns a shifted position.
-func (p Pos) Shift(d Dir) Pos {
+// shift returns a shifted position.
+func (p Pos) shift(d Dir) Pos {
 	newPos := complex(float64(p.Easting), float64(p.Northing)) + movement[d]
 	return Pos{RU(real(newPos)), RU(imag(newPos))}
 }
@@ -89,10 +89,10 @@ func Room(extent Rect, robot Step2Robot, action chan Action, report chan Step2Ro
 	for a := range action {
 		switch a {
 		case 'R', 'L':
-			robot.Dir = robot.Dir.Rotate(a)
+			robot.Dir = robot.Dir.rotate(a)
 		case 'A':
-			newPos := robot.Pos.Shift(robot.Dir)
-			if extent.Contains(newPos) {
+			newPos := robot.Pos.shift(robot.Dir)
+			if extent.contains(newPos) {
 				robot.Pos = newPos
 			}
 		}
@@ -120,8 +120,8 @@ func StartRobot3(name, script string, action chan Action3, log chan string) {
 	action <- Action3{name, 0, true}
 }
 
-// ValidateRobots checks for invalid setup and returns the map.
-func ValidateRobots(extent Rect, robots []Step3Robot) (map[string]*Step3Robot, string) {
+// validateRobots checks for invalid setup and returns the map.
+func validateRobots(extent Rect, robots []Step3Robot) (map[string]*Step3Robot, string) {
 	robotMap := map[string]*Step3Robot{}
 	errMsg := ""
 	for i, robot := range robots {
@@ -136,7 +136,7 @@ func ValidateRobots(extent Rect, robots []Step3Robot) (map[string]*Step3Robot, s
 				errMsg = "Two robots placed in the same position"
 			}
 		}
-		if !extent.Contains(robot.Pos) {
+		if !extent.contains(robot.Pos) {
 			errMsg = "Robot placed outside of a room: " + robot.Name
 		}
 		robotMap[robot.Name] = &robots[i]
@@ -147,7 +147,7 @@ func ValidateRobots(extent Rect, robots []Step3Robot) (map[string]*Step3Robot, s
 func validateMove(extent Rect, robotMap map[string]*Step3Robot, positions <-chan futureMove, results chan<- string) {
 	for f := range positions {
 		res := ""
-		if !extent.Contains(f.pos) {
+		if !extent.contains(f.pos) {
 			res = "Robot attempted to walk into a wall: " + f.name
 		}
 		for otherName, other := range robotMap {
@@ -168,7 +168,7 @@ type futureMove struct {
 func Room3(extent Rect, robots []Step3Robot, action chan Action3, report chan []Step3Robot, log chan string) {
 	defer close(report)
 
-	robotMap, errMsg := ValidateRobots(extent, robots)
+	robotMap, errMsg := validateRobots(extent, robots)
 	if errMsg != "" {
 		log <- errMsg
 		return
@@ -195,9 +195,9 @@ func Room3(extent Rect, robots []Step3Robot, action chan Action3, report chan []
 		case act.Act == 0 && act.Done:
 			active--
 		case act.Act == 'R' || act.Act == 'L':
-			robot.Dir = robot.Dir.Rotate(act.Act)
+			robot.Dir = robot.Dir.rotate(act.Act)
 		case act.Act == 'A':
-			newPos := robot.Pos.Shift(robot.Dir)
+			newPos := robot.Pos.shift(robot.Dir)
 			posValidate <- futureMove{act.Name, newPos}
 			if logMsg := <-posResult; logMsg == "" {
 				robot.Pos = newPos
