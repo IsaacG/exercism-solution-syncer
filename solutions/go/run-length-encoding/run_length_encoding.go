@@ -10,7 +10,7 @@ import (
 
 var repeated = regexp.MustCompile(`^(\d+)(\D)`)
 
-func Enc(r rune, c int) string {
+func enc(r rune, c int) string {
 	if c == 0 {
 		return ""
 	} else if c == 1 {
@@ -20,25 +20,27 @@ func Enc(r rune, c int) string {
 	}
 }
 
+// RunLengthEncode encodes.
 func RunLengthEncode(s string) string {
-	var res string = ""
+	var res string
 	var last rune
 	var count int
 	for _, c := range s {
 		if c == last {
 			count++
 		} else {
-			res += Enc(last, count)
+			res += enc(last, count)
 			count = 1
 			last = c
 		}
 	}
-	res += Enc(last, count)
+	res += enc(last, count)
 	return res
 }
 
+// RunLengthDecode decodes.
 func RunLengthDecode(s string) string {
-	var res string = ""
+	var res string
 	for i := 0; i < len(s); i++ {
 		matches := repeated.FindStringSubmatch(s[i:])
 		if len(matches) == 0 {
