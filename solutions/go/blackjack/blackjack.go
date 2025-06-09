@@ -21,13 +21,7 @@ func ParseCard(card string) int {
 		return 8
 	case "nine":
 		return 9
-	case "ten":
-		return 10
-	case "jack":
-		return 10
-	case "queen":
-		return 10
-	case "king":
+	case "ten", "jack", "queen", "king":
 		return 10
 	default:
 		return 0
