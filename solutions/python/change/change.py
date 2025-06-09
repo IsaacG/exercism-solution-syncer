@@ -1,9 +1,25 @@
 """Make change with fewest coins."""
 import functools
+import itertools
 from typing import Optional
 
 
 def find_fewest_coins(coins: list[int], target: int) -> list[int]:
+    """Return how to make change with fewest coins."""
+    if target < 0:
+        raise ValueError("target can't be negative")
+    if target == 0:
+        return []
+    worst = target // min(coins)
+    for count in range(1, worst + 1):
+        print(count, worst + 1)
+        for change in itertools.combinations_with_replacement(coins, count):
+            if sum(change) == target:
+                return list(change)
+    raise ValueError("can't make target with given coins")
+
+
+def find_fewest_coins_manual(coins: list[int], target: int) -> list[int]:
     """Return how to make change with fewest coins."""
     if target < 0:
         raise ValueError("target can't be negative")
