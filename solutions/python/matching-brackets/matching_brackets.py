@@ -5,13 +5,13 @@ def is_paired(input_string):
     if c in '[{(':
       stack.append(c)
     if c in ']})':
-      if len(stack) == 0:
+      if not stack:
         return False
       if stack[-1] == r[c]:
         stack.pop()
       else:
         return False
-  return len(stack) == 0
+  return bool(stack)
 
 
 # vim:ts=2:sw=2:expandtab
