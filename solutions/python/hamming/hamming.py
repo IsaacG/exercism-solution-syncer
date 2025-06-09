@@ -1,9 +1,8 @@
 """Compute the hamming distance."""
 from functools import reduce
 
-# Reduce a list of pairs by adding 1 on differing, otherwise count doesn't change.
 def reduction(count: int, strings: tuple[str, str]) -> int:
-    """Reduce function."""
+    """Reduce a list of pairs by adding 1 on differing, otherwise count doesn't change."""
     first, second = strings
     return count if first == second else count + 1
 
