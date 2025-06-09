@@ -13,18 +13,16 @@ decode (x:xs)
   | n /= "" = replicate (toInt n) (head r) ++ (decode . tail $ r)
   | otherwise = x:decode xs
   where
-    n = takeWhile isDigit $ x:xs
-    r = dropWhile isDigit $ x:xs
+    (n, r) = span isDigit $ x:xs
 decode [] = ""
 
 encode :: String -> String
 encode s
   | length s <= 1 = s
-  | n == 1 = h:encode t
-  | otherwise = toChar n ++ [h] ++ encode t
+  | length h == 1 = c:encode t
+  | otherwise = toChar (length h) ++ [c] ++ encode t
     where
-      h = head s
-      t = dropWhile (== head s) s
-      n = length . takeWhile  (== head s) $ s
+      (h, t) = span (== head s) s
+      c = head s
 
 -- vim:ts=2:sw=2:expandtab
