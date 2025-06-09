@@ -40,13 +40,14 @@ func Verse(n int) (string, error) {
 	if n < 0 || n >= 100 {
 		return "", fmt.Errorf("invalid number of bottles, %d; must be [0, 99]", n)
 	}
-	out := fmt.Sprintf("%s of beer on the wall, %s of beer.\n", bottle(n), strings.ToLower(bottle(n)))
+	// out := fmt.Sprintf("%s of beer on the wall, %s of beer.\n", bottle(n), strings.ToLower(bottle(n)))
+	out := bottle(n) + " of beer on the wall, " + strings.ToLower(bottle(n)) + " of beer.\n"
 	if n > 0 {
 		subject := "one"
 		if n == 1 {
 			subject = "it"
 		}
-		out += fmt.Sprintf("Take %s down and pass it around, %s of beer on the wall.\n", subject, strings.ToLower(bottle(n-1)))
+		out += "Take " + subject + " down and pass it around, " + strings.ToLower(bottle(n-1)) + " of beer on the wall.\n"
 	} else {
 		out += "Go to the store and buy some more, 99 bottles of beer on the wall.\n"
 	}
