@@ -12,7 +12,7 @@ def is_palindrome(num: int) -> bool:
 def cmp_palindrome(max_factor: int, min_factor: int, cmp: Callable[[int, int], bool]) -> Result:
     """Return the $cmp where $cmp is a largest/smallest test."""
     if min_factor > max_factor:
-        raise ValueError("Bad input")
+        raise ValueError("min must be <= max")
 
     factors: set[tuple[int, int]] = set()
     product = None
