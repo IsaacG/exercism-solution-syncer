@@ -23,18 +23,14 @@ var movement = map[Dir]complex128{
 	S: complex(0, -1),
 	W: complex(-1, 0),
 }
-
+var rotation = map[Action]Dir{
+	'R': 1,
+	'L': 3,
+}
 
 // Rotate returns a rotated direction.
 func (d Dir) Rotate(a Action) Dir {
-	switch a {
-	case 'R':
-		return (d + 1) % 4
-	case 'L':
-		return (d + 3) % 4
-	default:
-		panic("invalid rotation " + string(a))
-	}
+	return (d + rotation[a]) % 4
 }
 
 // Right rotates Step1Robot to the right.
