@@ -1,4 +1,4 @@
-"Recite a proverb."""
+"""Recite a proverb."""
 
 
 def proverb(*words, qualifier: None | str = None) -> list[str]:
