@@ -9,6 +9,7 @@ declare name=$2
 for (( i = 0; i <= 12; i++ )); do
   [[ "$name" = "${names[i]}" ]] && break
 done
+(( i == 12 )) && exit 1
 
 add () { out+=( ${plant[$1]} ); }
 add ${rows[0]:i*2+0:1}
