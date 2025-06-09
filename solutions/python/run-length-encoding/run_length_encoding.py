@@ -1,6 +1,9 @@
 import re
 
+
 REP_RE = re.compile(r'(\d*)(\D)')
+
+
 def decode(string):
   out = ''
   for m in REP_RE.finditer(string):
