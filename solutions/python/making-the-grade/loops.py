@@ -57,4 +57,4 @@ def perfect_score(student_info):
     for name, score in student_info:
         if score == 100:
             return [name, score]
-    return "No perfect score."
+    return []
