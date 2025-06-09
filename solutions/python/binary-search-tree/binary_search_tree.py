@@ -1,8 +1,7 @@
 """Binary Tree."""
 
 from __future__ import annotations
-import itertools
-from typing import Optional
+from typing import cast, Generator, Optional
 
 
 class TreeNode:
@@ -35,13 +34,13 @@ class TreeNode:
                 self.left = TreeNode(None)
             self.left.insert(value)
 
-    def __iter__(self) -> list[int]:
+    def __iter__(self) -> Generator[int, None, None]:
         """Return node values, sorted."""
-        return itertools.chain(
-            self.left or [],
-            [self.data],
-            self.right or [],
-        )
+        yield from self.left or []
+        # if self.data is None: return
+        # or this can be checked once in sorted_data() and assumed to exist here.
+        yield cast(int, self.data)
+        yield from self.right or []
 
 
 class BinarySearchTree:
@@ -59,4 +58,6 @@ class BinarySearchTree:
 
     def sorted_data(self) -> list[int]:
         """Return sorted data."""
+        if self.root.data is None:
+            return []
         return list(self.root)
