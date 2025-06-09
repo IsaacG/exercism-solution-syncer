@@ -3,10 +3,10 @@ package queenattack
 import "fmt"
 
 func position(p string) (int, int, error) {
-	if len(p) != 2 {
+	r := []rune(p)
+	if len(r) != 2 {
 		return 0, 0, fmt.Errorf("invalid position, %s", p)
 	}
-	r := []rune(p)
 	if r[0] < 'a' || r[0] > 'h' {
 		return 0, 0, fmt.Errorf("invalid file, %c", r[0])
 	}
