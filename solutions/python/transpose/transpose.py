@@ -20,7 +20,8 @@ def transpose(lines: str) -> str:
     width = 0
     for row in reversed(lines.splitlines()):
         width = max(len(row), width)
-        space_padded.insert(0, row.ljust(width))
+        space_padded.append(row.ljust(width))
+    space_padded.reverse()
 
     # Build a "matrix" which is rectangular to aid in lookups.
     input_matrix: list[list[str]] = []
