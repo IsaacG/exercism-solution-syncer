@@ -53,11 +53,10 @@ def next_prime:
 
 # Return the nth prime.
 def nth_prime:
-  .number |
-  if   .  < 1 then "there is no zeroth prime" | halt_error
-  elif . == 1 then 2
+  if   $n  < 1 then "there is no zeroth prime" | halt_error
+  elif $n == 1 then 2
   else
-    reduce range(1; . - 1) as $_ ([3]; next_prime) |
+    reduce range(1; $n - 1) as $_ ([3]; next_prime) |
     last
   end
 ;
