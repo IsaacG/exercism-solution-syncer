@@ -1,10 +1,10 @@
 export const transform = (values) => {
   const transformed = {}
-  for (const value in values) {
+  Object.entries(values).forEach(([value, letters]) => {
     const numeric = Number(value);
-    for (const letter of values[value]) {
+    letters.forEach((letter) => {
       transformed[letter.toLowerCase()] = numeric;
-    };
-  };
+    });
+  });
   return transformed;
 };
