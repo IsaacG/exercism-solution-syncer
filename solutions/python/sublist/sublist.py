@@ -1,4 +1,7 @@
 import enum
+import typing
+
+T = typing.TypeVar("T")
 
 class Results(enum.Enum):
     SUBLIST = 0
@@ -13,7 +16,7 @@ for result in Results:
     globals()[result.name] = result
 
 
-def sublist(list_one, list_two):
+def sublist(list_one: list[T], list_two: list[T]) -> int:
     if list_one == list_two:
         return EQUAL
 
