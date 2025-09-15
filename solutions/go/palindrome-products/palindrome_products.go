@@ -3,6 +3,8 @@ package palindrome
 import (
 	"errors"
 	"strconv"
+	"slices"
+	"strings"
 )
 
 type Product struct {
@@ -11,14 +13,20 @@ type Product struct {
 }
 
 func isPalindrome(n int) bool {
-	str := strconv.Itoa(n)
-	l := len(str) - 1
-	for i := 0; i <= l / 2; i++ {
-		if str[i] != str[l - i] {
-			return false
-		}
-	}
-	return true
+	s := strconv.Itoa(n)
+	chars := strings.Split(s, "")
+	slices.Reverse(chars)
+	return s == strings.Join(chars, "")
+}
+
+func updateProduct(p Product, product, a, b int, compare func(int, int) bool) Product {
+    if p.Number == 0 || compare(product, p.Number) {
+        return Product{product, [][2]int{{a, b}}}
+    }
+    if product == p.Number {
+        p.Factorizations = append(p.Factorizations, [2]int{a, b})
+    }
+    return p
 }
 
 func Products(fmin, fmax int) (Product, Product, error) {
@@ -30,16 +38,8 @@ func Products(fmin, fmax int) (Product, Product, error) {
 		for b := a; b <= fmax; b++ {
 			product := a * b
 			if isPalindrome(product) {
-				if low.Number == 0 || product < low.Number {
-					low = Product{product, [][2]int{{a, b}}}
-				} else if product == low.Number {
-					low.Factorizations = append(low.Factorizations, [2]int{a, b})
-				}
-				if product > high.Number {
-					high = Product{product, [][2]int{{a, b}}}
-				} else if product == high.Number {
-					high.Factorizations = append(high.Factorizations, [2]int{a, b})
-				}
+				low = updateProduct(low, product, a, b, func(x, y int) bool { return x < y })
+				high = updateProduct(high, product, a, b, func(x, y int) bool { return x > y })
 			}
 		}
 	}
