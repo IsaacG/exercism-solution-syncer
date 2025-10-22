@@ -1,7 +1,9 @@
 package variablelengthquantity
 
-import "fmt"
-import "slices"
+import (
+	"errors"
+	"slices"
+)
 
 const (
 	// 8th bit is used to indicate if there is more to this number.
@@ -12,10 +14,10 @@ const (
 
 // EncodeVarint encodes intergers into bytes.
 func EncodeVarint(input []uint32) []byte {
-	out := []byte{}
+	var out []byte
 	// Add one number at a time.
 	for _, number := range input {
-		encoded := []byte{}
+		var encoded []byte
 		// Add one byte for each set of lower 7 bits. Enable the more bit.
 		for i := number; i > 0; i >>= 7 {
 			encoded = append(encoded, moreBit | (byte(i) & byteMask))
@@ -33,12 +35,12 @@ func EncodeVarint(input []uint32) []byte {
 
 // DecodeVarint converts bytes to numbers.
 func DecodeVarint(input []byte) ([]uint32, error) {
-	numbers := []uint32{}
+	var numbers []uint32
 	// The last byte must not set the more bit.
 	if input[len(input)-1] & moreBit != 0 {
-		return nil, fmt.Errorf("")
+		return nil, errors.New("invalid input")
 	}
-	var number uint32 = 0
+	var number uint32
 	for _, val := range input {
 		// Collect the bytes into one number.
 		number = (number << 7) | uint32(byteMask & val)
