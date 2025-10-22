@@ -6,60 +6,69 @@ import (
 )
 
 // Pair stores a coordinate.
-type Pair struct{ y, x int }
+type Pair struct{ row, col int }
 
 // Matrix is used to get a saddle point.
 type Matrix struct {
-	data          [][]int
-	width, height int
+	data           [][]int
+	width, height  int
+	rowMax, colMin []int
 }
 
 // New returns a Matrix for a string.
 func New(s string) (*Matrix, error) {
-	var height, width int
-	lines := strings.Split(s, "\n")
-	height = len(lines)
-	data := make([][]int, height)
-	for idx, line := range lines {
+	var data [][]int
+	var rowMax []int
+	for line := range strings.SplitSeq(s, "\n") {
 		if line == "" {
 			break
 		}
-		words := strings.Split(line, " ")
-		width = len(words)
-		data[idx] = make([]int, width)
-		for wIdx, word := range words {
+		var row []int
+		max := 0
+		for word := range strings.FieldsSeq(line) {
 			num, err := strconv.Atoi(word)
 			if err != nil {
 				return nil, err
 			}
-			data[idx][wIdx] = num
+			row = append(row, num)
+			if num > max {
+				max = num
+			}
 		}
+		rowMax = append(rowMax, max)
+		data = append(data, row)
 	}
-	return &Matrix{data, width, height}, nil
-}
+	columns := 0
+	if len(data) != 0 {
+		columns = len(data[0])
+	}
+	colMin := make([]int, columns)
+	for col := range columns {
+		min := 0
+		for row := range data {
+			if row == 0 || data[row][col] < min {
+				min = data[row][col]
+			}
+		}
+		colMin[col] = min
+	}
 
-func (m *Matrix) optimal(x, y int) bool {
-	height := m.data[y][x]
-	for otherX := range m.width {
-		if m.data[y][otherX] > height {
-			return false
-		}
+	height := len(data)
+	var width int
+	if height > 0 {
+		width = len(data[0])
 	}
-	for otherY := range m.height {
-		if m.data[otherY][x] < height {
-			return false
-		}
-	}
-	return true
+	return &Matrix{data, width, height, rowMax, colMin}, nil
 }
 
 // Saddle returns saddle points for a Matrix.
 func (m *Matrix) Saddle() []Pair {
 	pairs := []Pair{}
-	for y := range m.height {
-		for x := range m.width {
-			if m.optimal(x, y) {
-				pairs = append(pairs, Pair{y + 1, x + 1})
+	for row := range m.height {
+		for col := range m.width {
+			// Check if this location has an optimal height.
+			if height := m.data[row][col]; height == m.rowMax[row] && height == m.colMin[col] {
+				pairs = append(pairs, Pair{row + 1, col + 1})
 			}
 		}
 	}
