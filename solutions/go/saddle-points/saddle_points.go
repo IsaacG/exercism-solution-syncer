@@ -6,7 +6,7 @@ import (
 )
 
 // Pair stores a coordinate.
-type Pair struct{ y, x int }
+type Pair struct{ row, col int }
 
 // Matrix is used to get a saddle point.
 type Matrix struct {
@@ -17,30 +17,26 @@ type Matrix struct {
 
 // New returns a Matrix for a string.
 func New(s string) (*Matrix, error) {
-	var height, width int
-	lines := strings.Split(s, "\n")
-	height = len(lines)
-	data := make([][]int, height)
-	rowMax := make([]int, height)
-	for idx, line := range lines {
+	var data [][]int
+	var rowMax []int
+	for line := range strings.SplitSeq(s, "\n") {
 		if line == "" {
 			break
 		}
-		words := strings.Fields(line)
-		width = len(words)
+		var row []int
 		max := 0
-		data[idx] = make([]int, width)
-		for wIdx, word := range words {
+		for word := range strings.FieldsSeq(line) {
 			num, err := strconv.Atoi(word)
 			if err != nil {
 				return nil, err
 			}
-			data[idx][wIdx] = num
+			row = append(row, num)
 			if num > max {
 				max = num
 			}
 		}
-		rowMax[idx] = max
+		rowMax = append(rowMax, max)
+		data = append(data, row)
 	}
 	columns := 0
 	if len(data) != 0 {
@@ -57,21 +53,22 @@ func New(s string) (*Matrix, error) {
 		colMin[col] = min
 	}
 
+	height := len(data)
+	var width int
+	if height > 0 {
+		width = len(data[0])
+	}
 	return &Matrix{data, width, height, rowMax, colMin}, nil
-}
-
-func (m *Matrix) optimal(x, y int) bool {
-	height := m.data[y][x]
-	return height == m.rowMax[y] && height == m.colMin[x]
 }
 
 // Saddle returns saddle points for a Matrix.
 func (m *Matrix) Saddle() []Pair {
 	pairs := []Pair{}
-	for y := range m.height {
-		for x := range m.width {
-			if m.optimal(x, y) {
-				pairs = append(pairs, Pair{y + 1, x + 1})
+	for row := range m.height {
+		for col := range m.width {
+			// Check if this location has an optimal height.
+			if height := m.data[row][col]; height == m.rowMax[row] && height == m.colMin[col] {
+				pairs = append(pairs, Pair{row + 1, col + 1})
 			}
 		}
 	}
