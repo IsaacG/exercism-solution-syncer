@@ -36,7 +36,7 @@ func (s *School) Grade(level int) []string {
 }
 
 func (s *School) Enrollment() []Grade {
-	grades := []Grade{}
+	var grades []Grade
 	for _, grade := range s.grades {
 		grades = append(grades, *grade)
 	}
