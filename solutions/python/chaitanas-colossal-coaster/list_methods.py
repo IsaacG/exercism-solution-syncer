@@ -1,3 +1,5 @@
+import copy
+
 def add_me_to_the_queue(express_queue, normal_queue, ticket_type, person_name):
     """
 
