@@ -59,7 +59,6 @@ COLORS = RED, IVORY, GREEN, BLUE, YELLOW = [i << COLOR for i in range(5)]
 DRINKS = TEA, COFFEE, ORANGE_JUICE, MILK, WATER = [i << DRINK for i in range(5)]
 SMOKES = OLD_GOLD, KOOLS, LUCKY_STRIKE, PARLIAMENTS, CHESTERFIELDS = [i << SMOKE for i in range(5)]
 
-OUTPUTS = ["Englishman", "Spaniard", "Japanese", "Ukrainian", "Norwegian"]
 RuleResult = tuple[bool, list[tuple[int, ...]]]
 
 
@@ -120,8 +119,8 @@ def adjacent_rule(combo: tuple[int, ...], attribute_a: int, val_a: int, attribut
 
 def green_ivory(combo: tuple[int, ...]) -> RuleResult:
     """6. The green house is immediately to the right of the ivory house."""
-    a = next(idx for idx, house in enumerate(combo) if matches(house, COLOR, GREEN))
-    b = next(idx for idx, house in enumerate(combo) if matches(house, COLOR, IVORY))
+    a = find_house(combo, COLOR, GREEN)
+    b = find_house(combo, COLOR, IVORY)
     if a == b + 1:
         return True, []
     alternatives = []
@@ -135,7 +134,7 @@ def green_ivory(combo: tuple[int, ...]) -> RuleResult:
 def milk_middle(combo: tuple[int, ...]) -> RuleResult:
     """9. Milk is drunk in the middle house."""
     a = 2  # middle
-    b = next(idx for idx, house in enumerate(combo) if matches(house, DRINK, MILK))
+    b = find_house(combo, DRINK, MILK)
     if a == b:
         return True, []
     return False, [swap(combo, a, b, DRINK)]
@@ -144,7 +143,7 @@ def milk_middle(combo: tuple[int, ...]) -> RuleResult:
 def norway_first(combo: tuple[int, ...]) -> RuleResult:
     """10. The Norwegian lives in the first house."""
     a = 0  # first
-    b = next(idx for idx, house in enumerate(combo) if matches(house, NATIONALITY, NORWEGIAN))
+    b = find_house(combo, NATIONALITY, NORWEGIAN)
     if a == b:
         return True, []
     return False, [swap(combo, a, b, NATIONALITY)]
@@ -210,15 +209,24 @@ def solve_puzzle() -> tuple[int, ...]:
     raise RuntimeError("not solved")
 
 
+def nationality(house: int) -> str:
+    n = house & (0b111 << NATIONALITY)
+    return {
+        ENGLISHMAN: "Englishman",
+        SPANIARD: "Spaniard",
+        JAPANESE: "Japanese",
+        UKRAINIAN: "Ukrainian",
+        NORWEGIAN: "Norwegian",
+    }[n]
+
+
 def drinks_water() -> str:
     """Return the nationality of the water drinker."""
     street = solve_puzzle()
-    house = next(house for house in street if matches(house, DRINK, WATER))
-    return next(nat for nat, nats in zip(OUTPUTS, NATIONALITIES) if matches(house, NATIONALITY, nats))
+    return nationality(street[find_house(street, DRINK, WATER)])
 
 
 def owns_zebra() -> str:
     """Return the nationality of the zebra owner."""
     street = solve_puzzle()
-    house = next(house for house in street if matches(house, PET, ZEBRA))
-    return next(nat for nat, nats in zip(OUTPUTS, NATIONALITIES) if matches(house, NATIONALITY, nats))
+    return nationality(street[find_house(street, PET, ZEBRA)])
