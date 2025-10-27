@@ -13,9 +13,10 @@ import (
 	"strings"
 )
 
-// Needed for the tests.
+// Needed for the tests. Not used.
 const recognizeDigit = 0
 
+// digits contains the characters which make up a digit, with the rows concatenated.
 var digits = []string{
 	" _ | ||_|   ", // 0
 	"     |  |   ", // 1
