@@ -59,7 +59,6 @@ COLORS = RED, IVORY, GREEN, BLUE, YELLOW = [i << COLOR for i in range(5)]
 DRINKS = TEA, COFFEE, ORANGE_JUICE, MILK, WATER = [i << DRINK for i in range(5)]
 SMOKES = OLD_GOLD, KOOLS, LUCKY_STRIKE, PARLIAMENTS, CHESTERFIELDS = [i << SMOKE for i in range(5)]
 
-OUTPUTS = ["Englishman", "Spaniard", "Japanese", "Ukrainian", "Norwegian"]
 RuleResult = tuple[bool, list[tuple[int, ...]]]
 
 
@@ -210,15 +209,24 @@ def solve_puzzle() -> tuple[int, ...]:
     raise RuntimeError("not solved")
 
 
+def nationality(house: int) -> str:
+    n = house & (0b111 << NATIONALITY)
+    return {
+        ENGLISHMAN: "Englishman",
+        SPANIARD: "Spaniard",
+        JAPANESE: "Japanese",
+        UKRAINIAN: "Ukrainian",
+        NORWEGIAN: "Norwegian",
+    }[n]
+
+
 def drinks_water() -> str:
     """Return the nationality of the water drinker."""
     street = solve_puzzle()
-    house = street[find_house(street, DRINK, WATER)]
-    return next(nat for nat, nats in zip(OUTPUTS, NATIONALITIES) if matches(house, NATIONALITY, nats))
+    return nationality(street[find_house(street, DRINK, WATER)])
 
 
 def owns_zebra() -> str:
     """Return the nationality of the zebra owner."""
     street = solve_puzzle()
-    house = street[find_house(street, PET, ZEBRA)]
-    return next(nat for nat, nats in zip(OUTPUTS, NATIONALITIES) if matches(house, NATIONALITY, nats))
+    return nationality(street[find_house(street, PET, ZEBRA)])
