@@ -59,7 +59,7 @@ def decrement(func: Callable[[LinkedList], NodeValue]) -> Callable[[LinkedList],
 
     def wrapper(linked_list: LinkedList):
         if linked_list.length <= 0:
-            raise IndexError("Cannot remove from an empty list.")
+            raise IndexError("List is empty")
         linked_list.length -= 1
         return func(linked_list)
 
@@ -94,7 +94,7 @@ class LinkedList:
         while cur != self.last and cur.value != value:
             cur = cur.next
         if cur.value != value:
-            raise ValueError("Not found")
+            raise ValueError("Value not found")
         cur.remove()
         self.length -= 1
 
