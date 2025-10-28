@@ -15,12 +15,12 @@ anagram () {
   declare -a found
 
   declare -A want
-  for (( i = 0; i < ${#match}; i++ )) do (( 'want[${match:$i:1}]'++ )); done
+  for (( i = 0; i < ${#match}; i++ )) do (( want[${match:$i:1}]++ )); done
   for word in "${words[@]}"; do
     declare -A count
     w="${word,,}"
     [[ $w = $match ]] && continue  # Word is not its own anagram
-    for (( i = 0; i < ${#w}; i++ )) do (( 'count[${w:$i:1}]'++ )); done
+    for (( i = 0; i < ${#w}; i++ )) do (( count[${w:$i:1}]++ )); done
     isMatch && found+=($word)
     unset count
   done
