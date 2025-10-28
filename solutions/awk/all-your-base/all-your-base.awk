@@ -31,5 +31,6 @@ BEGIN {
     out = parts[0]
     for (j = 1; j < i; j++)
         out = parts[j] " " out
+    if (NF && !out) print 0
     print out
 }
