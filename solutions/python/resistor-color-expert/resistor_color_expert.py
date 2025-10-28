@@ -30,7 +30,7 @@ def resistor_label(colors: list[str]) -> str:
 
     # Shift numbers over to get the proper prefix.
     power = 0
-    while val > 1000:
+    while val >= 1000:
         val /= 1000
         power += 1
 
