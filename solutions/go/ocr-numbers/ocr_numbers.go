@@ -31,8 +31,8 @@ var digits = []string{
 }
 
 // Recognize runs OCR.
-func Recognize(in string) []string {
-	lines := strings.Split(strings.Trim(in, "\n"), "\n")
+func Recognize(display string) []string {
+	lines := strings.Split(strings.Trim(display, "\n"), "\n")
 	var out []string
 	// For each row of digits,
 	for i := 0; i < len(lines); i += 4 {
@@ -42,8 +42,10 @@ func Recognize(in string) []string {
 			block := ""
 			// For each row of the digit,
 			for k := i; k < i+4; k++ {
+				// Concatenate the rows making up the digit.
 				block += lines[k][j : j+3]
 			}
+			// Output either the digit or "?" if it is not recognized.
 			if idx := slices.Index(digits, block); idx == -1 {
 				line.WriteString("?")
 			} else {
