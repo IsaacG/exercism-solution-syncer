@@ -8,7 +8,7 @@ declare -a stack
 die () { echo "$1"; exit 1; }
 
 # Word is a number.
-is_num () { [[ $1 = +([[:digit:]]) ]]; }
+is_num () { [[ $1 =~ -?[[:digit:]]+ ]]; }
 
 # Line is a macro definition (starts with ": ")
 is_macro () { [[ $1 = ": "* ]]; }
@@ -80,6 +80,7 @@ process_line () {
 operate () {
   case "$1" in
     +([[:digit:]]) ) push "$1";;
+    -+([[:digit:]]) ) push "$1";;
     '+') pop2; push $(( regA + regB ));;
     '-') pop2; push $(( regA - regB ));;
     '*') pop2; push $(( regA * regB ));;
