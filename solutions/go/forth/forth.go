@@ -14,8 +14,8 @@ type emulator struct {
 
 // define handles a ": name ... ;" definition.
 func (e *emulator) define(line []string) error {
-	l := len(line)
-	if l < 4 || line[0] != ":" || line[l-1] != ";" {
+	length := len(line)
+	if length < 4 || line[0] != ":" || line[length-1] != ";" {
 		return fmt.Errorf("malformed define, %v", line)
 	}
 	// The custom command name cannot be an integer.
@@ -23,12 +23,12 @@ func (e *emulator) define(line []string) error {
 		return fmt.Errorf("invalid define %s", line[1])
 	}
 	var operation []string
-	for _, w := range line[2 : l-1] {
+	for _, word := range line[2 : length-1] {
 		// When storing a definition, expand existing definitions.
-		if o, ok := e.operators[w]; ok {
-			operation = append(operation, o...)
+		if expanded, ok := e.operators[word]; ok {
+			operation = append(operation, expanded...)
 		} else {
-			operation = append(operation, w)
+			operation = append(operation, word)
 		}
 	}
 	e.operators[line[1]] = operation
@@ -37,14 +37,14 @@ func (e *emulator) define(line []string) error {
 
 // Evalute a command that operates on the stack.
 func (e *emulator) stackOp(op string, count int) error {
-	l := len(e.stack)
-	if l < count {
-		return fmt.Errorf("%s requires %d values; stack size is %d", op, count, l)
+	length := len(e.stack)
+	if length < count {
+		return fmt.Errorf("%s requires %d values; stack size is %d", op, count, length)
 	}
 	// Read the operands from the stack.
 	var result, operands []int
 	for i := range count {
-		operands = append(operands, e.stack[l-count+i])
+		operands = append(operands, e.stack[length-count+i])
 	}
 	switch op {
 	case "+":
@@ -68,7 +68,7 @@ func (e *emulator) stackOp(op string, count int) error {
 		result = []int{operands[0], operands[1], operands[0]}
 	}
 	// Update the stack.
-	e.stack = append(e.stack[:l-count], result...)
+	e.stack = append(e.stack[:length-count], result...)
 	return nil
 }
 
@@ -79,13 +79,12 @@ func (e *emulator) eval(line []string) error {
 	}
 	for _, word := range line {
 		var err error
-		var val int
-		if val, err = strconv.Atoi(word); err == nil {
+		if val, convErr := strconv.Atoi(word); convErr == nil {
 			// Integers get pushed to the stack.
 			e.stack = append(e.stack, val)
-		} else if v, ok := e.operators[word]; ok {
+		} else if operation, ok := e.operators[word]; ok {
 			// Custom definitions take precendence over built-in operators.
-			err = e.eval(v)
+			err = e.eval(operation)
 		} else {
 			switch word {
 			case "+", "-", "*", "/":
@@ -98,6 +97,7 @@ func (e *emulator) eval(line []string) error {
 				return fmt.Errorf("invalid command %s", word)
 			}
 		}
+		// Stop on an error.
 		if err != nil {
 			return err
 		}
@@ -107,11 +107,11 @@ func (e *emulator) eval(line []string) error {
 
 // Forth emulates a Forth program.
 func Forth(input []string) ([]int, error) {
-	e := &emulator{nil, map[string][]string{}}
+	em := &emulator{nil, map[string][]string{}}
 	for _, line := range input {
-		if err := e.eval(strings.Fields(strings.ToUpper(line))); err != nil {
+		if err := em.eval(strings.Fields(strings.ToUpper(line))); err != nil {
 			return nil, err
 		}
 	}
-	return e.stack, nil
+	return em.stack, nil
 }
