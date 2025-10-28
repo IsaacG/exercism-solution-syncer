@@ -32,9 +32,40 @@ export function getSecondCard(deck) {
  *
  * @returns {Card[]} new deck with reordered cards
  */
-export function swapTopTwoCards(deck) {
-  const [first, second, ...rest] = deck;
-  return [second, first, ...rest]
+export function swapTwoCards(deck) {
+  const [first, second] = deck;
+  return [second, first]
+}
+
+/**
+ * Rotate (shift) the position of the three cards (by one place)
+ *
+ * @param {[Card, Card, Card]} deck
+ *
+ * @returns {[Card, Card, Card]} new deck with the 3 cards shifted by one position
+ */
+export function shiftThreeCardsAround(deck) {
+  const [first, second, third] = deck;
+  return [second, third, first]
+}
+
+export function swapNamedPile(piles) {
+  // 🪄 Don't break the magic.
+  // 🚨 Do NOT use piles.chosen or piles.disregarded.
+  // 🚨 Do NOT touch the next line or Elyse will accidentally reveal the trick.
+  const {chosen, disregarded} = piles;
+  return {chosen: disregarded, disregarded: chosen};
+}
+
+/**
+ * Grab the chosen pile from the available piles
+ *
+ * @param {{ chosen: Card[], disregarded: Card[] }} piles
+ *
+ * @returns {Card[]} the pile named chosen
+ */
+export function pickNamedPile(piles) {
+  return piles.chosen;
 }
 
 /**
