@@ -13,18 +13,18 @@ type Grade struct {
 
 // School contains data about all the grades.
 type School struct {
-	grades map[int]*Grade
+	grades [20]*Grade
 }
 
 // New returns a new School object.
 func New() *School {
-	return &School{map[int]*Grade{}}
+	return &School{}
 }
 
 // Add a student to a specific level/grade.
 func (s *School) Add(student string, level int) {
-	grade, ok := s.grades[level]
-	if !ok {
+	grade := s.grades[level]
+	if grade == nil {
 		// Create a new Grade if it is not yet in the School.
 		grade = &Grade{level, []string{}}
 		s.grades[level] = grade
@@ -35,8 +35,8 @@ func (s *School) Add(student string, level int) {
 
 // Grade returns the students in a specific Grade.
 func (s *School) Grade(level int) []string {
-	grade, ok := s.grades[level]
-	if !ok {
+	grade := s.grades[level]
+	if grade == nil {
 		return nil
 	}
 	return grade.students
@@ -46,7 +46,9 @@ func (s *School) Grade(level int) []string {
 func (s *School) Enrollment() []Grade {
 	var grades []Grade
 	for _, grade := range s.grades {
-		grades = append(grades, *grade)
+		if grade != nil {
+			grades = append(grades, *grade)
+		}
 	}
 	slices.SortFunc(grades, func(a, b Grade) int { return cmp.Compare(a.level, b.level) })
 	return grades
