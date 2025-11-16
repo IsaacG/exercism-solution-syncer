@@ -11,20 +11,19 @@ const recognizeDigit = 0
 
 // digits contains the characters which make up a digit, with the rows concatenated.
 // Populated by init().
-var digits = []string{}
+var digits []string
 
 // Recognize runs OCR.
 func Recognize(display string) []string {
 
 	lines := strings.Split(strings.Trim(display, "\n"), "\n")
 	var out []string
-	var block strings.Builder
 	// For each row of digits,
 	for i := 0; i < len(lines); i += 4 {
 		var line strings.Builder
 		// For each letter block,
 		for j := 0; j < len(lines[i]); j += 3 {
-			block.Reset()
+			var block strings.Builder
 			// For each row of the digit,
 			for k := i; k < i+4; k++ {
 				// Concatenate the rows making up the digit.
