@@ -1,6 +1,7 @@
 package poker
 
 import (
+	"cmp"
 	"errors"
 	"slices"
 	"strconv"
@@ -20,16 +21,6 @@ const (
 	onePair
 	highCard
 )
-
-func cmp(a, b int) int {
-	if a < b {
-		return -1
-	}
-	if a > b {
-		return +1
-	}
-	return 0
-}
 
 var faceCards = map[string]int{
 	"J": 11,
@@ -71,9 +62,9 @@ func (h Hand) Count() [][2]int {
 	}
 	slices.SortFunc(out, func(a, b [2]int) int {
 		if a[1] == b[1] {
-			return -cmp(a[0], b[0])
+			return -cmp.Compare(a[0], b[0])
 		}
-		return -cmp(a[1], b[1])
+		return -cmp.Compare(a[1], b[1])
 	})
 	return out
 }
@@ -103,18 +94,18 @@ func (h Hand) isStraight() bool {
 	return vals[3] == vals[4]-1 || (vals[0] == 2 && vals[4] == faceCards["A"])
 }
 
-// cmp compares two hands and determines the better hand.
-func (h Hand) cmp(other Hand) int {
+// compare compares two hands and determines the better hand.
+func (h Hand) compare(other Hand) int {
 	rankA, valsA := h.Value()
 	rankB, valsB := other.Value()
 	// Compare ranks first.
 	if rankA != rankB {
-		return -cmp(rankA, rankB)
+		return -cmp.Compare(rankA, rankB)
 	}
 	// For matching ranks, compare the card values.
-	for idx, v := range valsA {
-		if v != valsB[idx] {
-			return cmp(v, valsB[idx])
+	for i, v := range valsA {
+		if v != valsB[i] {
+			return cmp.Compare(v, valsB[i])
 		}
 	}
 	return 0
@@ -173,9 +164,9 @@ func NewHand(s string) (Hand, error) {
 		var face string
 		var suit rune
 		runes := []rune(c)
-		for idx, r := range runes {
+		for i, r := range runes {
 			if r == '♤' || r == '♡' || r == '♢' || r == '♧' {
-				if idx != len(runes)-1 {
+				if i != len(runes)-1 {
 					return Hand{}, errors.New("invalid card")
 				}
 				suit = r
@@ -199,7 +190,7 @@ func NewHand(s string) (Hand, error) {
 	if len(cards) != 5 {
 		return Hand{}, errors.New("invalid card count")
 	}
-	slices.SortFunc(cards, func(a, b Card) int { return cmp(a.val, b.val) })
+	slices.SortFunc(cards, func(a, b Card) int { return cmp.Compare(a.val, b.val) })
 	return Hand{s, cards}, nil
 }
 
@@ -215,12 +206,12 @@ func BestHand(hands []string) ([]string, error) {
 	}
 	ranked := slices.Clone(cardHands)
 	slices.SortFunc(ranked, func(a, b Hand) int {
-		return -a.cmp(b)
+		return -a.compare(b)
 	})
 
 	var out []string
 	for _, hand := range cardHands {
-		if hand.cmp(ranked[0]) == 0 {
+		if hand.compare(ranked[0]) == 0 {
 			out = append(out, hand.input)
 		}
 	}
