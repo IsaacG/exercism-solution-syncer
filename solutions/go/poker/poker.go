@@ -8,9 +8,11 @@ import (
 	"strings"
 )
 
+type Rank int
+
 // Ranks of hands.
 const (
-	royalFlush = iota
+	royalFlush Rank = iota
 	straightFlush
 	fourOfAKind
 	fullHouse
@@ -35,10 +37,28 @@ type Card struct {
 	suit rune
 }
 
+// Count represents a value and how many times it appears.
+type Count struct {
+	value      int
+	occurances int
+}
+
 // Hand represents a hand of five cards.
 type Hand struct {
 	input string
 	cards []Card
+}
+
+// HandCount represents the counts of all the cards in a hand.
+type HandCount []Count
+
+// Values returns the unique pip values in the count, ordered by occurances.
+func (hc HandCount) Values() []int {
+	var values []int
+	for _, count := range hc {
+		values = append(values, count.value)
+	}
+	return values
 }
 
 // Values returns the pip values of the cards in a hand.
@@ -51,25 +71,25 @@ func (h Hand) Values() []int {
 }
 
 // Count returns a slice of pairs containing the card value and how many times it appears.
-func (h Hand) Count() [][2]int {
+func (h Hand) Count() HandCount {
 	counts := map[int]int{}
 	for _, c := range h.cards {
 		counts[c.val]++
 	}
-	var out [][2]int
+	var out []Count
 	for val, count := range counts {
-		out = append(out, [2]int{val, count})
+		out = append(out, Count{value: val, occurances: count})
 	}
-	slices.SortFunc(out, func(a, b [2]int) int {
-		if a[1] == b[1] {
-			return -cmp.Compare(a[0], b[0])
+	slices.SortFunc(out, func(a, b Count) int {
+		if a.occurances != b.occurances {
+			return -cmp.Compare(a.occurances, b.occurances)
 		}
-		return -cmp.Compare(a[1], b[1])
+		return -cmp.Compare(a.value, b.value)
 	})
 	return out
 }
 
-func (h Hand) isFlush() bool {
+func (h Hand) flush() bool {
 	for _, c := range h.cards {
 		if c.suit != h.cards[0].suit {
 			return false
@@ -78,11 +98,11 @@ func (h Hand) isFlush() bool {
 	return true
 }
 
-func (h Hand) isRoyal() bool {
+func (h Hand) royal() bool {
 	return h.cards[0].val > 10
 }
 
-func (h Hand) isStraight() bool {
+func (h Hand) straight() bool {
 	vals := h.Values()
 	// The first four cards must be in order.
 	for i := range 3 {
@@ -121,40 +141,36 @@ func (h Hand) straightValues() []int {
 }
 
 // Value returns the rank and relevant card values of a hand.
-func (h Hand) Value() (int, []int) {
-	count := h.Count() // [][2]int{value, count}
-	vals := h.Values()
-	if h.isRoyal() && h.isFlush() && h.isStraight() {
+func (h Hand) Value() (Rank, []int) {
+	count := h.Count()
+	if h.royal() && h.flush() && h.straight() {
 		return royalFlush, h.straightValues()
 	}
-	if h.isFlush() && h.isStraight() {
+	if h.flush() && h.straight() {
 		return straightFlush, h.straightValues()
 	}
-	if count[0][1] == 4 {
-		return fourOfAKind, []int{count[0][0], count[1][0]}
+	if count[0].occurances == 4 {
+		return fourOfAKind, count.Values()
 	}
-	if count[0][1] == 3 && count[1][1] == 2 {
-		return fullHouse, []int{count[0][0], count[1][0]}
+	if count[0].occurances == 3 && count[1].occurances == 2 {
+		return fullHouse, count.Values()
 	}
-	if h.isFlush() {
-		vals := h.Values()
-		slices.Reverse(vals)
-		return flush, vals
+	if h.flush() {
+		return flush, count.Values()
 	}
-	if h.isStraight() {
+	if h.straight() {
 		return straight, h.straightValues()
 	}
-	if count[0][1] == 3 {
-		return threeOfAKind, []int{count[0][0], count[1][0], count[2][0]}
+	if count[0].occurances == 3 {
+		return threeOfAKind, count.Values()
 	}
-	if count[0][1] == 2 && count[1][1] == 2 {
-		return twoPair, []int{count[0][0], count[1][0], count[2][0]}
+	if count[0].occurances == 2 && count[1].occurances == 2 {
+		return twoPair, count.Values()
 	}
-	if count[0][1] == 2 {
-		return onePair, []int{count[0][0], count[1][0], count[2][0], count[3][0]}
+	if count[0].occurances == 2 {
+		return onePair, count.Values()
 	}
-	slices.Reverse(vals)
-	return highCard, vals
+	return highCard, count.Values()
 }
 
 // NewHand returns a hand, validating the input.
