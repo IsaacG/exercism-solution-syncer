@@ -20,21 +20,21 @@ func Transpose(input []string) []string {
 	for idx := range longest {
 		// Work in reverse to handle length padding - each line must be as long as the next line.
 		idx = longest - idx - 1
-		result := ""
+		var result strings.Builder
 		for _, line := range input {
 			if idx < len(line) {
-				result += string(line[idx])
+				result.WriteByte(line[idx])
 			} else {
-				result += " "
+				result.WriteRune(' ')
 			}
 		}
 		// Strip trailing spaces then add back as much as is needed.
-		result = strings.TrimRight(result, " ")
-		for i := len(result); i < priorLen; i++ {
-			result += " "
+		padded := strings.TrimRight(result.String(), " ")
+		for i := len(padded); i < priorLen; i++ {
+			padded += " "
 		}
-		priorLen = len(result)
-		out = append(out, result)
+		priorLen = len(padded)
+		out = append(out, padded)
 	}
 	slices.Reverse(out)
 	return out
