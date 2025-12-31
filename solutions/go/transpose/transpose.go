@@ -17,9 +17,8 @@ func Transpose(input []string) []string {
 
 	var out []string
 	var priorLen int
-	for idx := range longest {
-		// Work in reverse to handle length padding - each line must be as long as the next line.
-		idx = longest - idx - 1
+	// Work in reverse to handle length padding - each line must be as long as the next line.
+	for idx := longest - 1; idx >= 0; idx-- {
 		var result strings.Builder
 		for _, line := range input {
 			if idx < len(line) {
