@@ -1,7 +1,6 @@
 package transpose
 
 import (
-	"slices"
 	"strings"
 )
 
@@ -15,26 +14,25 @@ func Transpose(input []string) []string {
 		}
 	}
 
-	var out []string
+	out := make([]string, longest)
 	var priorLen int
 	// Work in reverse to handle length padding - each line must be as long as the next line.
-	for idx := longest - 1; idx >= 0; idx-- {
+	for i := longest - 1; i >= 0; i-- {
 		var result strings.Builder
 		for _, line := range input {
-			if idx < len(line) {
-				result.WriteByte(line[idx])
+			if i < len(line) {
+				result.WriteByte(line[i])
 			} else {
 				result.WriteRune(' ')
 			}
 		}
 		// Strip trailing spaces then add back as much as is needed.
 		padded := strings.TrimRight(result.String(), " ")
-		for i := len(padded); i < priorLen; i++ {
+		for j := len(padded); j < priorLen; j++ {
 			padded += " "
 		}
 		priorLen = len(padded)
-		out = append(out, padded)
+		out[i] = padded
 	}
-	slices.Reverse(out)
 	return out
 }
