@@ -8,20 +8,20 @@ import (
 // Markdown tokens.
 const (
 	EOF = iota
-	TEXT
-	STRONG
-	EM
-	HEADER
-	NEWLINE
-	LIST
-	PAR
+	Text
+	Strong
+	Emphasis
+	Header
+	Newline
+	List
+	Paragraph
 )
 
 // tags maps some markdown tokens to HTML tags.
 var tags = map[int]string{
-	STRONG: "strong",
-	EM:     "em",
-	PAR:    "p",
+	Strong:    "strong",
+	Emphasis:  "em",
+	Paragraph: "p",
 }
 
 // Lexer reads a markdown string and emits tokens.
@@ -37,31 +37,32 @@ func NewLexer(markdown string) *Lexer {
 }
 
 // NextToken emits tokens from markdown.
-// The returns values are (1) the markdown text, (2) the token type, and (3) if the token is at the start of a line.
-func (l *Lexer) NextToken() (string /* text */, int /* token type */, bool /* first col */) {
-	firstCol := l.pos == 0 || l.data[l.pos-1] == '\n'
+// The return values are (1) the markdown text, (2) the token type, and (3) if the token is at the start of a line.
+func (l *Lexer) NextToken() (text string, token int, firstCol bool) {
+	firstCol = l.pos == 0 || l.data[l.pos-1] == '\n'
 
 	if l.pos == l.size {
 		return "", EOF, firstCol
 	}
 
-	switch l.data[l.pos] {
-	// '_' is either EM "_" or STRONG "__"; check next char to decide.
-	case '_':
+	text = l.data[l.pos : l.pos+1]
+	switch text {
+	// "_" is either Emphasis "_" or Strong "__"; check next char to decide.
+	case "_":
 		l.pos++
 		if l.pos < l.size && l.data[l.pos] == '_' {
 			l.pos++
-			return "__", STRONG, firstCol
+			return "__", Strong, firstCol
 		}
-		return "_", EM, firstCol
-	// '*' is a LIST item.
-	case '*':
+		return text, Emphasis, firstCol
+	// "*" is a List item.
+	case "*":
 		if firstCol {
 			l.pos++
-			return "*", LIST, firstCol
+			return text, List, firstCol
 		}
-	// '#' when 1-6 long is a header.
-	case '#':
+	// `#{1,6}` is a header.
+	case "#":
 		size := 1
 		header := "#"
 		for ; l.data[l.pos+size] == '#'; size++ {
@@ -69,14 +70,14 @@ func (l *Lexer) NextToken() (string /* text */, int /* token type */, bool /* fi
 		}
 		if firstCol && size < 7 {
 			l.pos += size
-			return header, HEADER, firstCol
+			return header, Header, firstCol
 		}
-	case '\n':
+	case "\n":
 		l.pos++
-		return "\n", NEWLINE, firstCol
+		return text, Newline, firstCol
 	}
 	l.pos++
-	return string(l.data[l.pos-1]), TEXT, firstCol
+	return text, Text, firstCol
 }
 
 // EatSpaces discards spaces.
@@ -100,18 +101,18 @@ func NewTokenPrinter() *TokenPrinter {
 	}
 }
 
-// List handles a LIST token.
+// List handles a List token.
 func (hw *TokenPrinter) List(text string, token int, firstCol bool) bool {
-	if !hw.state[LIST] {
+	if !hw.state[List] {
 		hw.Write("<ul>")
 	}
-	hw.state[LIST] = true
-	hw.state[PAR] = true
+	hw.state[List] = true
+	hw.state[Paragraph] = true
 	hw.Write("<li>")
 	return true
 }
 
-// Tag handles STRONG, EM and PAR tokens.
+// Tag handles Strong, Emphasis and Paragraph tokens.
 func (hw *TokenPrinter) Tag(text string, token int, firstCol bool) bool {
 	hw.state[token] = !hw.state[token]
 	if hw.state[token] {
@@ -122,37 +123,37 @@ func (hw *TokenPrinter) Tag(text string, token int, firstCol bool) bool {
 	return false
 }
 
-// Header handles HEADER tokens of various lengths.
+// Header handles Header tokens of various lengths.
 func (hw *TokenPrinter) Header(text string, token int, firstCol bool) bool {
 	hw.header = fmt.Sprintf("h%d", len(text))
-	hw.state[PAR] = true
+	hw.state[Paragraph] = true
 	hw.Write("<" + hw.header + ">")
 	return true
 }
 
-// Newline handles NEWLINE tokens, closing tags as needed.
+// Newline handles Newline tokens, closing tags as needed.
 func (hw *TokenPrinter) Newline(text string, token int, firstCol bool) bool {
 	if hw.header != "" {
 		hw.Write("</" + hw.header + ">")
 		hw.header = ""
 	}
-	if hw.state[LIST] {
+	if hw.state[List] {
 		hw.Write("</li>")
-		hw.state[PAR] = false
+		hw.state[Paragraph] = false
 	}
 	return true
 }
 
-// Text is used to handle TEXT and generally emit text.
+// Text is used to handle Text and generally emit text.
 func (hw *TokenPrinter) Text(text string, token int, firstCol bool) bool {
-	if hw.state[LIST] && firstCol {
+	if hw.state[List] && firstCol {
 		hw.Write("</ul>")
-		hw.state[LIST] = false
+		hw.state[List] = false
 	}
-	if !hw.state[PAR] {
+	if !hw.state[Paragraph] {
 		hw.Write("<p>")
 	}
-	hw.state[PAR] = true
+	hw.state[Paragraph] = true
 	hw.Write(text)
 	return false
 }
@@ -167,9 +168,9 @@ func (hw *TokenPrinter) Write(s string) {
 func (hw *TokenPrinter) Close() {
 	if hw.header != "" {
 		hw.Write("</" + hw.header + ">")
-	} else if hw.state[LIST] {
+	} else if hw.state[List] {
 		hw.Write("</li></ul>")
-	} else if hw.state[PAR] {
+	} else if hw.state[Paragraph] {
 		hw.Write("</p>")
 	}
 }
@@ -184,12 +185,12 @@ func Render(markdown string) string {
 	lexer := NewLexer(markdown)
 	printer := NewTokenPrinter()
 	ops := map[int]func(string, int, bool) bool{
-		NEWLINE: printer.Newline,
-		TEXT:    printer.Text,
-		STRONG:  printer.Tag,
-		EM:      printer.Tag,
-		HEADER:  printer.Header,
-		LIST:    printer.List,
+		Newline:  printer.Newline,
+		Text:     printer.Text,
+		Strong:   printer.Tag,
+		Emphasis: printer.Tag,
+		Header:   printer.Header,
+		List:     printer.List,
 	}
 
 	for {
