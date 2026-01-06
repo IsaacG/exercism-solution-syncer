@@ -4,14 +4,15 @@ package alphametics
 import (
 	"errors"
 	"strings"
+	"unicode/utf8"
 )
 
-// charWeight returns a weight of each rune, used to evaluate equations.
+// runeWeight returns a weight of each rune, used to evaluate equations.
 // "ABA + BC" has weights {'A': 101, 'B': 20, 'C': 1}.
-// By multiplying weights be char value, euqations can be evaluated quickly.
+// By multiplying weights be rune value, equations can be evaluated quickly.
 // For example, given values {'A': 2, 'B': 3, 'C': 4}, the above equation
 // has a value of 2 * 101 + 3 * 20 + 4 * 1.
-func charWeight(words []string) map[rune]int {
+func runeWeight(words []string) map[rune]int {
 	w := map[rune]int{}
 	for _, word := range words {
 		runes := []rune(word)
@@ -27,9 +28,9 @@ func charWeight(words []string) map[rune]int {
 // solver solves puzzles.
 type solver struct {
 	// Weight of runes for equation LHS - RHS = 0
-	charWeights map[rune]int
+	runeWeights map[rune]int
 	// List of runes to solve.
-	chars []rune
+	runes []rune
 	// Map indicating which runes cannot be zero.
 	nonZero map[rune]bool
 }
@@ -47,49 +48,50 @@ func newSolver(input string) (*solver, error) {
 	}
 	words = append(words, strings.Trim(parts[1], " "))
 
-	// Compute chars and nonZero chars.
+	// Compute runes and nonZero runes.
 	nonZero := make(map[rune]bool, len(words))
-	charMap := make(map[rune]struct{}, len(input))
+	runeMap := make(map[rune]struct{}, len(input))
 	for _, word := range words {
-		nonZero[rune(word[0])] = true
-		for _, c := range word {
-			charMap[c] = struct{}{}
+		r, _ := utf8.DecodeRuneInString(word)
+		nonZero[r] = true
+		for _, r := range word {
+			runeMap[r] = struct{}{}
 		}
 	}
 
-	chars := make([]rune, 0, len(charMap))
-	for c := range charMap {
-		chars = append(chars, c)
+	runes := make([]rune, 0, len(runeMap))
+	for r := range runeMap {
+		runes = append(runes, r)
 	}
 
 	weights := map[rune]int{}
 	// LHS weights are positive.
-	for c, w := range charWeight(words[:len(words)-1]) {
-		weights[c] += w
+	for r, w := range runeWeight(words[:len(words)-1]) {
+		weights[r] += w
 	}
 	// RHS weights are negative..
-	for c, w := range charWeight(words[len(words)-1:]) {
-		weights[c] -= w
+	for r, w := range runeWeight(words[len(words)-1:]) {
+		weights[r] -= w
 	}
 	return &solver{
-		chars:       chars,
+		runes:       runes,
 		nonZero:     nonZero,
-		charWeights: weights,
+		runeWeights: weights,
 	}, nil
 }
 
-// recursiveSolve solves a puzzle recursively, one char at a time.
+// recursiveSolve solves a puzzle recursively, one rune at a time.
 // An equation is valid when LHS == RHS. Alternatively, LHS - RHS == 0.
-// Equations can be solved recursively by replacing one char at a time and tracking
-// the computed "balance" of LHS - RHS. When all characters are evaluated, LHS - RHS = 0
+// Equations can be solved recursively by replacing one rune at a time and tracking
+// the computed "balance" of LHS - RHS. When all runes are evaluated, LHS - RHS = 0
 // must be true.
-func (p solver) recursiveSolve(balance int, chars []rune, used map[int]bool) (map[string]int, bool) {
-	// Split the chars into the current char to replace and the rest to be recursively handled.
-	c, rest := chars[0], chars[1:]
-	weight := p.charWeights[c]
-	// Try using values [0..9] or [1..9] as a value for c.
+func (p solver) recursiveSolve(balance int, runes []rune, used map[int]bool) (map[string]int, bool) {
+	// Split the runes into the current rune to replace and the rest to be recursively handled.
+	r, rest := runes[0], runes[1:]
+	weight := p.runeWeights[r]
+	// Try using values [0..9] or [1..9] as a value for r.
 	start := 0
-	if p.nonZero[c] {
+	if p.nonZero[r] {
 		start = 1
 	}
 	for i := start; i < 10; i++ {
@@ -98,17 +100,17 @@ func (p solver) recursiveSolve(balance int, chars []rune, used map[int]bool) (ma
 		}
 
 		used[i] = true
-		// If there are no remaining chars, check if the equation balances.
+		// If there are no remaining runes, check if the equation balances.
 		if len(rest) == 0 {
 			// If the equation balances, we found a solution.
 			if balance+weight*i == 0 {
-				return map[string]int{string(c): i}, true
+				return map[string]int{string(r): i}, true
 			}
 		} else {
-			// Check if we can find a solution with this value for c.
+			// Check if we can find a solution with this value for r.
 			vals, ok := p.recursiveSolve(balance+weight*i, rest, used)
 			if ok {
-				vals[string(c)] = i
+				vals[string(r)] = i
 				return vals, true
 			}
 		}
@@ -123,7 +125,7 @@ func Solve(puzzle string) (map[string]int, error) {
 	if err != nil {
 		return nil, err
 	}
-	solution, ok := p.recursiveSolve(0, p.chars, map[int]bool{})
+	solution, ok := p.recursiveSolve(0, p.runes, map[int]bool{})
 	if !ok {
 		return nil, errors.New("no solution found")
 	}
