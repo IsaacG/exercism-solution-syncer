@@ -1,13 +1,10 @@
 package transpose
 
-import (
-	"strings"
-)
-
 // Transpose a slice of strings.
 func Transpose(input []string) []string {
 	// Compute the longest line length.
 	var longest int
+	inputLen := len(input)
 	for _, line := range input {
 		if len(line) > longest {
 			longest = len(line)
@@ -18,21 +15,23 @@ func Transpose(input []string) []string {
 	var prevLen int
 	// Work in reverse to handle length padding - each line must be as long as the next line.
 	for i := longest - 1; i >= 0; i-- {
-		transposed := make([]byte, 0, longest)
-		for _, inputLine := range input {
+		transposed := make([]byte, inputLen)
+		var lastChar int
+		for j, inputLine := range input {
 			if i < len(inputLine) {
-				transposed = append(transposed, inputLine[i])
+				transposed[j] = inputLine[i]
+				lastChar = j
 			} else {
-				transposed = append(transposed, ' ')
+				transposed[j] = ' '
 			}
 		}
-		// Strip trailing spaces then add back as much as is needed.
-		padded := strings.TrimRight(string(transposed), " ")
-		for range prevLen - len(padded) {
-			padded += " "
+
+		// Determine the length of the transposed line.
+		// It must be the max of the prev line and the last char.
+		if prevLen < lastChar {
+			prevLen = lastChar
 		}
-		prevLen = len(padded)
-		out[i] = padded
+		out[i] = string(transposed[:prevLen+1])
 	}
 	return out
 }
