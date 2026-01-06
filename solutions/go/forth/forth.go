@@ -42,9 +42,10 @@ func (e *emulator) stackOp(op string, count int) error {
 		return fmt.Errorf("%s requires %d values; stack size is %d", op, count, length)
 	}
 	// Read the operands from the stack.
-	var result, operands []int
+	var result []int
+	operands := make([]int, count)
 	for i := range count {
-		operands = append(operands, e.stack[length-count+i])
+		operands[i] = e.stack[length-count+i]
 	}
 	switch op {
 	case "+":
@@ -54,7 +55,7 @@ func (e *emulator) stackOp(op string, count int) error {
 	case "*":
 		result = []int{operands[0] * operands[1]}
 	case "/":
-		if op == "/" && operands[1] == 0 {
+		if operands[1] == 0 {
 			return fmt.Errorf("illegal division by zero")
 		}
 		result = []int{operands[0] / operands[1]}
@@ -66,6 +67,8 @@ func (e *emulator) stackOp(op string, count int) error {
 		result = []int{operands[1], operands[0]}
 	case "OVER":
 		result = []int{operands[0], operands[1], operands[0]}
+	default:
+		panic("Invalid op, " + op)
 	}
 	// Update the stack.
 	e.stack = append(e.stack[:length-count], result...)
