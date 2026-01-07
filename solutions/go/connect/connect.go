@@ -3,6 +3,8 @@ package connect
 // coord represents a hex coordinate.
 type coord [2]int
 
+var hexDirections = []coord{{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, -1}, {-1, 1}}
+
 // add adds two coordinates and/or a coordinate and offset/direction.
 func (c coord) add(o coord) coord {
 	return coord{c[0] + o[0], c[1] + o[1]}
@@ -10,17 +12,17 @@ func (c coord) add(o coord) coord {
 
 // neighbors returns six neighboring coordinates.
 func (c coord) neighbors() []coord {
-	hexDirections := [][2]int{{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, -1}, {-1, 1}}
-	var n []coord
-	for _, d := range hexDirections {
-		n = append(n, c.add(d))
+	n := make([]coord, 6)
+	for i, d := range hexDirections {
+		n[i] = c.add(d)
 	}
 	return n
 }
 
 type game struct {
 	pieces map[rune]map[coord]bool
-	max    [2]int
+	// max stores the last row/col index.
+	max [2]int
 }
 
 // newGame parses and contructs a new game, storing all the X and O pieces.
@@ -78,6 +80,4 @@ func ResultOf(lines []string) (string, error) {
 		return "O", nil
 	}
 	return "", nil
-
-	panic("Please implement the ResultOf function")
 }
