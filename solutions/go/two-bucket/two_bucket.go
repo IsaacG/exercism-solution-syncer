@@ -10,9 +10,10 @@ func min(a, b int) int {
 }
 
 type bucket struct {
-	name          string
-	capacity      int
-	volume, moves int
+	name     string
+	capacity int
+	volume   int
+	moves    int
 }
 
 func (b *bucket) fillIfEmpty() {
@@ -21,12 +22,14 @@ func (b *bucket) fillIfEmpty() {
 		b.volume = b.capacity
 	}
 }
+
 func (b *bucket) emptyIfFull() {
 	if b.volume == b.capacity {
 		b.moves++
 		b.volume = 0
 	}
 }
+
 func (b *bucket) pourInto(other *bucket) {
 	amount := min(b.volume, other.capacity-other.volume)
 	if amount > 0 {
@@ -39,7 +42,7 @@ func (b *bucket) pourInto(other *bucket) {
 // Solve the bucket puzzle.
 func Solve(sizeBucketOne, sizeBucketTwo, goalAmount int, startBucket string) (string, int, int, error) {
 	if sizeBucketOne == 0 || sizeBucketTwo == 0 || goalAmount == 0 || (startBucket != "one" && startBucket != "two") {
-		return "", 0, 0, errors.New("no solution")
+		return "", 0, 0, errors.New("invalid inputs")
 	}
 
 	source := &bucket{name: "one", capacity: sizeBucketOne}
