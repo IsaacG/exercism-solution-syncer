@@ -1,4 +1,6 @@
 // zebra solution based on kahgoh's solution in Elixir.
+// Each "identifier" is represented by one bit allowing a uint16 to represent all the detail of a house.
+// Five houses (or a street) can be represented by a [5]uint16.
 package zebra
 
 import rand "math/rand/v2"
@@ -42,6 +44,14 @@ const (
 	Chesterfields    = 5 << ShiftSmoke
 )
 
+var nations = map[uint16]string{
+	Englishman: "Englishman",
+	Spaniard:   "Spaniard",
+	Japanese:   "Japanese",
+	Ukrainian:  "Ukrainian",
+	Norwegian:  "Norwegian",
+}
+
 // Street has 5 houses, each a uint16.
 type Street [5]uint16
 
@@ -52,14 +62,9 @@ func abs(a int) int {
 	return -a
 }
 
-func nationality(house uint16) string {
-	nations := map[uint16]string{
-		Englishman: "Englishman",
-		Spaniard:   "Spaniard",
-		Japanese:   "Japanese",
-		Ukrainian:  "Ukrainian",
-		Norwegian:  "Norwegian",
-	}
+// Return the string representation of the nationality of a house which meets a criteria.
+func (s Street) nationality(mask, value uint16) string {
+	house := s[s.index(mask, value)]
 	for k, v := range nations {
 		if house&MaskNationality == k {
 			return v
@@ -68,8 +73,9 @@ func nationality(house uint16) string {
 	return ""
 }
 
-func findHouse(street Street, mask, value uint16) int {
-	for idx, house := range street {
+// index returns the index of a house on a street which has a given property.
+func (s Street) index(mask, value uint16) int {
+	for idx, house := range s {
 		if house&mask == value {
 			return idx
 		}
@@ -77,6 +83,7 @@ func findHouse(street Street, mask, value uint16) int {
 	return -1
 }
 
+// swap returns a copy of a street which has a property swapped between two houses.
 func swap(street Street, idxA, idxB int, mask uint16) Street {
 	revMask := MaskAll ^ mask
 	copy := street
@@ -85,22 +92,28 @@ func swap(street Street, idxA, idxB int, mask uint16) Street {
 	return copy
 }
 
+// houseRule checks if a single house has two properties.
+// If a single house meets the requirements, return ok.
+// Otherwise return new streets where that rule holds true.
 func houseRule(street Street, maskA, valA, maskB, valB uint16) ([]Street, bool) {
-	a := findHouse(street, maskA, valA)
-	b := findHouse(street, maskB, valB)
+	a := street.index(maskA, valA)
+	b := street.index(maskB, valB)
 	if a == b {
 		return nil, true
 	}
 	return []Street{swap(street, a, b, maskA), swap(street, a, b, maskB)}, false
 }
 
+// neighborRule checks if two adjacent houses have two properties.
+// If the street meets the requirements, return ok.
+// Otherwise return new streets where that rule holds true.
 func neighborRule(street Street, maskA, valA, maskB, valB uint16) ([]Street, bool) {
-	a := findHouse(street, maskA, valA)
-	b := findHouse(street, maskB, valB)
+	a := street.index(maskA, valA)
+	b := street.index(maskB, valB)
 	if abs(a-b) == 1 {
 		return nil, true
 	}
-	alt := []Street{}
+	alt := make([]Street, 0, 4)
 	if a > 0 {
 		alt = append(alt, swap(street, a-1, b, maskB))
 	}
@@ -117,8 +130,8 @@ func neighborRule(street Street, maskA, valA, maskB, valB uint16) ([]Street, boo
 }
 
 func ruleGreenIvory(street Street) ([]Street, bool) {
-	a := findHouse(street, MaskColor, Green)
-	b := findHouse(street, MaskColor, Ivory)
+	a := street.index(MaskColor, Green)
+	b := street.index(MaskColor, Ivory)
 	if a == b+1 {
 		return nil, true
 	}
@@ -134,7 +147,7 @@ func ruleGreenIvory(street Street) ([]Street, bool) {
 
 func ruleMilkMiddle(street Street) ([]Street, bool) {
 	a := 2
-	b := findHouse(street, MaskDrink, Milk)
+	b := street.index(MaskDrink, Milk)
 	if a == b {
 		return nil, true
 	}
@@ -143,7 +156,7 @@ func ruleMilkMiddle(street Street) ([]Street, bool) {
 
 func ruleNorwayFirst(street Street) ([]Street, bool) {
 	a := 0
-	b := findHouse(street, MaskNationality, Norwegian)
+	b := street.index(MaskNationality, Norwegian)
 	if a == b {
 		return nil, true
 	}
@@ -170,6 +183,7 @@ var rules = []func(Street) ([]Street, bool){
 }
 
 func solver() Street {
+	// Start with a random street.
 	attribs := [][]uint16{
 		{Englishman, Spaniard, Japanese, Ukrainian, Norwegian},
 		{Dog, Fox, Snails, Horse, Zebra},
@@ -187,12 +201,15 @@ func solver() Street {
 		}
 	}
 
+	// Apply rules repeatedly and queue new mutations until we find a street that satisfies all the rules.
 	todo := []Street{street}
-	seen := map[Street]bool{}
+	seen := make(map[Street]bool)
 	for len(todo) != 0 {
+		// Pop a street to use.
 		street := todo[len(todo)-1]
 		todo = todo[:len(todo)-1]
 		found := true
+		// Apply all rules. Either we satisfy them all or we craft better alternatives.
 		for _, rule := range rules {
 			if alternatives, ok := rule(street); !ok {
 				for _, alternative := range alternatives {
@@ -220,14 +237,8 @@ type Solution struct {
 
 func SolvePuzzle() Solution {
 	street := solver()
-	solution := Solution{}
-	for _, house := range street {
-		if house&MaskDrink == Water {
-			solution.DrinksWater = nationality(house)
-		}
-		if house&MaskPet == Zebra {
-			solution.OwnsZebra = nationality(house)
-		}
+	return Solution{
+		DrinksWater: street.nationality(MaskDrink, Water),
+		OwnsZebra:   street.nationality(MaskPet, Zebra),
 	}
-	return solution
 }
