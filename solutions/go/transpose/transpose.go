@@ -7,7 +7,7 @@ func Transpose(input []string) []string {
 	inputLen := len(input)
 	for _, line := range input {
 		if len(line) > longest {
-			longest = len(line)
+			longest = len([]rune(line))
 		}
 	}
 
@@ -15,11 +15,12 @@ func Transpose(input []string) []string {
 	var prevLen int
 	// Work in reverse to handle length padding - each line must be as long as the next line.
 	for i := longest - 1; i >= 0; i-- {
-		transposed := make([]byte, inputLen)
+		transposed := make([]rune, inputLen)
 		var lastChar int
 		for j, inputLine := range input {
-			if i < len(inputLine) {
-				transposed[j] = inputLine[i]
+			line := []rune(inputLine)
+			if i < len(line) {
+				transposed[j] = line[i]
 				lastChar = j
 			} else {
 				transposed[j] = ' '
@@ -28,9 +29,7 @@ func Transpose(input []string) []string {
 
 		// Determine the length of the transposed line.
 		// It must be the max of the prev line and the last char.
-		if prevLen < lastChar {
-			prevLen = lastChar
-		}
+		prevLen = max(prevLen, lastChar)
 		out[i] = string(transposed[:prevLen+1])
 	}
 	return out
