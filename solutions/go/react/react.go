@@ -35,6 +35,7 @@ func (c *myCell) runCallbacks() {
 func (c *myCell) dependents() []*computeCell {
 	return c.deps
 }
+
 func (c *myCell) addDep(dep *computeCell) {
 	c.deps = append(c.deps, dep)
 }
@@ -133,10 +134,9 @@ func New() Reactor {
 }
 
 func (r *reactor) CreateInput(initial int) InputCell {
-	c := &inputCell{
+	return &inputCell{
 		myCell{value: initial},
 	}
-	return c
 }
 
 func (r *reactor) CreateCompute1(dep Cell, compute func(int) int) ComputeCell {
