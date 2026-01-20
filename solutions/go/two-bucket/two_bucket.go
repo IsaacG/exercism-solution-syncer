@@ -2,13 +2,6 @@ package twobucket
 
 import "errors"
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 type bucket struct {
 	name     string
 	capacity int
