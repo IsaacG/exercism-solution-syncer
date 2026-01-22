@@ -1,12 +1,8 @@
 package pov
 
-import (
-	"errors"
-)
-
 // Tree holds a tree structure.
 type Tree struct {
-	val    string
+	value  string
 	parent *Tree
 	// adjacencies = parent + children
 	adjacencies []*Tree
@@ -22,17 +18,19 @@ func New(value string, children ...*Tree) *Tree {
 	return t
 }
 
-// findNode searches downwards (ignoring the parent) for a node.
-func (tr *Tree) findNode(value string) (*Tree, error) {
+// findNode searches downwards (ignoring the parent) for a node and returns the path and if the node exists.
+func (tr *Tree) findNode(value string) ([]*Tree, bool) {
 	if tr.Value() == value {
-		return tr, nil
+		return []*Tree{tr}, true
 	}
 	for _, child := range tr.Children() {
-		if found, err := child.findNode(value); err == nil {
-			return found, nil
+		if found, ok := child.findNode(value); ok {
+			path := make([]*Tree, 1, len(found)+1)
+			path[0] = tr
+			return append(path, found...), true
 		}
 	}
-	return nil, errors.New("unable to find node")
+	return nil, false
 }
 
 // setParent recursively updates the parent of a tree.
@@ -45,7 +43,7 @@ func (tr *Tree) setParent(parent *Tree) {
 
 // Value returns the value at the root of a tree.
 func (tr *Tree) Value() string {
-	return tr.val
+	return tr.value
 }
 
 // Children returns a slice containing the children of a tree.
@@ -61,10 +59,11 @@ func (tr *Tree) Children() []*Tree {
 
 // FromPov returns the pov from the node specified in the argument.
 func (tr *Tree) FromPov(from string) *Tree {
-	root, err := tr.findNode(from)
-	if err != nil {
+	path, ok := tr.findNode(from)
+	if !ok {
 		return nil
 	}
+	root := path[len(path)-1]
 	root.setParent(nil)
 	return root
 }
@@ -73,26 +72,21 @@ func (tr *Tree) FromPov(from string) *Tree {
 // O(n^2) time.
 func (tr *Tree) PathTo(from, to string) []string {
 	// Validate the from and to exist in the tree.
-	if _, err := tr.findNode(from); err != nil {
+	if _, ok := tr.findNode(from); !ok {
 		return nil
 	}
-	if _, err := tr.findNode(to); err != nil {
+	if _, ok := tr.findNode(to); !ok {
 		return nil
 	}
 
 	tr = tr.FromPov(from)
-	out := []string{tr.Value()}
-
-	// Walk the tree one step at a time towards the "to".
-	for ; tr.Value() != to; out = append(out, tr.Value()) {
-		for _, child := range tr.Children() {
-			// When we find a child leading towards the target, repeat from that child.
-			if _, err := child.findNode(to); err == nil {
-				tr = child
-				break
-			}
-		}
-
+	path, ok := tr.findNode(to)
+	if !ok {
+		return nil
+	}
+	out := make([]string, len(path))
+	for i, t := range path {
+		out[i] = t.Value()
 	}
 	return out
 }
