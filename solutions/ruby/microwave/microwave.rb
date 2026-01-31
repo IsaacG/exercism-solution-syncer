@@ -4,6 +4,6 @@ class Microwave
   end
 
   def timer
-    "%02d:%02d" % [@sec / 60, @sec % 60]
+    format('%02<hour>d:%02<minute>d', { hour: @sec / 60, minute: @sec % 60 })
   end
 end
