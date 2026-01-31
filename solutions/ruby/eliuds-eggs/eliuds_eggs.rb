@@ -1,12 +1,10 @@
 class EliudsEggs
   def self.egg_count(number)
     count = 0
-    while number > 0
-      if number & 1 == 1
-        count += 1
-      end
+    while number.positive?
+      count += 1 if number & 1 == 1
       number >>= 1
     end
-    return count
+    count
   end
 end
