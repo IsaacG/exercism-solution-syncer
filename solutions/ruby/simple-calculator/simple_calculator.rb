@@ -5,22 +5,22 @@ class SimpleCalculator
   end
 
   def self.calculate(first_operand, second_operand, operation)
-    unless operation != nil && operation != "" && ALLOWED_OPERATIONS.include?(operation)
-      raise UnsupportedOperation.new
+    raise UnsupportedOperation, '' unless !operation.nil? && operation != '' && ALLOWED_OPERATIONS.include?(operation)
+    raise ArgumentError, '' unless first_operand.is_a?(Integer) && second_operand.is_a?(Integer)
+    return 'Division by zero is not allowed.' if operation == '/' && second_operand.zero?
+
+    result = compute(first_operand, second_operand, operation)
+    "#{first_operand} #{operation} #{second_operand} = #{result}"
+  end
+
+  def self.compute(first_operand, second_operand, operation)
+    case operation
+    when '+'
+      first_operand + second_operand
+    when '*'
+      first_operand * second_operand
+    when '/'
+      first_operand / second_operand
     end
-    if operation == '/' && second_operand == 0
-      return 'Division by zero is not allowed.'
-    end
-    unless first_operand.is_a?(Integer) && second_operand.is_a?(Integer)
-      raise ArgumentError.new
-    end
-    if operation == '+'
-      result = first_operand + second_operand
-    elsif operation == '*'
-      result = first_operand * second_operand
-    elsif operation == '/'
-      result = first_operand / second_operand
-    end
-    return "#{first_operand} #{operation} #{second_operand} = #{result}"
   end
 end
