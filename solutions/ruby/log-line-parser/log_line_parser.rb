@@ -4,15 +4,15 @@ class LogLineParser
   end
 
   def message
-    return @line.split(': ')[1].strip
+    @line.split(': ')[1].strip
   end
 
   def log_level
     level = @line.split(': ')[0].downcase
-    return level[1, level.length - 2]
+    level[1, level.length - 2]
   end
 
   def reformat
-    return "#{message} (#{log_level})"
+    "#{message} (#{log_level})"
   end
 end
