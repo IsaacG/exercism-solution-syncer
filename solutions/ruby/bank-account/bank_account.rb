@@ -4,52 +4,36 @@ class BankAccount
   end
 
   def open
-    if @open
-      raise ArgumentError.new("You can't open an already open account.")
-    end
+    raise ArgumentError, "You can't open an already open account." if @open
+
     @open = true
     @balance = 0
   end
 
   def deposit(amnt)
-    unless @open
-      raise ArgumentError.new("You can't deposit money into a closed account.")
-    end
-    if amnt < 0
-      raise ArgumentError.new("You can't deposit a negative amount.")
-    end
+    raise ArgumentError, "You can't deposit money into a closed account." unless @open
+    raise ArgumentError, "You can't deposit a negative amount." if amnt.negative?
 
     @balance += amnt
   end
 
   def withdraw(amnt)
-    unless @open
-      raise ArgumentError.new("You can't withdraw money into a closed account.")
-    end
-    if amnt < 0
-      raise ArgumentError.new("You can't withdraw a negative amount.")
-    end
-    if amnt > @balance
-      raise ArgumentError.new("You can't withdraw more than you have.")
-    end
+    raise ArgumentError, "You can't withdraw money into a closed account." unless @open
+    raise ArgumentError, "You can't withdraw a negative amount." if amnt.negative?
+    raise ArgumentError, "You can't withdraw more than you have." if amnt > @balance
 
     @balance -= amnt
   end
 
   def close
-    unless @open
-      raise ArgumentError.new("You can't close an already closed account.")
-    end
+    raise ArgumentError, "You can't close an already closed account." unless @open
 
     @open = false
   end
 
   def balance
-    unless @open
-      raise ArgumentError.new("You can't check the balance of a closed account.")
-    end
+    raise ArgumentError, "You can't check the balance of a closed account." unless @open
 
     @balance
   end
 end
-
