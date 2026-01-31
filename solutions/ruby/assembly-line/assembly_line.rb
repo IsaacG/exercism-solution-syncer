@@ -4,19 +4,12 @@ class AssemblyLine
   end
 
   def production_rate_per_hour
-    if 1 <= @speed && @speed <= 4
-      rate = 1.00
-    elsif 5 <= @speed && @speed <= 8
-      rate = 0.90
-    elsif @speed == 9
-      rate = 0.80
-    else
-      rate = 0.77
-    end
-    return 221 * @speed * rate
+    rates = [[4, 1.00], [8, 0.90], [9, 0.80]]
+    rate = (rates.find { |speed_rate| @speed <= speed_rate[0] } || [nil, 0.77])[1]
+    221 * @speed * rate
   end
 
   def working_items_per_minute
-    return (production_rate_per_hour / 60).floor
+    (production_rate_per_hour / 60).floor
   end
 end
