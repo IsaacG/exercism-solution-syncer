@@ -1,14 +1,16 @@
 class LogLineParser
   def initialize(line)
-    @line = line
+    @_level, @_msg = line.split(': ')
   end
 
+  attr_accessor :_level, :_msg
+
   def message
-    @line.split(': ')[1].strip
+    @_msg.strip
   end
 
   def log_level
-    level = @line.split(': ')[0].downcase
+    level = @_level.downcase
     level[1, level.length - 2]
   end
 
