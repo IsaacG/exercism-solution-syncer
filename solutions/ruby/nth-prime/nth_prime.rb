@@ -1,30 +1,24 @@
-class PrimeGenerator
-  private
-
-  attr_accessor :primes
-
-  def initialize
-    self.primes = [2, 3]
-  end
-
-  public
-
-  def nth(num)
-    raise ArgumentError if num < 1
-
-    candidate = primes[-1]
-    while primes.length < num
-      candidate += 2
-      primes.append(candidate) if primes.all? { |prime| (candidate % prime).positive? }
-    end
-    primes[num - 1]
-  end
-end
-
-GENERATOR = PrimeGenerator.new
-
 module Prime
-  def self.nth(num)
-    GENERATOR.nth(num)
+  def self.nth(count)
+    raise ArgumentError if count < 1
+
+    found = [2]
+    candidate = 1
+    while found.length < count
+      candidate += 2
+      is_prime = true
+      limit = Integer.sqrt(candidate)
+
+      found.each do |prime|
+        break if prime > limit
+
+        if (candidate % prime).zero?
+          is_prime = false
+          break
+        end
+      end
+      found.append(candidate) if is_prime
+    end
+    found[count - 1]
   end
 end
