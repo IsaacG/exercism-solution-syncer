@@ -13,7 +13,7 @@ class HighScores
 
   def personal_top_three()= scores.sort.reverse[0, 3]
 
-  def latest()= scores[-1]
+  def latest()= scores.last
 
   def personal_best()= scores.max
 
