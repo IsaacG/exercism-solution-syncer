@@ -6,7 +6,7 @@ class LogLineParser
 
   def initialize(line)
     level, message = line.split(': ')
-    self.log_level = level.downcase[1, level.length - 2]
+    self.log_level = level.downcase.delete_prefix('[').delete_suffix(']')
     self.message = message.strip
   end
 
