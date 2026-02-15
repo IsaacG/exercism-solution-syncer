@@ -3,7 +3,7 @@ module SavingsAccount
   MAX_RATE = 2.475
 
   def self.interest_rate(balance)
-    (RATES.to_a.find { |threshold, _| balance < threshold } || [0, MAX_RATE])[1]
+    (RATES.to_a.find { |threshold, _| balance < threshold } || [0, MAX_RATE]).last
   end
 
   def self.annual_balance_update(balance)
