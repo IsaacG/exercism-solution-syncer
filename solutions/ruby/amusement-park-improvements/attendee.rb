@@ -2,7 +2,6 @@ class Attendee
 
   private
 
-  attr_writer :pass_id
   attr_accessor :height
 
   def initialize(height)
@@ -11,22 +10,17 @@ class Attendee
 
   public
 
-  attr_reader :pass_id
+  attr_accessor :pass_id
 
-  def issue_pass!(pass_id)
-    self.pass_id = pass_id
-  end
+  alias has_pass? pass_id
+  alias issue_pass! pass_id=
 
   def revoke_pass!
     self.pass_id = false
   end
 
-  def has_pass?
-    !!pass_id
-  end
-
   def fits_ride?(ride_minimum_height)
-    @height >= ride_minimum_height
+    height >= ride_minimum_height
   end
 
   def allowed_to_ride?(ride_minimum_height)
