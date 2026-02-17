@@ -7,7 +7,7 @@ class SimpleCalculator
 
   def self.calculate(first_operand, second_operand, operation)
     raise UnsupportedOperation, '' unless ALLOWED_OPERATIONS.include?(operation) && first_operand.respond_to?(operation)
-    raise ArgumentError, '' unless [first_operand, second_operand].all? { it.is_a?(Integer) }
+    raise ArgumentError, '' unless [first_operand, second_operand].all? { _1.is_a?(Integer) }
     return 'Division by zero is not allowed.' if operation == '/' && second_operand.zero?
 
     result = first_operand.send(operation, second_operand)
