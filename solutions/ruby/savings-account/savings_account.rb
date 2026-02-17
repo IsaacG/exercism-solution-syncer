@@ -1,9 +1,13 @@
 module SavingsAccount
-  RATES = { 0 => 3.213, 1000 => 0.5, 5000 => 1.621 }.freeze
-  MAX_RATE = 2.475
+  BALANCE_TO_RATES = {
+    (...0)        => 3.213,
+    (0...1000)    => 0.5,
+    (1000...5000) => 1.621,
+    (5000..)      => 2.475
+  }.freeze
 
   def self.interest_rate(balance)
-    (RATES.to_a.find { |threshold, _| balance < threshold } || [0, MAX_RATE]).last
+    BALANCE_TO_RATES.each { |range, interest| return interest if range.include?(balance) }
   end
 
   def self.annual_balance_update(balance)
@@ -11,11 +15,9 @@ module SavingsAccount
   end
 
   def self.years_before_desired_balance(current_balance, desired_balance)
-    years = 0
-    while current_balance < desired_balance
-      years += 1
+    (0..).each do |year|
+      return year if current_balance >= desired_balance
       current_balance = annual_balance_update(current_balance)
     end
-    years
   end
 end
