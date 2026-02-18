@@ -1,8 +1,7 @@
 module Luhn
   def self.valid?(identifier)
     identifier = identifier.delete(' ').reverse
-    return false if identifier.length == 1
-    return false if identifier.match?(/[^0-9]/)
+    return false if identifier.length == 1 || identifier.match?(/[^0-9]/)
 
     sum = identifier.chars.map(&:to_i).each_with_index.sum do |digit, i|
       if i.odd?
