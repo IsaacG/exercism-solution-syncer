@@ -8,21 +8,23 @@ module SavingsAccount
 
   private_constant :BALANCE_TO_RATES
 
-  def self.interest_rate(balance)
+  def interest_rate(balance)
     BALANCE_TO_RATES.each do |range, rate|
       return rate if range.include?(balance)
     end
   end
 
-  def self.annual_balance_update(balance)
+  def annual_balance_update(balance)
     balance + balance * interest_rate(balance) / 100
   end
 
-  def self.years_before_desired_balance(current_balance, desired_balance)
+  def years_before_desired_balance(current_balance, desired_balance)
     (0..).each do |year|
       return year if current_balance >= desired_balance
 
       current_balance = annual_balance_update(current_balance)
     end
   end
+
+  module_function :interest_rate, :annual_balance_update, :years_before_desired_balance
 end.freeze
