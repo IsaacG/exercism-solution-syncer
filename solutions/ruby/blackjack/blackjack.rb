@@ -4,17 +4,16 @@ module Blackjack
   STAND = 'S'.freeze
   WIN = 'W'.freeze
 
-  TEN_FACE_CARDS = %w[jack queen king].freeze
-  SOME_CARDS = %w[two three four five six seven eight nine ten ace].freeze
+  private_constant
 
-  private_constant :TEN_FACE_CARDS, :SOME_CARDS
+  CARD_VALUES = (
+    %w[jack queen king].map { |card| [card, 10] } +
+    %w[two three four five six seven eight nine ten ace].each_with_index.map { |card, index| [card, index + 2] }
+  ).to_h.freeze
 
-  def parse_card(card)
-    values = {}
-    TEN_FACE_CARDS.each { |card| values[card] = 10 }
-    SOME_CARDS.each_index { |i| values[SOME_CARDS[i]] = i + 2 }
-    values.fetch(card, 0)
-  end
+  module_function
+
+  def parse_card(card)= CARD_VALUES.fetch(card, 0)
 
   def card_range(card1, card2)
     case [card1, card2].map { parse_card(_1) }.sum
@@ -35,6 +34,4 @@ module Blackjack
     when 'blackjack' then parse_card(dealer_card) >= 10 ? STAND : WIN
     end
   end
-
-  module_function :parse_card, :card_range, :first_turn
 end
