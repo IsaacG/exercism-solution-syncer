@@ -1,4 +1,6 @@
 module SavingsAccount
+  private_constant
+
   BALANCE_TO_RATES = {
         ...0    => 3.213,
        0...1000 => 0.5,
@@ -6,7 +8,7 @@ module SavingsAccount
     5000...     => 2.475
   }.freeze
 
-  private_constant :BALANCE_TO_RATES
+  module_function
 
   def interest_rate(balance)
     BALANCE_TO_RATES.each do |range, rate|
@@ -25,6 +27,4 @@ module SavingsAccount
       current_balance = annual_balance_update(current_balance)
     end
   end
-
-  module_function :interest_rate, :annual_balance_update, :years_before_desired_balance
-end.freeze
+end
