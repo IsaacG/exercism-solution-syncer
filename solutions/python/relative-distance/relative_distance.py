@@ -8,7 +8,10 @@ class RelativeDistance:
     def __init__(self, family_tree: dict[str, list[str]]):
         relatives = collections.defaultdict(set)
         for a, bs in family_tree.items():
+            # a is related to all people in bs
             relatives[a].update(bs)
+            # everyone in bs is related to a,
+            # as well as to everyone in bs that is not themselves
             for b in bs:
                 relatives[b].add(a)
                 relatives[b].update(c for c in bs if c != b)
