@@ -1,19 +1,8 @@
 module Tournament
   TEMPLATE = "%<name>-30s | %<played>2s | %<win>2s | %<draw>2s | %<loss>2s | %<points>2s\n".freeze
 
-  def self.initialize_teams(input)
-    teams = {}
-    input
-      .lines(chomp: true)
-      .map { |line| line.split(';')[0, 2] }
-      .flatten
-      .uniq
-      .each { |team| teams[team] = { name: team, win: 0, loss: 0, draw: 0 } }
-    teams
-  end
-
   def self.compute(input)
-    teams = initialize_teams(input)
+    teams = Hash.new { |hash, team| hash[team] = { name: team, win: 0, loss: 0, draw: 0 } }
 
     input.strip.each_line(chomp: true) do |line|
       a, b, result = line.split(';')
@@ -27,6 +16,11 @@ module Tournament
       end
     end
 
+    teams.each_value do |v|
+      v[:played] = %i[win loss draw].sum { |i| v[i] }
+      v[:points] = 3 * v[:win] + 1 * v[:draw]
+    end
+
     teams
   end
 
@@ -37,19 +31,10 @@ module Tournament
     teams
       .each_value
       .sort_by { |team| [-points[team[:name]], team[:name]] }
-      .map do |team|
-        format(
-          TEMPLATE,
-          {
-            name: team[:name],
-            played: %i[win loss draw].sum { |i| team[i] },
-            win: team[:win],
-            loss: team[:loss],
-            draw: team[:draw],
-            points: points[team[:name]]
-          }
-        )
-      end
+      # This line fails with,
+      # TypeError: no implicit conversion of Symbol into Integer
+      # .sort_by { |team| [-team[:name][:points], team[:name]] }
+      .map { |team| format(TEMPLATE, team) }
       .unshift(format(TEMPLATE, { name: 'Team', played: 'MP', win: 'W', loss: 'L', draw: 'D', points: 'P' }))
       .join
   end
