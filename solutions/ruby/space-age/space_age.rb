@@ -10,16 +10,7 @@ class SpaceAge
     self.earth_years = age / 365.25 / 24 / 60 / 60
   end
 
-  def on_planet(planet)
-    (earth_years / ORBITS[planet]).round(2)
-  end
+  def on_planet(planet)= (earth_years / ORBITS[planet]).round(2)
 
-  def on_mercury()= on_planet(:mercury)
-  def on_venus()= on_planet(:venus)
-  def on_earth()= on_planet(:earth)
-  def on_mars()= on_planet(:mars)
-  def on_jupiter()= on_planet(:jupiter)
-  def on_saturn()= on_planet(:saturn)
-  def on_uranus()= on_planet(:uranus)
-  def on_neptune()= on_planet(:neptune)
+  ORBITS.each_key { |planet| define_method("on_#{planet}") { on_planet(planet) } }
 end
