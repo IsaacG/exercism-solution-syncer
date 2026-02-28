@@ -3,7 +3,7 @@ module Tournament
 
   def self.add_summaries(teams)
     teams.each_value do |v|
-      v[:played] = %i[win loss draw].sum { |i| v[i] }
+      v[:played] = v.values_at(:win, :loss, :draw).sum
       v[:points] = 3 * v[:win] + 1 * v[:draw]
     end
   end
