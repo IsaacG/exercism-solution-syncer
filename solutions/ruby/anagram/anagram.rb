@@ -9,9 +9,7 @@ class Anagram
   end
 
   def count(word)
-    count = Hash.new(0)
-    word.downcase.chars { |c| count[c] += 1 }
-    count
+    word.downcase.chars.tally
   end
 
   public
