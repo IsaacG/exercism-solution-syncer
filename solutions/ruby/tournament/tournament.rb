@@ -1,7 +1,9 @@
 class Tournament
-  private
-
   TEMPLATE = "%<name>-30s | %<played>2s | %<win>2s | %<draw>2s | %<loss>2s | %<points>2s\n".freeze
+
+  private_constant :TEMPLATE
+
+  private
 
   attr_accessor :teams
 
