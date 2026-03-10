@@ -1,5 +1,5 @@
 // Package protein translates between codons and proteins.
-package protein
+package proteintranslation
 
 import "errors"
 
@@ -54,6 +54,9 @@ func FromRNA(s string) ([]string, error) {
 		} else {
 			proteins = append(proteins, p)
 		}
+	}
+	if len(s) % 3 != 0 {
+		return nil, ErrInvalidBase
 	}
 	return proteins, nil
 }
