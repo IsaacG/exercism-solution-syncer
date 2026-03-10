@@ -1,5 +1,5 @@
 // Package scrabble solves the scrabble exercise.
-package scrabble
+package scrabblescore
 
 import "strings"
 
