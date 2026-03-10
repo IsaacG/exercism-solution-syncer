@@ -1,5 +1,5 @@
 // Package summultiples sums multiples.
-package summultiples
+package sumofmultiples
 
 func isDiv(n int, d []int) bool {
 	for _, i := range d {
