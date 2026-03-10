@@ -1,5 +1,5 @@
 // Package circular implements a circular buffer.
-package circular
+package circularbuffer
 
 import "errors"
 
