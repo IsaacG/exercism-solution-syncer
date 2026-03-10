@@ -1,5 +1,5 @@
 // Package prime computes prime factors.
-package prime
+package primefactors
 
 // Factors computes prime factors.
 func Factors(n int64) []int64 {
