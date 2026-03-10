@@ -109,6 +109,23 @@ func (l *List) Last() *Node {
 	return l.tail.prev
 }
 
+func (l *List) Delete(v any) {
+	for e := l.First(); e != l.tail; e = e.next {
+		if e.Value == v {
+			e.unlink()
+			return
+		}
+	}
+}
+
+func (l *List) Count() int {
+	var count int
+	for e := l.head.next; e != l.tail; e = e.next {
+		count++
+	}
+	return count
+}
+
 func (l *List) isEmpty() bool {
 	return l.head.next == l.tail
 }
