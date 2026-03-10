@@ -84,7 +84,7 @@ func ToRomanNumeral(i int) (string, error)  {
 		{1, "X", "V", "I"},
 	}
 
-	if i < 1 || i > 3000 {
+	if i < 1 || i > 5000 {
 		return s, errors.New("value out of range")
 	}
 	for _, set := range sets {
