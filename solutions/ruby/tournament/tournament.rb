@@ -10,22 +10,19 @@ class Tournament
 
   private
 
-  attr_accessor :teams
+  attr_accessor :results
 
   def initialize(input)
-    self.teams = Hash.new { |hash, team| hash[team] = { name: team, win: 0, loss: 0, draw: 0 } }
-    input
-      .strip
-      .lines
-      .map { |l| l.strip.split(';') }
-      .map { |team_a, team_b, result| [team_a, team_b].zip(RESULTS[result]) }
-      .flatten(1)
-      .each { |team, outcome| teams[team][outcome] += 1 }
+    self.results = Hash.new { |hash, team| hash[team] = { name: team, win: 0, loss: 0, draw: 0 } }
+    input.strip.each_line(chomp: true) do |line|
+      *teams, result = *line.strip.split(';')
+      teams.zip(RESULTS[result]).each { |team, outcome| results[team][outcome] += 1 }
+    end
     add_summaries
   end
 
   def add_summaries
-    teams.each_value do |v|
+    results.each_value do |v|
       v[:played] = v.values_at(:win, :loss, :draw).sum
       v[:points] = 3 * v[:win] + 1 * v[:draw]
     end
@@ -34,7 +31,7 @@ class Tournament
   public
 
   def to_s
-    teams
+    results
       .each_value
       .sort_by { |team| [-team[:points], team[:name]] }
       .map { |team| format(TEMPLATE, team) }
