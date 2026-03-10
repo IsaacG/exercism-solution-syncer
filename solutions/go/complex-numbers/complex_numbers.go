@@ -1,5 +1,5 @@
 // Package complex provides complex number support.
-package complex
+package complexnumbers
 
 import "math"
 
