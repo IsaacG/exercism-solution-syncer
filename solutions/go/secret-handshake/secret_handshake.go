@@ -1,5 +1,5 @@
 // Package secret interprets a secret handshake.
-package secret
+package secrethandshake
 
 // Handshake performs the secret handshake.
 func Handshake(code uint) []string {
