@@ -31,7 +31,7 @@ var localeConfig = map[string]struct {
 		dateFormat:             "02-01-2006",
 		thousandsSeparator:     ".",
 		positiveCurrencyFormat: "%s %s,%02s ",
-		negativeCurrencyFormat: "%s %s,%02s-",
+		negativeCurrencyFormat: "%s -%s,%02s ",
 	},
 	"en-US": {
 		header:                 []string{"Date", "Description", "Change"},
@@ -134,6 +134,6 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 		ss[i] = s
 	}
 
-	header := fmt.Sprintf("%-10s | %-25s | %s\n", l.header[0], l.header[1], l.header[2])
+	header := fmt.Sprintf("%-10s | %-25s | %-13s\n", l.header[0], l.header[1], l.header[2])
 	return header + strings.Join(ss, ""), nil
 }
