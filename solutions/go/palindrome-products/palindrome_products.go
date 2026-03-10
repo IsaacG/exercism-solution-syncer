@@ -1,4 +1,4 @@
-package palindrome
+package palindromeproducts
 
 import (
 	"errors"
@@ -34,7 +34,7 @@ func updateProduct(p Product, product, a, b int, compare func(int, int) bool) Pr
 func Products(fmin, fmax int) (Product, Product, error) {
 	var low, high Product
 	if fmin > fmax {
-		return low, high, errors.New("fmin > fmax")
+		return low, high, errors.New("min must be <= max")
 	}
 	for a := fmin; a <= fmax; a++ {
 		for b := a; b <= fmax; b++ {
@@ -44,9 +44,6 @@ func Products(fmin, fmax int) (Product, Product, error) {
 				high = updateProduct(high, product, a, b, func(x, y int) bool { return x > y })
 			}
 		}
-	}
-	if low.Number == 0 {
-		return low, high, errors.New("no palindromes")
 	}
 	return low, high, nil
 }
