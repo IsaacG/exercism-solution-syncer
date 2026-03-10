@@ -1,6 +1,6 @@
-package space
+package spaceage
 
-const earthYear = 31557600 // seconds
+const earthYear = 31557600  // seconds
 
 type Planet string
 
