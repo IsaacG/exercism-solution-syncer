@@ -1,4 +1,4 @@
-package ocr
+package ocrnumbers
 
 import (
 	"fmt"
@@ -14,9 +14,14 @@ const recognizeDigit = 0
 var digits []string
 
 // Recognize runs OCR.
-func Recognize(display string) []string {
-
+func Recognize(display string) ([]string, error) {
 	lines := strings.Split(strings.Trim(display, "\n"), "\n")
+	if len(lines) % 4 != 0 {
+		return nil, fmt.Errorf("number of input lines is not a multiple of four")
+	}
+	if len(lines) > 0 && len(lines[0]) % 3 != 0 {
+		return nil, fmt.Errorf("number of input columns is not a multiple of three")
+	}
 	var out []string
 	// For each row of digits,
 	for i := 0; i < len(lines); i += 4 {
@@ -38,7 +43,7 @@ func Recognize(display string) []string {
 		}
 		out = append(out, line.String())
 	}
-	return out
+	return out, nil
 }
 
 func init() {
