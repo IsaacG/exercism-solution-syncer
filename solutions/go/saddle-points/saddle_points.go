@@ -1,4 +1,4 @@
-package matrix
+package saddlepoints
 
 import (
 	"strconv"
