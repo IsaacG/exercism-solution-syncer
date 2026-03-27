@@ -33,11 +33,18 @@ func (l *List) Push(element int) {
 
 func (l *List) Pop() (int, error) {
 	if l.root == nil {
-		return 0, errors.New("cannot pop from empty list")
+		return 0, errors.New("list is empty")
 	}
 	val := l.root.value
 	l.root = l.root.next
 	return val, nil
+}
+
+func (l *List) Peek() (int, error) {
+	if l.root == nil {
+		return 0, errors.New("list is empty")
+	}
+	return l.root.value, nil
 }
 
 func (l *List) Array() []int {
