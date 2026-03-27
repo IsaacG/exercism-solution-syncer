@@ -1,5 +1,7 @@
 // Package letter counts letter frequency.
-package letter
+package parallelletterfrequency
+
+import "strings"
 
 // FreqMap records the frequency of each rune in a given text.
 type FreqMap map[rune]int
@@ -8,8 +10,10 @@ type FreqMap map[rune]int
 // data as a FreqMap.
 func Frequency(s string) FreqMap {
 	m := FreqMap{}
-	for _, r := range s {
-		m[r]++
+	for _, r := range strings.ToLower(s) {
+		if (r >= 'a' && r <= 'z') || r > 200 {
+			m[r]++
+		}
 	}
 	return m
 }
