@@ -1,7 +1,6 @@
-package school
+package gradeschool
 
 import (
-	"cmp"
 	"slices"
 )
 
@@ -22,7 +21,10 @@ func New() *School {
 }
 
 // Add a student to a specific level/grade.
-func (s *School) Add(student string, level int) {
+func (s *School) Add(student string, level int) bool {
+	if slices.Contains(s.Enrollment(), student) {
+		return false
+	}
 	grade := s.grades[level]
 	if grade == nil {
 		// Create a new Grade if it is not yet in the School.
@@ -31,6 +33,7 @@ func (s *School) Add(student string, level int) {
 	}
 	grade.students = append(grade.students, student)
 	slices.Sort(grade.students)
+	return true
 }
 
 // Grade returns the students in a specific Grade.
@@ -43,13 +46,12 @@ func (s *School) Grade(level int) []string {
 }
 
 // Enrollment returns the students from all Grades.
-func (s *School) Enrollment() []Grade {
-	var grades []Grade
+func (s *School) Enrollment() []string {
+	var students []string
 	for _, grade := range s.grades {
 		if grade != nil {
-			grades = append(grades, *grade)
+			students = append(students, grade.students...)
 		}
 	}
-	slices.SortFunc(grades, func(a, b Grade) int { return cmp.Compare(a.level, b.level) })
-	return grades
+	return students
 }
