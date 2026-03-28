@@ -1,19 +1,18 @@
 // Package matrix handles a matrix.
-package matrix
+package saddlepoints
 
 import (
 	"errors"
 	"strconv"
 	"strings"
 )
-
 // Matrix represents a matrix.
 type Matrix struct {
 	rows [][]int
 }
 
 // New returns a new matrix from string.
-func New(in string) (*Matrix, error) {
+func New(in string) (Matrix, error) {
 	var rows [][]int
 	var cols = -1
 	for _, line := range strings.Split(in, "\n") {
@@ -21,22 +20,22 @@ func New(in string) (*Matrix, error) {
 		for _, val := range strings.Fields(line) {
 			i, err := strconv.Atoi(val)
 			if err != nil {
-				return nil, err
+				return Matrix{}, err
 			}
 			row = append(row, i)
 		}
 		if cols == -1 {
 			cols = len(row)
 		} else if cols != len(row) {
-			return nil, errors.New("inconsistent length")
+			return Matrix{}, errors.New("inconsistent length")
 		}
 		rows = append(rows, row)
 	}
-	return &Matrix{rows}, nil
+	return Matrix{rows}, nil
 }
 
 // Rows returns the rows of a matric.
-func (m *Matrix) Rows() [][]int {
+func (m Matrix) Rows() [][]int {
 	rows := make([][]int, len(m.rows))
 	for i, r := range m.rows {
 		row := make([]int, len(r))
@@ -49,7 +48,7 @@ func (m *Matrix) Rows() [][]int {
 }
 
 // Cols returns the columns of a matric.
-func (m *Matrix) Cols() [][]int {
+func (m Matrix) Cols() [][]int {
 	if len(m.rows) == 0 {
 		return nil
 	}
@@ -66,7 +65,7 @@ func (m *Matrix) Cols() [][]int {
 }
 
 // Set sets a matrix value.
-func (m *Matrix) Set(x, y, val int) bool {
+func (m Matrix) Set(x, y, val int) bool {
 	if len(m.rows) == 0 {
 		return false
 	}
