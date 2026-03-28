@@ -1,9 +1,6 @@
 // Package sublist checks for sublists.
 package sublist
 
-// Relation describes how lists are related.
-type Relation string
-
 func startswith(a, b []int) bool {
 	for i, v := range b {
 		if v != a[i] {
@@ -16,15 +13,15 @@ func startswith(a, b []int) bool {
 // Sublist returns a Relation: equal, unequal, sublist or superlist.
 func Sublist(a, b []int) Relation {
 	if len(a) == len(b) && startswith(a, b) {
-		return "equal"
+		return RelationEqual
 	}
 
 	// a is the longer list. Check that b is in a.
 	swapped := len(a) < len(b)
-	r := Relation("superlist")
+	r := RelationSuperlist
 	if swapped {
 		a, b = b, a
-		r = Relation("sublist")
+		r = RelationSublist
 	}
 
 	for i := 0; i <= len(a)-len(b); i++ {
@@ -32,5 +29,5 @@ func Sublist(a, b []int) Relation {
 			return r
 		}
 	}
-	return "unequal"
+	return RelationUnequal
 }
