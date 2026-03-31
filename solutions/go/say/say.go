@@ -9,7 +9,7 @@ var (
 		"thirteen", "fourteen", "fifteen", "sixteen",
 		"seventeen", "eighteen", "ninteen"}
 	tens = []string{"", "", "twenty", "thirty", "forty", "fifty", "sixty",
-		"seventy", "eighty", "ninty"}
+		"seventy", "eighty", "ninety"}
 )
 
 // saySmall handles numbers under 100, i.e. with no "place" holder.
