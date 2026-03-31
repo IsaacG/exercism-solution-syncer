@@ -1,5 +1,5 @@
-// Package account provides a bank account.
-package account
+// Package bankaccount provides a bank account.
+package bankaccount
 
 import "sync"
 
@@ -57,4 +57,11 @@ func (a *Account) Deposit(amount int64) (newBalance int64, ok bool) {
 	}
 	a.balance += amount
 	return a.balance, true
+}
+
+func (a *Account) Withdraw(amount int64) (newBalance int64, ok bool) {
+	if amount < 0 {
+		return 0, false
+	}
+	return a.Deposit(-amount)
 }
