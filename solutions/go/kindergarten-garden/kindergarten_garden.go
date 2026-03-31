@@ -1,4 +1,4 @@
-package kindergarten
+package kindergartengarden
 
 import (
 	"errors"
@@ -9,12 +9,15 @@ import (
 // Garden stores a class garden.
 type Garden map[string][]rune
 
-var plants = map[rune]string{
-	'C': "clover",
-	'G': "grass",
-	'R': "radishes",
-	'V': "violets",
-}
+var (
+	plants = map[rune]string{
+		'C': "clover",
+		'G': "grass",
+		'R': "radishes",
+		'V': "violets",
+	}
+	defaultStudents = []string{"Alice", "Bob", "Charlie", "David", "Eve", "Fred", "Ginny", "Harriet", "Ileana", "Joseph", "Kincaid", "Larry"}
+)
 
 // NewGarden returns a garden from a diagram.
 func NewGarden(diagram string, children []string) (*Garden, error) {
@@ -33,7 +36,7 @@ func NewGarden(diagram string, children []string) (*Garden, error) {
 	if len(cups[1]) != len(cups[2]) {
 		return nil, errors.New("rows must be same size")
 	}
-	if len(cups[1]) != 2*len(children) {
+	if len(cups[1]) != 2*len(children) && len(children) != 0 {
 		return nil, errors.New("rows contain two cups per child")
 	}
 	for _, c := range diagram {
@@ -45,6 +48,9 @@ func NewGarden(diagram string, children []string) (*Garden, error) {
 		}
 	}
 
+	if len(children) == 0 {
+		children = defaultStudents[:len(cups[1]) / 2]
+	}
 	garden := make(Garden, len(children))
 	c := make([]string, len(children))
 	copy(c, children)
