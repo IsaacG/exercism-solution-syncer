@@ -1,7 +1,5 @@
 package react
 
-import "slices"
-
 // MyCell is a Cell which supports both callbacks and dependent compute cells.
 type MyCell interface {
 	Cell
@@ -76,20 +74,33 @@ type inputCell struct {
 }
 
 // recursiveDependents recursively collects all dependent computeCells.
+// Sort cells be max steps from the input so we update in the correct order.
 func (c *inputCell) recursiveDependents() []*computeCell {
-	var impacted, new []*computeCell
-	new = c.deps
-	for new != nil {
-		impacted = append(impacted, new...)
+	distance := make(map[*computeCell]int)
+	for i, new := 0, c.deps; new != nil; i++ {
+		// Track the max steps to a cell
+		for _, cell := range new {
+			distance[cell] = i
+		}
+		// Queue up the next level
 		var discovered []*computeCell
 		for _, cell := range new {
 			for _, dep := range cell.dependents() {
-				if !slices.Contains(impacted, dep) {
-					discovered = append(discovered, dep)
-				}
+				discovered = append(discovered, dep)
 			}
 		}
 		new = discovered
+	}
+
+	// Collect cells by distance
+	var impacted []*computeCell
+	for i := 0; len(distance) != 0; i++ {
+		for cell, dist := range distance {
+			if dist == i {
+				delete(distance, cell)
+				impacted = append(impacted, cell)
+			}
+		}
 	}
 	return impacted
 }
