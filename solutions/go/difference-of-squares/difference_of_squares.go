@@ -1,5 +1,5 @@
 // Package diffsquares solves diffsquares.
-package diffsquares
+package differenceofsquares
 
 // SumOfSquares sums up a sequence of squares.
 func SumOfSquares(n int) int {
