@@ -34,7 +34,6 @@ var (
 
 func FromRomanNumeral(s string) int {
 	if ! valid.MatchString(s) {
-		println("Invalid roman numberal input")
 		return 0
 	}
 	s = s + "0"
