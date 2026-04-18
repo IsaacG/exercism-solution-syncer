@@ -3,6 +3,9 @@ package series
 
 // All returns a list of all substrings of s with length n.
 func All(n int, s string) (out []string) {
+	if n <= 0 {
+		return nil
+	}
 	for i := 0; i+n <= len(s); i++ {
 		out = append(out, s[i:i+n])
 	}
