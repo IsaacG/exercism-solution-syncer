@@ -1,9 +1,12 @@
 // Package pascal drawns a Pascal's triangle.
-package pascal
+package pascalstriangle
 
 // Triangle generates a Triangle.
 func Triangle(n int) [][]int {
 	t := make([][]int, 0)
+	if n == 0 {
+		return t
+	}
 	t = append(t, []int{1})
 	for i := 1; i < n; i++ {
 		r := []int{1}
