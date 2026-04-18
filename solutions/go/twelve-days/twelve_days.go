@@ -1,5 +1,5 @@
 // Package twelve generates the Twelve Days.
-package twelve
+package twelvedays
 
 import (
 	"fmt"
