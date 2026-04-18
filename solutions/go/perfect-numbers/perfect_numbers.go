@@ -1,5 +1,5 @@
 // Package perfect checks perfect numbers.
-package perfect
+package perfectnumbers
 
 import "errors"
 
