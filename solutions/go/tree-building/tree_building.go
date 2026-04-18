@@ -1,5 +1,5 @@
 // Package tree builds trees.
-package tree
+package treebuilding
 
 import (
 	"errors"
