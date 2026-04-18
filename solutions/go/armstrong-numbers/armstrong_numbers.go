@@ -1,5 +1,5 @@
 // Package armstrong tests for Armstrong numbers.
-package armstrong
+package armstrongnumbers
 
 // IsNumber checks if a number is an Armstrong number.
 func IsNumber(i int) bool {
