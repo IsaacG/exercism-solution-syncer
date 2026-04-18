@@ -1,5 +1,5 @@
 // Package atbash does at-bash cipher.
-package atbash
+package atbashcipher
 
 import (
 	"strings"
