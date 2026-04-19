@@ -2,6 +2,7 @@ package affinecipher
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -60,8 +61,8 @@ func mmi(a int) int {
 }
 
 func Decode(text string, a, b int) (string, error) {
-	if GCD(a, letters) != 1 {
-		return "", errors.New("a and m must be coprime")
+	if g := GCD(a, letters); g != 1 {
+		return "", fmt.Errorf("a and m must be coprime, got %d", g)
 	}
 	m := mmi(a)
 	var sb strings.Builder
