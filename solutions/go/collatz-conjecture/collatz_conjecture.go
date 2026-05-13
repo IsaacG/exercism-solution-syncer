@@ -9,10 +9,10 @@ func CollatzConjecture(i int) (int, error) {
 	}
 	count := 0
 	for i != 1 {
-		if (i % 2 == 0) {
-			i = i / 2
+		if i%2 == 0 {
+			i /= 2
 		} else {
-			i = i * 3 + 1
+			i = i*3 + 1
 		}
 		count++
 	}
