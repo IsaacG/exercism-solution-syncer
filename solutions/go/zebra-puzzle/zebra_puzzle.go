@@ -212,22 +212,26 @@ func solver() Street {
 		// Apply all rules. Either we satisfy them all or we craft better alternatives.
 		for _, rule := range rules {
 			if alternatives, ok := rule(street); !ok {
+				foundNewAlternative := false
 				for _, alternative := range alternatives {
 					if seen[alternative] {
 						continue
 					}
 					seen[alternative] = true
+					foundNewAlternative = true
 					todo = append(todo, alternative)
 				}
 				found = false
-				break
+				if foundNewAlternative {
+					break
+				}
 			}
 		}
 		if found {
 			return street
 		}
 	}
-	return Street{}
+	panic("No solution found")
 }
 
 type Solution struct {
