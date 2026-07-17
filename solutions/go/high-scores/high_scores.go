@@ -2,30 +2,29 @@ package highscores
 
 import "slices"
 
-type HighScores struct {
-	scores []int
-}
+type HighScores []int
 
 func NewHighScores(scores []int) *HighScores {
-	return &HighScores{scores}
+	hs := HighScores(scores)
+	return &hs
 }
 
 func (s *HighScores) Scores() []int {
-	return s.scores
+	return []int(*s)
 }
 
 func (s *HighScores) Latest() int {
-	return s.scores[len(s.scores)-1]
+	return (*s)[len(*s)-1]
 }
 
 func (s *HighScores) PersonalBest() int {
-	scores := slices.Clone(s.scores)
+	scores := slices.Clone(*s)
 	slices.Sort(scores)
 	return scores[len(scores)-1]
 }
 
 func (s *HighScores) TopThree() []int {
-	scores := slices.Clone(s.scores)
+	scores := slices.Clone(*s)
 	slices.Sort(scores)
 	slices.Reverse(scores)
 	return scores[:min(3, len(scores))]
