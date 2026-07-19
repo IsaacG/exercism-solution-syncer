@@ -182,8 +182,8 @@ var rules = []func(Street) ([]Street, bool){
 	func(s Street) ([]Street, bool) { return neighborRule(s, MaskNationality, Norwegian, MaskColor, Blue) },
 }
 
-func solver() Street {
-	// Start with a random street.
+// Create a random Street.
+func randomStreet() Street {
 	attribs := [][]uint16{
 		{Englishman, Spaniard, Japanese, Ukrainian, Norwegian},
 		{Dog, Fox, Snails, Horse, Zebra},
@@ -200,34 +200,43 @@ func solver() Street {
 			street[i] += attrib[i]
 		}
 	}
+	return street
+}
 
-	// Apply rules repeatedly and queue new mutations until we find a street that satisfies all the rules.
-	todo := []Street{street}
-	seen := make(map[Street]bool)
-	for len(todo) != 0 {
-		// Pop a street to use.
-		street := todo[len(todo)-1]
-		todo = todo[:len(todo)-1]
-		found := true
-		// Apply all rules. Either we satisfy them all or we craft better alternatives.
-		for _, rule := range rules {
-			if alternatives, ok := rule(street); !ok {
-				for _, alternative := range alternatives {
-					if seen[alternative] {
-						continue
+func solver() Street {
+	for {
+		street := randomStreet()
+
+		// Apply rules repeatedly and queue new mutations until we find a street that satisfies all the rules.
+		todo := []Street{street}
+		seen := make(map[Street]bool)
+		// If no solution is found quickly (~1000 loops), restart with a new seed.
+		// There was a sufficiently high number of seeds that resolve quickly.
+		// Rather than spend a long time on a "hard" seed, try again fast.
+		for count := 0; len(todo) != 0 && count < 1000; count++ {
+			// Pop a street to use.
+			street := todo[len(todo)-1]
+			todo = todo[:len(todo)-1]
+			found := true
+			// Apply all rules. Either we satisfy them all or we craft better alternatives.
+			for _, rule := range rules {
+				if alternatives, ok := rule(street); !ok {
+					for _, alternative := range alternatives {
+						if seen[alternative] {
+							continue
+						}
+						seen[alternative] = true
+						todo = append(todo, alternative)
 					}
-					seen[alternative] = true
-					todo = append(todo, alternative)
+					found = false
 				}
-				found = false
-				break
+			}
+			if found {
+				return street
 			}
 		}
-		if found {
-			return street
-		}
 	}
-	return Street{}
+	panic("No solution found")
 }
 
 type Solution struct {
