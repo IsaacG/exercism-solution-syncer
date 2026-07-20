@@ -65,12 +65,7 @@ func abs(a int) int {
 // Return the string representation of the nationality of a house which meets a criteria.
 func (s Street) nationality(mask, value uint16) string {
 	house := s[s.index(mask, value)]
-	for k, v := range nations {
-		if house&MaskNationality == k {
-			return v
-		}
-	}
-	return ""
+	return nations[house&MaskNationality]
 }
 
 // index returns the index of a house on a street which has a given property.
@@ -86,10 +81,10 @@ func (s Street) index(mask, value uint16) int {
 // swap returns a copy of a street which has a property swapped between two houses.
 func swap(street Street, idxA, idxB int, mask uint16) Street {
 	revMask := MaskAll ^ mask
-	copy := street
-	copy[idxA] = street[idxA]&revMask | street[idxB]&mask
-	copy[idxB] = street[idxB]&revMask | street[idxA]&mask
-	return copy
+	streetCopy := street
+	streetCopy[idxA] = street[idxA]&revMask | street[idxB]&mask
+	streetCopy[idxB] = street[idxB]&revMask | street[idxA]&mask
+	return streetCopy
 }
 
 // houseRule checks if a single house has two properties.
@@ -236,7 +231,6 @@ func solver() Street {
 			}
 		}
 	}
-	panic("No solution found")
 }
 
 type Solution struct {
