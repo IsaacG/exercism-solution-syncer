@@ -18,7 +18,7 @@ func Number(s string) (string, error) {
 			break
 		}
 	}
-	s = string(t)
+	s = string(t) 
 
 	if len(s) == 11 {
 		if s[0] == '1' {
@@ -50,7 +50,7 @@ func AreaCode(s string) (string, error) {
 
 // Format formats a number all pretty-like.
 func Format(s string) (string, error) {
-	s, err := Number(s)
+	s, err := Number(s) 
 	if err != nil {
 		return "", err
 	}
