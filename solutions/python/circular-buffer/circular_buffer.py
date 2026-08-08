@@ -18,7 +18,9 @@ class CircularBuffer:
     def __init__(self, capacity: int):
         """Initialize a buffer."""
         self._len = capacity + 1
-        self.clear()
+        self._data = [None] * self._len
+        self._read = 0
+        self._write = 0
 
     def _next(self, pos: int) -> int:
         """Return the next position."""
@@ -57,6 +59,5 @@ class CircularBuffer:
 
     def clear(self):
         """Reset the buffer."""
-        self._data = [None] * self._len
         self._read = 0
         self._write = 0
