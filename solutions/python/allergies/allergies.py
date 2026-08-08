@@ -1,6 +1,6 @@
-ALLERGENS = (
-  'eggs', 'peanuts', 'shellfish', 'strawberries',
-  'tomatoes', 'chocolate', 'pollen', 'cats')
+ALLERGENS = [
+  "eggs", "peanuts", "shellfish", "strawberries", "tomatoes", "chocolate", "pollen", "cats",
+]
 
 
 class Allergies(object):
@@ -16,6 +16,3 @@ class Allergies(object):
     @property
     def lst(self):
         return self._lst
-
-
-# vim:ts=2:sw=2:expandtab
