@@ -1,21 +1,16 @@
 import string
 
-mapping = {string.ascii_lowercase[i]: string.ascii_lowercase[25 - i] for i in range(26)}
+mapping = dict(zip(string.ascii_lowercase, string.ascii_lowercase[::-1]))
 mapping.update({i: i for i in string.digits})
-alnum = string.ascii_letters + string.digits
+
 
 def encode(text):
-  text = text.lower()
-  text = (t for t in text if t in alnum)
-  text = list(mapping[t] for t in text)
-  r = (''.join(text[i:i+5]) for i in range(0, len(text), 5))
-
-  return ' '.join(r)
+    text = decode(text)
+    return " ".join("".join(text[i:i + 5]) for i in range(0, len(text), 5))
 
 
 def decode(text):
-  text = text.replace(' ', '')
-  return ''.join(mapping[t] for t in text)
-
-
-# vim:ts=2:sw=2:expandtab
+    text = text.lower()
+    text = (t for t in text if t.isalnum())
+    text = [mapping[t] for t in text]
+    return "".join(text)
