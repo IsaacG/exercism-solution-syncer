@@ -1,7 +1,6 @@
 """Binary search."""
 
-
-def find(search_list: list[int], value: int) -> int:
+def find[T](search_list: list[T], value: T) -> int:
     """Return the index of a value in a list, using binary search."""
     lower = 0
     upper = len(search_list)
