@@ -1,13 +1,10 @@
 """Binary Tree."""
 
 from __future__ import annotations
-from typing import cast, Generator, Generic, Iterable, Optional, TypeVar
+from typing import cast, Iterable, Optional
 
 
-T = TypeVar("T")
-
-
-class TreeNode(Generic[T]):
+class TreeNode[T]:
     """Binary Tree Node."""
 
     def __init__(
@@ -37,7 +34,7 @@ class TreeNode(Generic[T]):
                 self.left = TreeNode(None)
             self.left.insert(value)
 
-    def __iter__(self) -> Generator[T, None, None]:
+    def __iter__(self) -> Iterable[T]:
         """Return node values, sorted."""
         yield from self.left or []
         # if self.data is None: return
@@ -46,7 +43,7 @@ class TreeNode(Generic[T]):
         yield from self.right or []
 
 
-class BinarySearchTree(Generic[T]):
+class BinarySearchTree[T]:
     """Binary Tree."""
 
     def __init__(self, tree_data: Iterable[T]):
