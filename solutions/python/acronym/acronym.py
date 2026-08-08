@@ -1,8 +1,10 @@
-import re
-
 def abbreviate(words):
-  words = re.sub(r'[-_]', ' ', words).split()
-  return ''.join(w[0] for w in words).upper()
-
-
-# vim:ts=2:sw=2:expandtab
+    out = ""
+    take = True
+    for i in words:
+        if i in "-_ ":
+            take = True
+        elif take:
+            take = False
+            out += i
+    return out.upper()
