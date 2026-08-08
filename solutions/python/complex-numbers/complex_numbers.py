@@ -3,6 +3,7 @@
 import math
 import numbers
 
+
 class ComplexNumber:
     """Complex Number."""
 
@@ -76,4 +77,4 @@ class ComplexNumber:
         return e_i * math.exp(self.real)
 
     def __repr__(self):
-        return f"{self.real} + {self.imaginary} * i"
+        return f"{self.real} + {self.imaginary}j"
