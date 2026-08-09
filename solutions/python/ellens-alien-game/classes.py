@@ -19,9 +19,8 @@ class Alien:
 
     def hit(self) -> None:
         """Reduce Alien health."""
-        # With bounds checks:
-        # self.health = max(0, self.health - 1)
-        self.health -= 1
+        if self.is_alive:
+            self.health -= 1
 
     def teleport(self, x_coordinate: int, y_coordinate: int) -> None:
         """Change the Alien position."""
