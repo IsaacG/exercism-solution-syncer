@@ -10,12 +10,11 @@ TRAITS = ('strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'ch
 class Character:
 
     def __init__(self):
-        random.seed()
-        for a in TRAITS:
-            setattr(self, a, self.ability())
+        for trait in TRAITS:
+            setattr(self, trait, self.ability())
 
         self.hitpoints = 10 + modifier(self.constitution)
 
     def ability(self):
         dice = sorted([random.randint(1, 6) for _ in range(4)], reverse=True)
-        return sum(dice[0:3])
+        return sum(dice[:3])
