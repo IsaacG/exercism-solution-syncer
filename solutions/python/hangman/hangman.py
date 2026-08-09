@@ -1,5 +1,3 @@
-# Game status categories
-# Change the values as you see fit
 STATUS_WIN = "win"
 STATUS_LOSE = "lose"
 STATUS_ONGOING = "ongoing"
@@ -14,7 +12,7 @@ class Hangman(object):
 
   def guess(self, char):
     if self.status != STATUS_ONGOING:
-      raise ValueError('The game has already ended.')
+      raise ValueError("The game has already ended.")
 
     # Reduce guess count on a wrong or repeated guess.
     if char not in self.word or char in self.guesses:
@@ -30,12 +28,9 @@ class Hangman(object):
       self.status = STATUS_LOSE
 
   def get_masked_word(self):
-    return ''.join(
-        c if c in self.guesses else '_'
+    return "".join(
+        c if c in self.guesses else "_"
         for c in self.word)
 
   def get_status(self):
     return self.status
-
-
-# vim:ts=2:sw=2:expandtab
