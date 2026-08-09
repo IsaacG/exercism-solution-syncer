@@ -1,26 +1,25 @@
 """Doubly linked list."""
 
 from __future__ import annotations
-from typing import Callable, Generic, Generator, Optional, TypeVar
-NodeValue = TypeVar('NodeValue')
+import collections.abc
 
 
-class Node(Generic[NodeValue]):
+class Node[T]:
     """List node."""
-    def __init__(self, value: NodeValue):
+    def __init__(self, value: T):
         """Create a new node."""
         self.value = value
-        self.prev: Optional[Node] = None
-        self.next: Optional[Node] = None
+        self.prev: Node | None = None
+        self.next: Node | None = None
 
-    def add_prev(self, value: NodeValue) -> Node:
+    def add_prev(self, value: T) -> Node:
         """Add a node prior to self."""
         new_node = Node(value)
         assert self.prev is not None
         self.link(self.prev, new_node, self)
         return new_node
 
-    def add_next(self, value: NodeValue) -> Node:
+    def add_next(self, value: T) -> Node:
         """Add a node after self."""
         new_node = Node(value)
         assert self.next is not None
@@ -33,7 +32,7 @@ class Node(Generic[NodeValue]):
         node_a.next, node_b.next = node_b, node_c
         node_b.prev, node_c.prev = node_a, node_b
 
-    def remove(self) -> NodeValue:
+    def remove(self) -> T:
         """Remove a node from the list and return its value."""
         assert self.prev is not None
         assert self.next is not None
@@ -42,31 +41,7 @@ class Node(Generic[NodeValue]):
         return self.value
 
 
-def increment(
-    func: Callable[[LinkedList, NodeValue], None]
-) -> Callable[[LinkedList, NodeValue], None]:
-    """LinkedList increment decorator to bump the length."""
-
-    def wrapper(linked_list: LinkedList, value: NodeValue) -> None:
-        func(linked_list, value)
-        linked_list.length += 1
-
-    return wrapper
-
-
-def decrement(func: Callable[[LinkedList], NodeValue]) -> Callable[[LinkedList], NodeValue]:
-    """LinkedList decrement decorator to check and reduce the length."""
-
-    def wrapper(linked_list: LinkedList):
-        if linked_list.length <= 0:
-            raise IndexError("List is empty")
-        linked_list.length -= 1
-        return func(linked_list)
-
-    return wrapper
-
-
-class LinkedList:
+class LinkedList[T]:
     """A linked list."""
 
     def __init__(self):
@@ -78,17 +53,17 @@ class LinkedList:
         self.head.next, self.last.prev = self.last, self.head
         self.length = 0
 
-    @increment
-    def push(self, value: NodeValue) -> None:
+    def push(self, value: T) -> None:
         """Push a node to the end of the list."""
         self.last.add_prev(value)
+        self.length += 1
 
-    @increment
-    def unshift(self, value: NodeValue) -> None:
+    def unshift(self, value: T) -> None:
         """Insert a node at the start of the list."""
         self.head.add_next(value)
+        self.length += 1
 
-    def delete(self, value) -> NodeValue:
+    def delete(self, value) -> None:
         """Remove the first node with a matching value."""
         cur = self.head.next
         while cur != self.last and cur.value != value:
@@ -98,17 +73,23 @@ class LinkedList:
         cur.remove()
         self.length -= 1
 
-    @decrement
-    def pop(self) -> NodeValue:
+    def remove(self, node: Node) -> T:
+        """Remove a node from the list and return its value."""
+        if self.length <= 0:
+            raise IndexError("List is empty")
+        val = node.remove()
+        self.length -= 1
+        return val
+
+    def pop(self) -> T:
         """Pop a node from the end of the list."""
-        return self.last.prev.remove()
+        return self.remove(self.last.prev)
 
-    @decrement
-    def shift(self) -> NodeValue:
+    def shift(self) -> T:
         """Remove a node from the start of the list."""
-        return self.head.next.remove()
+        return self.remove(self.head.next)
 
-    def __iter__(self) -> Generator[NodeValue, None, None]:
+    def __iter__(self) -> collections.abc.Iterator[T]:
         """Iterate through the list."""
         cur = self.head.next
         while cur != self.last:
