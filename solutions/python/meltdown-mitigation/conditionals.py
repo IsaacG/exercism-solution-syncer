@@ -1,3 +1,6 @@
+LEVELS = [(80, "green"), (60, "orange"), (30, "red"), (0, "black")]
+
+
 def is_criticality_balanced(temperature, neutrons_emitted):
     """Verify criticality is balanced.
 
@@ -32,9 +35,8 @@ def reactor_efficiency(voltage, current, theoretical_max_power):
     (generated power/ theoretical max power)*100
     where generated power = voltage * current
     """
-    levels = ((80, "green"), (60, "orange"), (30, "red"), (0, "black"))
-    efficiency = 100 * (voltage * current) / theoretical_max_power
-    return next(color for level, color in levels if efficiency >= level)
+    efficiency = 100 * voltage * current / theoretical_max_power
+    return next(color for level, color in LEVELS if efficiency >= level)
 
 
 def fail_safe(temperature, neutrons_produced_per_second, threshold):
@@ -52,7 +54,6 @@ def fail_safe(temperature, neutrons_produced_per_second, threshold):
     val = 100 * temperature * neutrons_produced_per_second / threshold
     if val < 90:
         return "LOW"
-    elif 90 <= val <= 110:
+    if val <= 110:
         return "NORMAL"
-    else:
-        return "DANGER"
+    return "DANGER"
