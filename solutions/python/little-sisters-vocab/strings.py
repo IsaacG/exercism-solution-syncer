@@ -24,7 +24,7 @@ def make_word_groups(vocab_words):
     with the prefix  and the words with prefix applied, separated
      by ' :: '.
     """
-    return " :: ".join([vocab_words[0]] + [vocab_words[0] + i for i in vocab_words[1:]])
+    return (" :: " + vocab_words[0]).join(vocab_words)
 
 
 def remove_suffix_ness(word):
@@ -35,10 +35,10 @@ def remove_suffix_ness(word):
 
     This function takes in a word and returns the base word with `ness` removed.
     """
-    w = word.removesuffix("ness")
-    if w.endswith("i"):
-        w = w.removesuffix("i") + "y"
-    return w
+    word = word.removesuffix("ness")
+    if word.endswith("i"):
+        word = word.removesuffix("i") + "y"
+    return word
 
 
 def adjective_to_verb(sentence, index):
