@@ -1,13 +1,15 @@
+MATCHING = {")": "(", "]": "[", "}": "{"}
+
+
 def is_paired(input_string):
     unmatched_context = []
-    matching = {")": "(", "]": "[", "}": "{"}
     for character in input_string:
-        if character in matching.values():
+        if character in MATCHING.values():
             unmatched_context.append(character)
-        if character in matching:
+        elif character in MATCHING:
             if not unmatched_context:
                 return False
-            if unmatched_context[-1] == matching[character]:
+            if unmatched_context[-1] == MATCHING[character]:
                 unmatched_context.pop()
             else:
                 return False
