@@ -1,5 +1,6 @@
 import enum
 
+
 class Colors(enum.IntEnum):
   black = 0
   brown = 1
@@ -18,7 +19,4 @@ def color_code(color):
 
 
 def colors():
-    return list(Colors.__members__.keys())
-
-
-# vim:ts=2:sw=2:expandtab
+    return list(Colors.__members__)
