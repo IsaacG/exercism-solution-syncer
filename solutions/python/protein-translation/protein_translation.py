@@ -1,5 +1,4 @@
-
-trans = {
+CODONS = {
     'AUG': 'Methionine',
     'UUU': 'Phenylalanine',
     'UUC': 'Phenylalanine',
@@ -19,14 +18,12 @@ trans = {
     'UGA': 'STOP',
 }
 
+
 def proteins(strand):
     proteins = []
     for i in range(0, len(strand), 3):
-        protein = trans[strand[i:i+3]]
+        protein = CODONS[strand[i:i+3]]
         if protein == 'STOP':
             break
         proteins.append(protein)
     return proteins
-	
-
-# vim:ts=4:sw=4:expandtab
