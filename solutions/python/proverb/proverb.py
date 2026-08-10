@@ -1,6 +1,5 @@
 """Recite a proverb."""
 
-
 def proverb(*words, qualifier: None | str = None) -> list[str]:
     """Return proverb verses."""
     out = [
@@ -10,5 +9,5 @@ def proverb(*words, qualifier: None | str = None) -> list[str]:
     if words:
         if qualifier:
             qualifier += " "
-        out.append(f"And all for the want of a {qualifier or ''}{words[0]}.")
+        out.append(f"And all for the want of a {qualifier or ""}{words[0]}.")
     return out
