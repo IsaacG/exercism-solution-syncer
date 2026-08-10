@@ -12,3 +12,5 @@ def slices(series, length):
         series[i:i + length]
         for i in range(len(series) - length + 1)
     ]
+
+# vim:ts=2:sw=2:expandtab
