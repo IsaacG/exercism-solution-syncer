@@ -21,19 +21,11 @@ class Cipher:
     """Simple cipher."""
 
     def __init__(self, key: str | None = None):
-        if key is None:
-            key = "".join([
-                random.choice(string.ascii_lowercase)
-                for _ in range(100)
-            ])
-        self.key = key
+        self.key = key or "".join(random.choices(string.ascii_lowercase, k=100))
 
     def encode(self, text: str, reverse: bool = False) -> str:
         """Return an encoded string using the key."""
-        return "".join([
-            add(char, key, reverse)
-            for char, key in zip(text, itertools.cycle(self.key))
-        ])
+        return "".join(add(char, key, reverse) for char, key in zip(text, itertools.cycle(self.key)))
 
     def decode(self, text: str) -> str:
         """Return a decoded string using the key."""
