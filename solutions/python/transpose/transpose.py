@@ -16,7 +16,7 @@ def transpose(lines: str) -> str:
     to aid in matrix transposing (to avoid any IndexErrors).
     """
     # Input with space padding so line length never increases.
-    space_padded: list[str] = []
+    space_padded = list[str]()
     width = 0
     for row in reversed(lines.splitlines()):
         width = max(len(row), width)
@@ -24,7 +24,7 @@ def transpose(lines: str) -> str:
     space_padded.reverse()
 
     # Build a "matrix" which is rectangular to aid in lookups.
-    input_matrix: list[list[str]] = []
+    input_matrix = list[list[str]]()
     for row in space_padded:
         input_matrix.append(list(row) + [""] * (width - len(row)))
 
