@@ -34,9 +34,7 @@ def BuildTree(records: list[Record]) -> Node | None:
     if sorted(nodes.keys()) != list(range(len(nodes))):
         raise ValueError('Record id is invalid or out of order.')
 
-    for record in records:
-        if record.record_id == 0:
-            continue
+    for record in records[1:]:
         nodes[record.parent_id].children.append(nodes[record.record_id])
     
     return nodes[0]
