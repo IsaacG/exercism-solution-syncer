@@ -2,15 +2,14 @@
 
 import itertools
 import string
-from typing import Optional
 
 
-def solve(puzzle: str) -> Optional[dict[str, int]]:
+def solve(puzzle: str) -> dict[str, int] | None:
     """Return a puzzle solution."""
     left, right = puzzle.split(" == ")
     parts = [p.strip() for p in left.split("+")]
     words = parts + [right]
-    letters = set().union(*(set(w) for w in words))
+    letters = {letter for word in words for letter in word}
     # Try all permutations of digits for the letters.
     for vals in itertools.permutations(string.digits, r=len(letters)):
         mapping = dict(zip(letters, vals))
