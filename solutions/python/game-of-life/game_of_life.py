@@ -21,10 +21,7 @@ def tick(matrix):
         row = []
         for x in range(width):
             count = sum((x + dx, y + dy) in alive for dx, dy in DIRECTIONS)
-            next_alive = (
-                ((x, y) in alive and count in [2, 3])
-                or ((x, y) not in alive and count == 3)
-            )
+            next_alive = count == 3 or (x, y) in alive and count == 2
             row.append(1 if next_alive else 0)
         out.append(row)
     return out
