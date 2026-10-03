@@ -9,4 +9,4 @@ func find(search_list, value):
 			hi = mid - 1
 		else:
 			lo = mid + 1
-	return false
+	return null
