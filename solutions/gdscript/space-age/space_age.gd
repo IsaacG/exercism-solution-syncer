@@ -11,4 +11,6 @@ var PLANET_RATIOS = {
 }
 
 func on_planet(planet, seconds):
+	if planet not in PLANET_RATIOS:
+		return null
 	return seconds / EARTH_SECONDS / PLANET_RATIOS[planet]
