@@ -2,7 +2,7 @@ var COLORS = ["black", "brown", "red", "orange", "yellow", "green", "blue", "vio
 var UNITS = ["ohms", "kiloohms", "megaohms", "gigaohms"]
 
 
-func color_code(colors):
+func label(colors):
 	"""Return the value of a resistor color."""
 	var val = 0
 	for color in colors.slice(0, 2):
