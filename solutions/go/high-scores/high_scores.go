@@ -18,9 +18,7 @@ func (s *HighScores) Latest() int {
 }
 
 func (s *HighScores) PersonalBest() int {
-	scores := slices.Clone(*s)
-	slices.Sort(scores)
-	return scores[len(scores)-1]
+    return slices.Max(*s)
 }
 
 func (s *HighScores) TopThree() []int {
