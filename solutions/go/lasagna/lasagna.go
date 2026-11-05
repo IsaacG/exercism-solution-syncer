@@ -1,8 +1,12 @@
 // Package lasagna does baking time.
 package lasagna
 
-// OvenTime is total time in the oven.
-const OvenTime = 40
+const (
+    // OvenTime is total time in the oven.
+    OvenTime = 40
+	// TimePerLayer is the prep time per layer.
+	TimePerLayer = 2
+)
 
 // RemainingOvenTime returns time left in the oven.
 func RemainingOvenTime(elapsed int) int {
@@ -11,7 +15,7 @@ func RemainingOvenTime(elapsed int) int {
 
 // PreparationTime returns time needed to prep.
 func PreparationTime(layers int) int {
-	return layers * 2
+	return layers * TimePerLayer
 }
 
 // ElapsedTime returns time already elapsed.
